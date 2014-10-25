@@ -1,4 +1,4 @@
-pendex
+Pendex
 ======
 
 Pendex app.

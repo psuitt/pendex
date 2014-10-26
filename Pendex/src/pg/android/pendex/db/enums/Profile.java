@@ -7,13 +7,15 @@ package pg.android.pendex.db.enums;
  */
 public enum Profile {
 
-	ID("INTEGER PRIMARY KEY AUTOINCREMENT"),
-	Name("TEXT");
+	Id("id"),
+	Name("name"),
+	Answers("answers"),
+	Pendex("pendex");
 
-	public String type;
+	public String name;
 
-	Profile(final String type) {
-		this.type = type;
+	Profile(final String name) {
+		this.name = name;
 	}
 
 }

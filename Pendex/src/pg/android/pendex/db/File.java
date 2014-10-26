@@ -1,6 +1,5 @@
 package pg.android.pendex.db;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,49 +19,37 @@ public final class File {
 	private static final String FILE_NAME_JSON = "questions.json";
 	private static final String FILE_NAME_SETTINGS = "settings.json";
 
-	public static void storeSettingsToFile(final Context context, final JSONObject jsonObject) throws IOException {
+	public static void storeSettingsToFile(final Context context, final String fileName, final JSONObject jsonObject) throws IOException {
 
 		// MODE_PRIVATE will create the file (or replace a file of the same name) and make it private to your application.
-		final FileOutputStream fos = context.openFileOutput(File.FILE_NAME_SETTINGS, Context.MODE_PRIVATE);
+		final FileOutputStream fos = context.openFileOutput(fileName, Context.MODE_PRIVATE);
 		fos.write(jsonObject.toString().getBytes());
 		fos.close();
 
 	}
 
-	public static String loadSettingsFromFile(final Context context) throws FileNotFoundException {
+	public static String loadQuestionsFromFile(final Context context) throws IOException {
 
-		//FileInputStream fis = context.openFileInput(FILE_NAME_SETTINGS);
-		//fis.
-		//fos.close();
-		return null;
+		return File.loadFileJSON(context, File.FILE_NAME_JSON);
 
 	}
 
-	public static String loadQuestionsFromFile(final Context context) {
+	public static String loadFileJSON(final Context context, final String fileName) throws IOException {
 
-		String json = null;
+		// Get the file input steam.
+		final InputStream is = context.getAssets().open(fileName);
 
-		try {
+		final int size = is.available();
 
-			final InputStream is = context.getAssets().open(File.FILE_NAME_JSON);
+		final byte[] buffer = new byte[size];
 
-			final int size = is.available();
+		// Read to buffer
+		is.read(buffer);
 
-			final byte[] buffer = new byte[size];
+		// Close the input stream.
+		is.close();
 
-			is.read(buffer);
-
-			is.close();
-
-			json = new String(buffer, "UTF-8");
-
-
-		} catch (final IOException e) {
-			e.printStackTrace();
-			return null;
-		}
-
-		return json;
+		return new String(buffer, "UTF-8");
 
 	}
 

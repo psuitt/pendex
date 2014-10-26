@@ -1,42 +1,33 @@
 package pg.android.pendex.utils;
 
-import org.json.JSONArray;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.json.JSONException;
+import org.json.JSONObject;
 
-import pg.android.pendex.db.File;
-
-import android.content.Context;
-
-/**
- * Returns questions.
- * 
- * @author Sora
- *
- */
 public class JsonUtil {
 
-	/**
-	 * Returns the questions in a {@link JSONArray} format.
-	 * 
-	 * @param context - {@link Context} - Application context.
-	 * 
-	 * @return {@link JSONArray} - The json array.
-	 */
-	public static JSONArray getJsonQuestions(Context context) {
-		
-		JSONArray array;
-		
-		try {
-			
-			array = new JSONArray(File.loadQuestionsFromFile(context));
-			
-		} catch (JSONException e) {
-			e.printStackTrace();
-            return null;
+	public static Map<String, Integer > createPendexMapFromJson(final JSONObject pendex) throws JSONException{
+
+		final Iterator<String> pendexKeyIter = pendex.keys();
+
+		final Map<String, Integer> map = new HashMap<String, Integer>();
+
+		while (pendexKeyIter.hasNext()) {
+
+			final String pendexText = pendexKeyIter.next();
+
+			final int val = pendex.getInt(pendexText);
+
+			map.put(pendexText, val);
+
 		}
-		
-		return array;
-		
+
+		return map;
+
+
 	}
-	
+
 }

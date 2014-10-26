@@ -1,17 +1,21 @@
 package pg.android.pendex.utils;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.content.Context;
 import pg.android.pendex.beans.Answer;
 import pg.android.pendex.beans.PendexRating;
 import pg.android.pendex.beans.Question;
+import pg.android.pendex.db.File;
+import pg.android.pendex.exceptions.OutOfQuestionsException;
+import pg.android.pendex.exceptions.QuestionsLoadException;
+import android.content.Context;
 
 /**
  * Utility for generating questions.
@@ -21,72 +25,98 @@ import pg.android.pendex.beans.Question;
  */
 public class QuestionUtil {
 
-	public static Question getRandomQuestion(Context context) {
-		
-		Question question = null;
-		
-		JSONArray array = JsonUtil.getJsonQuestions(context);	
-		
-		try {
-			question = convertJsonToQuestion(array.getJSONObject(0));
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	private static final List<Question> questions = new ArrayList<Question>();
+
+	private static final int QUESTIONS_TO_REFRESH = 5;
+	private static final int MAX_QUESTIONS_LOADED = 10;
+
+	public static Question getRandomQuestion(final Context context) throws QuestionsLoadException, OutOfQuestionsException {
+
+		if (questions.isEmpty() || questions.size() < QUESTIONS_TO_REFRESH) {
+			loadQuestions(context);
 		}
-		
-		return question;
-		
+
+		// Sanity check because you could be done.
+		if (!questions.isEmpty()) {
+			final Random r = new Random();
+			final int randomIndex = r.nextInt(questions.size());
+			final Question q = questions.get(randomIndex);
+			questions.remove(randomIndex);
+			return q;
+		}
+
+		throw new OutOfQuestionsException();
+
 	}
 
-	private static Question convertJsonToQuestion(JSONObject object) throws JSONException {
-		
-		Question question = new Question();
-		
-		String id = object.getString("id");
-		String questionText = object.getString("question");
-		Integer random = object.getInt("random");
-		
+	private static void loadQuestions(final Context context) throws QuestionsLoadException {
+
+		try {
+
+			final JSONArray array =  new JSONArray(File.loadQuestionsFromFile(context));
+			int added = 0;
+
+			for (int i = 0 ; i < array.length(); i++) {
+
+				final JSONObject object = array.getJSONObject(i);
+				final String id = object.getString("id");
+
+				if (!ProfileUtil.hasAnswered(id) && added < MAX_QUESTIONS_LOADED) {
+					questions.add(convertJsonToQuestion(object));
+					added++;
+				}
+
+			}
+
+		} catch (final JSONException e) {
+
+			e.printStackTrace();
+			throw new QuestionsLoadException();
+
+		} catch (final IOException e) {
+
+			e.printStackTrace();
+			throw new QuestionsLoadException();
+
+		}
+
+	}
+
+	private static Question convertJsonToQuestion(final JSONObject object) throws JSONException {
+
+		final Question question = new Question();
+
+		final String id = object.getString("id");
+		final String questionText = object.getString("question");
+		final Integer random = object.getInt("random");
+
 		question.setId(id);
 		question.setRandom(random);
 		question.setQuestion(questionText);
-		
-		JSONArray answers = object.getJSONArray("answers");
-		
+
+		final JSONArray answers = object.getJSONArray("answers");
+
 		for (int i = 0 ; i < answers.length(); i++) {
-			
-			JSONObject ans = answers.getJSONObject(i);
-		
-			String answerText = ans.getString("answer");
-			
-			JSONObject pendex = ans.getJSONObject("pendex");
-			
-			Answer answer = new Answer();
-			
+
+			final JSONObject ans = answers.getJSONObject(i);
+
+			final String answerText = ans.getString("answer");
+
+			final JSONObject pendex = ans.getJSONObject("pendex");
+
+			final Answer answer = new Answer();
+
 			answer.setAnswer(answerText);
-			
-			PendexRating pendexRating = new PendexRating();
-			
-			Iterator<String> pendexKeyIter = pendex.keys();
-			
-			Map<String, Integer> map = new HashMap<String, Integer>();
-			
-			while (pendexKeyIter.hasNext()) {
-				
-				String pendexText = pendexKeyIter.next();
-				
-				int val = pendex.getInt(pendexText);
-				
-				map.put(pendexText, val);
-				
-			}
-			
-			pendexRating.setPendex(map);
-			
+
+			final PendexRating pendexRating = new PendexRating();
+
+			pendexRating.setPendex(JsonUtil.createPendexMapFromJson(pendex));
+
 			answer.setPendexRating(pendexRating);
-			
+
 		}
-		
+
 		return question;
 	}
-	
+
 }

@@ -3,7 +3,7 @@ package pg.android.pendex.utils;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import pg.android.pendex.db.FileReader;
+import pg.android.pendex.db.File;
 
 import android.content.Context;
 
@@ -28,7 +28,7 @@ public class JsonUtil {
 		
 		try {
 			
-			array = new JSONArray(FileReader.loadQuestionsFromFile(context));
+			array = new JSONArray(File.loadQuestionsFromFile(context));
 			
 		} catch (JSONException e) {
 			e.printStackTrace();

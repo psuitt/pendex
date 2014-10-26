@@ -17,7 +17,7 @@ import android.content.Context;
 public final class File {
 
 	private static final String FILE_NAME_JSON = "questions.json";
-	private static final String FILE_NAME_SETTINGS = "settings.json";
+	//private static final String FILE_NAME_SETTINGS = "settings.json";
 
 	public static void storeSettingsToFile(final Context context, final String fileName, final JSONObject jsonObject) throws IOException {
 

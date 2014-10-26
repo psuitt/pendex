@@ -3,7 +3,9 @@ package pg.android.pendex;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import pg.android.pendex.beans.Question;
 import pg.android.pendex.utils.JsonUtil;
+import pg.android.pendex.utils.QuestionUtil;
 import android.support.v7.app.ActionBarActivity;
 import android.app.Activity;
 import android.support.v7.app.ActionBar;
@@ -252,15 +254,8 @@ public class NavigationDrawerFragment extends Fragment {
         }
 
         if (item.getItemId() == R.id.action_example) {
-        	JSONArray array = JsonUtil.getJsonQuestions(getActivity());
-        	String s = "Action!";
-			try {
-				s = array.getJSONObject(0).getString("question");
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-            Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();
+        	Question q = QuestionUtil.getRandomQuestion(getActivity());
+            Toast.makeText(getActivity(), q.getQuestion(), Toast.LENGTH_SHORT).show();
             return true;
         }
 

@@ -1,10 +1,16 @@
 package pg.android.pendex.utils;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
+import pg.android.pendex.beans.Answer;
+import pg.android.pendex.beans.PendexRating;
 import pg.android.pendex.beans.Question;
 
 /**
@@ -17,20 +23,18 @@ public class QuestionUtil {
 
 	public static Question getRandomQuestion(Context context) {
 		
-		JSONArray array = JsonUtil.getJsonQuestions(context);
-    	String s = "Action!";
+		Question question = null;
 		
+		JSONArray array = JsonUtil.getJsonQuestions(context);	
 		
 		try {
-			Question question = convertJsonToQuestion(array.getJSONObject(0));
+			question = convertJsonToQuestion(array.getJSONObject(0));
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		
-		
-		return null;
+		return question;
 		
 	}
 
@@ -52,12 +56,37 @@ public class QuestionUtil {
 			
 			JSONObject ans = answers.getJSONObject(i);
 		
+			String answerText = ans.getString("answer");
 			
+			JSONObject pendex = ans.getJSONObject("pendex");
+			
+			Answer answer = new Answer();
+			
+			answer.setAnswer(answerText);
+			
+			PendexRating pendexRating = new PendexRating();
+			
+			Iterator<String> pendexKeyIter = pendex.keys();
+			
+			Map<String, Integer> map = new HashMap<String, Integer>();
+			
+			while (pendexKeyIter.hasNext()) {
+				
+				String pendexText = pendexKeyIter.next();
+				
+				int val = pendex.getInt(pendexText);
+				
+				map.put(pendexText, val);
+				
+			}
+			
+			pendexRating.setPendex(map);
+			
+			answer.setPendexRating(pendexRating);
 			
 		}
 		
-		
-		return null;
+		return question;
 	}
 	
 }

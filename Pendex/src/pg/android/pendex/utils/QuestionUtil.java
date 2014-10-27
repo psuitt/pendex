@@ -95,6 +95,7 @@ public class QuestionUtil {
 		question.setQuestion(questionText);
 
 		final JSONArray answers = object.getJSONArray("answers");
+		final List<Answer> answersList = new ArrayList<Answer>();
 
 		for (int i = 0 ; i < answers.length(); i++) {
 
@@ -114,7 +115,11 @@ public class QuestionUtil {
 
 			answer.setPendexRating(pendexRating);
 
+			answersList.add(answer);
+
 		}
+
+		question.setAnswers(answersList);
 
 		return question;
 	}

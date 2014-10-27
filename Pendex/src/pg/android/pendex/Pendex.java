@@ -1,5 +1,9 @@
 package pg.android.pendex;
 
+import pg.android.pendex.beans.Question;
+import pg.android.pendex.exceptions.OutOfQuestionsException;
+import pg.android.pendex.exceptions.QuestionsLoadException;
+import pg.android.pendex.utils.QuestionUtil;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,6 +16,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 
 
 public class Pendex extends ActionBarActivity
@@ -40,6 +46,42 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 		mNavigationDrawerFragment.setUp(
 				R.id.navigation_drawer,
 				(DrawerLayout) findViewById(R.id.drawer_layout));
+
+		final Button p1_button = (Button)findViewById(R.id.button1);
+
+		p1_button.setOnClickListener(new Button.OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				nextQuestion();
+			}
+		});
+
+		nextQuestion();
+
+	}
+
+	private void nextQuestion() {
+
+		try {
+
+			final Question question = QuestionUtil.getRandomQuestion(getApplicationContext());
+
+			final Button p1_button = (Button)findViewById(R.id.button1);
+			final Button p2_button = (Button)findViewById(R.id.button2);
+			final TextView text_view = (TextView)findViewById(R.id.textView1);
+
+			text_view.setText(question.getQuestion());
+			p1_button.setText(question.getAnswers().get(0).getAnswer());
+			p2_button.setText(question.getAnswers().get(1).getAnswer());
+
+		} catch (final QuestionsLoadException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (final OutOfQuestionsException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 	@Override

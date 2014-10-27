@@ -1,6 +1,6 @@
 package pg.android.pendex.beans;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * Questions object to interact with the mask the database.
@@ -13,9 +13,9 @@ public class Question {
 	private String id;
 	private int random;
 	private String question;
-	private Set<Answer> answers;
-	
-	public Question() {			
+	private List<Answer> answers;
+
+	public Question() {
 	}
 
 	public String getId() {
@@ -42,12 +42,12 @@ public class Question {
 		this.question = question;
 	}
 
-	public Set<Answer> getAnswers() {
+	public List<Answer> getAnswers() {
 		return answers;
 	}
 
-	public void setAnswers(final Set<Answer> answers) {
+	public void setAnswers(final List<Answer> answers) {
 		this.answers = answers;
 	}
-	
+
 }

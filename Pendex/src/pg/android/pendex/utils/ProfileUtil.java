@@ -5,12 +5,16 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import pg.android.pendex.beans.Answer;
+import pg.android.pendex.beans.PendexRating;
+import pg.android.pendex.beans.Question;
 import pg.android.pendex.db.File;
 import pg.android.pendex.db.enums.Profile;
 import pg.android.pendex.exceptions.ProfileLoadException;
@@ -23,13 +27,13 @@ import android.content.Context;
  * @author Sora
  *
  */
-public class ProfileUtil {
+public final class ProfileUtil {
 
 	private static String loadedProfileId = "default";
-	private String loadedProfileName = "default";
-	private String loadedProfileFileName = "default.json";
+	private static String loadedProfileName = "default";
+	private static String loadedProfileFileName = "default.json";
 	private static Set<String> answeredIds = new HashSet<String>();
-	private Map<String, Integer> pendex = new HashMap<String, Integer>();
+	private static Map<String, Integer> pendex = new HashMap<String, Integer>();
 
 	private static final String PROFILE_FILENAME_SUFFIX = "-profile.json";
 
@@ -112,6 +116,32 @@ public class ProfileUtil {
 
 			e.printStackTrace();
 			throw new ProfileSaveException();
+
+		}
+
+	}
+
+	public static void answerQuestion(final int indexOfAnswer) {
+
+		final Question selectedQuestion = QuestionUtil.getSelectedQuestion();
+
+		// No question to answer.
+		if (selectedQuestion == null) {
+			return;
+		}
+
+		final Answer answer = selectedQuestion.getAnswers().get(indexOfAnswer);
+		final PendexRating pendexRating = answer.getPendexRating();
+
+		answeredIds.add(selectedQuestion.getId());
+
+		for (final Entry<String, Integer> entry : pendexRating.getPendex().entrySet()) {
+
+			if (pendex.containsKey(entry.getKey())) {
+				pendex.put(entry.getKey(), pendex.get(entry.getKey()) + entry.getValue());
+			} else {
+				pendex.put(entry.getKey(), entry.getValue());
+			}
 
 		}
 

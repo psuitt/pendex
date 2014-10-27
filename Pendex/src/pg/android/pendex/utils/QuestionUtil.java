@@ -23,8 +23,9 @@ import android.content.Context;
  * @author Sora
  *
  */
-public class QuestionUtil {
+public final class QuestionUtil {
 
+	private static Question selectedQuestion;
 	private static final List<Question> questions = new ArrayList<Question>();
 
 	private static final int QUESTIONS_TO_REFRESH = 5;
@@ -42,8 +43,11 @@ public class QuestionUtil {
 			final int randomIndex = r.nextInt(questions.size());
 			final Question q = questions.get(randomIndex);
 			questions.remove(randomIndex);
+			selectedQuestion = q;
 			return q;
 		}
+
+		selectedQuestion = null;
 
 		throw new OutOfQuestionsException();
 
@@ -122,6 +126,10 @@ public class QuestionUtil {
 		question.setAnswers(answersList);
 
 		return question;
+	}
+
+	public static Question getSelectedQuestion() {
+		return selectedQuestion;
 	}
 
 }

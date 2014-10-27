@@ -21,10 +21,8 @@
             android:id="@+id/textView1"
             android:layout_width="match_parent"
             android:layout_height="100dip"
-  
-            android:gravity="top"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="test text" />
+  			android:gravity="top"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <Button
             android:id="@+id/button1"

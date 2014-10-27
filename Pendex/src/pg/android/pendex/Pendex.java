@@ -3,6 +3,7 @@ package pg.android.pendex;
 import pg.android.pendex.beans.Question;
 import pg.android.pendex.exceptions.OutOfQuestionsException;
 import pg.android.pendex.exceptions.QuestionsLoadException;
+import pg.android.pendex.utils.ProfileUtil;
 import pg.android.pendex.utils.QuestionUtil;
 import android.app.Activity;
 import android.os.Bundle;
@@ -47,39 +48,56 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 				R.id.navigation_drawer,
 				(DrawerLayout) findViewById(R.id.drawer_layout));
 
-		final Button p1_button = (Button)findViewById(R.id.button1);
-
-		p1_button.setOnClickListener(new Button.OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				nextQuestion();
-			}
-		});
+		setUpButtonListeners();
 
 		nextQuestion();
 
 	}
 
+	private void setUpButtonListeners() {
+
+		final Button p1_button = (Button) findViewById(R.id.button1);
+		final Button p2_button = (Button) findViewById(R.id.button2);
+
+		p1_button.setOnClickListener(new Button.OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				ProfileUtil.answerQuestion(0);
+				nextQuestion();
+			}
+		});
+
+		p2_button.setOnClickListener(new Button.OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				ProfileUtil.answerQuestion(1);
+				nextQuestion();
+			}
+		});
+	}
+
 	private void nextQuestion() {
+
+		final Button p1_button = (Button)findViewById(R.id.button1);
+		final Button p2_button = (Button)findViewById(R.id.button2);
+		final TextView text_view = (TextView)findViewById(R.id.textView1);
 
 		try {
 
 			final Question question = QuestionUtil.getRandomQuestion(getApplicationContext());
-
-			final Button p1_button = (Button)findViewById(R.id.button1);
-			final Button p2_button = (Button)findViewById(R.id.button2);
-			final TextView text_view = (TextView)findViewById(R.id.textView1);
 
 			text_view.setText(question.getQuestion());
 			p1_button.setText(question.getAnswers().get(0).getAnswer());
 			p2_button.setText(question.getAnswers().get(1).getAnswer());
 
 		} catch (final QuestionsLoadException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
+
 		} catch (final OutOfQuestionsException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			text_view.setText("You have completed all avaible questions check your profile to see how you did !");
+			p1_button.setText("");
+			p2_button.setText("");
 		}
 
 	}

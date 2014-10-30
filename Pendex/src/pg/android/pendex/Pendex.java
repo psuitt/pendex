@@ -1,11 +1,14 @@
 package pg.android.pendex;
 
 import pg.android.pendex.beans.Question;
+import pg.android.pendex.constants.Messages;
 import pg.android.pendex.exceptions.OutOfQuestionsException;
 import pg.android.pendex.exceptions.QuestionsLoadException;
+import pg.android.pendex.interfaces.INavigationDrawerCallbacks;
 import pg.android.pendex.utils.ProfileUtil;
 import pg.android.pendex.utils.QuestionUtil;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -20,17 +23,18 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-
-public class Pendex extends ActionBarActivity
-implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+public class Pendex extends ActionBarActivity implements
+		INavigationDrawerCallbacks {
 
 	/**
-	 * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
+	 * Fragment managing the behaviors, interactions and presentation of the
+	 * navigation drawer.
 	 */
 	private NavigationDrawerFragment mNavigationDrawerFragment;
 
 	/**
-	 * Used to store the last screen title. For use in {@link #restoreActionBar()}.
+	 * Used to store the last screen title. For use in
+	 * {@link #restoreActionBar()}.
 	 */
 	private CharSequence mTitle;
 
@@ -39,13 +43,12 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_pendex);
 
-		mNavigationDrawerFragment = (NavigationDrawerFragment)
-				getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+		mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager()
+				.findFragmentById(R.id.navigation_drawer);
 		mTitle = getTitle();
 
 		// Set up the drawer.
-		mNavigationDrawerFragment.setUp(
-				R.id.navigation_drawer,
+		mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
 				(DrawerLayout) findViewById(R.id.drawer_layout));
 
 		setUpButtonListeners();
@@ -78,13 +81,14 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
 	private void nextQuestion() {
 
-		final Button p1_button = (Button)findViewById(R.id.button1);
-		final Button p2_button = (Button)findViewById(R.id.button2);
-		final TextView text_view = (TextView)findViewById(R.id.textView1);
+		final Button p1_button = (Button) findViewById(R.id.button1);
+		final Button p2_button = (Button) findViewById(R.id.button2);
+		final TextView text_view = (TextView) findViewById(R.id.textView1);
 
 		try {
 
-			final Question question = QuestionUtil.getRandomQuestion(getApplicationContext());
+			final Question question = QuestionUtil
+					.getRandomQuestion(getApplicationContext());
 
 			text_view.setText(question.getQuestion());
 			p1_button.setText(question.getAnswers().get(0).getAnswer());
@@ -95,7 +99,7 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 			e.printStackTrace();
 
 		} catch (final OutOfQuestionsException e) {
-			text_view.setText("You have completed all avaible questions check your profile to see how you did !");
+			text_view.setText(Messages.COMPLETED_MESSAGE);
 			p1_button.setText("");
 			p2_button.setText("");
 		}
@@ -106,9 +110,10 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 	public void onNavigationDrawerItemSelected(final int position) {
 		// update the main content by replacing fragments
 		final FragmentManager fragmentManager = getSupportFragmentManager();
-		fragmentManager.beginTransaction()
-		.replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
-		.commit();
+		fragmentManager
+				.beginTransaction()
+				.replace(R.id.container,
+						PlaceholderFragment.newInstance(position + 1)).commit();
 	}
 
 	public void onSectionAttached(final int number) {
@@ -118,6 +123,8 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 			break;
 		case 2:
 			mTitle = getString(R.string.title_section2);
+			final Intent intent = new Intent(getBaseContext(), Profile.class);
+			startActivity(intent);
 			break;
 		case 3:
 			mTitle = getString(R.string.title_section3);
@@ -131,7 +138,6 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 		actionBar.setDisplayShowTitleEnabled(true);
 		actionBar.setTitle(mTitle);
 	}
-
 
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
@@ -169,8 +175,7 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 		private static final String ARG_SECTION_NUMBER = "section_number";
 
 		/**
-		 * Returns a new instance of this fragment for the given section
-		 * number.
+		 * Returns a new instance of this fragment for the given section number.
 		 */
 		public static PlaceholderFragment newInstance(final int sectionNumber) {
 			final PlaceholderFragment fragment = new PlaceholderFragment();
@@ -184,17 +189,18 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 		}
 
 		@Override
-		public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
-				final Bundle savedInstanceState) {
-			final View rootView = inflater.inflate(R.layout.fragment_pendex, container, false);
+		public View onCreateView(final LayoutInflater inflater,
+				final ViewGroup container, final Bundle savedInstanceState) {
+			final View rootView = inflater.inflate(R.layout.fragment_pendex,
+					container, false);
 			return rootView;
 		}
 
 		@Override
 		public void onAttach(final Activity activity) {
 			super.onAttach(activity);
-			((Pendex) activity).onSectionAttached(
-					getArguments().getInt(ARG_SECTION_NUMBER));
+			((Pendex) activity).onSectionAttached(getArguments().getInt(
+					ARG_SECTION_NUMBER));
 		}
 	}
 

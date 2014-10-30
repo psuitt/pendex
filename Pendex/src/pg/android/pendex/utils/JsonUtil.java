@@ -9,7 +9,8 @@ import org.json.JSONObject;
 
 public final class JsonUtil {
 
-	public static Map<String, Integer > createPendexMapFromJson(final JSONObject pendex) throws JSONException{
+	public static Map<String, Integer> createPendexMapFromJson(
+			final JSONObject pendex) throws JSONException {
 
 		final Iterator<String> pendexKeyIter = pendex.keys();
 
@@ -26,7 +27,6 @@ public final class JsonUtil {
 		}
 
 		return map;
-
 
 	}
 

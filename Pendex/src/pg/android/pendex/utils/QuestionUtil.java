@@ -25,6 +25,7 @@ import android.content.Context;
  */
 public final class QuestionUtil {
 
+	private static boolean done = false;
 	private static Question selectedQuestion;
 	private static final List<Question> questions = new ArrayList<Question>();
 
@@ -32,6 +33,10 @@ public final class QuestionUtil {
 	private static final int MAX_QUESTIONS_LOADED = 10;
 
 	public static Question getRandomQuestion(final Context context) throws QuestionsLoadException, OutOfQuestionsException {
+
+		if (done) {
+			return null;
+		}
 
 		if (questions.isEmpty() || questions.size() < QUESTIONS_TO_REFRESH) {
 			loadQuestions(context);
@@ -48,6 +53,8 @@ public final class QuestionUtil {
 		}
 
 		selectedQuestion = null;
+
+		done = true;
 
 		throw new OutOfQuestionsException();
 

@@ -2,8 +2,10 @@ package pg.android.pendex.utils;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -15,6 +17,7 @@ import org.json.JSONObject;
 import pg.android.pendex.beans.Answer;
 import pg.android.pendex.beans.PendexRating;
 import pg.android.pendex.beans.Question;
+import pg.android.pendex.beans.Trait;
 import pg.android.pendex.db.File;
 import pg.android.pendex.db.enums.Profile;
 import pg.android.pendex.exceptions.ProfileLoadException;
@@ -25,7 +28,7 @@ import android.content.Context;
  * Utility for loading profiles.
  * 
  * @author Sora
- *
+ * 
  */
 public final class ProfileUtil {
 
@@ -40,27 +43,32 @@ public final class ProfileUtil {
 	public void reset() {
 		ProfileUtil.loadedProfileId = "default";
 		loadedProfileName = "default";
-		loadedProfileFileName = ProfileUtil.getProfileFileName(ProfileUtil.loadedProfileId);
+		loadedProfileFileName = ProfileUtil
+				.getProfileFileName(ProfileUtil.loadedProfileId);
 		ProfileUtil.answeredIds = new HashSet<String>();
 		pendex = new HashMap<String, Integer>();
 	}
 
-	public void loadProfile(final Context context, final String profile) throws ProfileLoadException, ProfileSaveException {
+	public void loadProfile(final Context context, final String profile)
+			throws ProfileLoadException, ProfileSaveException {
 
 		ProfileUtil.loadedProfileId = profile;
-		loadedProfileFileName = ProfileUtil.getProfileFileName(ProfileUtil.loadedProfileId);
+		loadedProfileFileName = ProfileUtil
+				.getProfileFileName(ProfileUtil.loadedProfileId);
 		ProfileUtil.answeredIds = new HashSet<String>();
 		pendex = new HashMap<String, Integer>();
 
 		try {
 
-			final JSONObject profileObj = new JSONObject(File.loadFileJSON(context, loadedProfileFileName));
+			final JSONObject profileObj = new JSONObject(File.loadFileJSON(
+					context, loadedProfileFileName));
 
 			loadedProfileName = profileObj.getString(Profile.Name.name);
 
-			final JSONArray answers = profileObj.getJSONArray(Profile.Answers.name);
+			final JSONArray answers = profileObj
+					.getJSONArray(Profile.Answers.name);
 
-			for (int i = 0 ; i < answers.length(); i++) {
+			for (int i = 0; i < answers.length(); i++) {
 
 				final String answer = answers.getString(i);
 
@@ -68,7 +76,8 @@ public final class ProfileUtil {
 
 			}
 
-			final JSONObject pendexJson = profileObj.getJSONObject(Profile.Pendex.name);
+			final JSONObject pendexJson = profileObj
+					.getJSONObject(Profile.Pendex.name);
 
 			pendex.putAll(JsonUtil.createPendexMapFromJson(pendexJson));
 
@@ -93,9 +102,11 @@ public final class ProfileUtil {
 	/**
 	 * Saves the profiles throws an IO exception when anything fails.
 	 * 
-	 * @param context - {@link Context} - Usually the application context.
+	 * @param context
+	 *            - {@link Context} - Usually the application context.
 	 * 
-	 * @throws IOException - {@link IOException} - when saving fails.
+	 * @throws IOException
+	 *             - {@link IOException} - when saving fails.
 	 */
 	public void saveProfile(final Context context) throws ProfileSaveException {
 
@@ -135,15 +146,36 @@ public final class ProfileUtil {
 
 		answeredIds.add(selectedQuestion.getId());
 
-		for (final Entry<String, Integer> entry : pendexRating.getPendex().entrySet()) {
+		for (final Entry<String, Integer> entry : pendexRating.getPendex()
+				.entrySet()) {
 
 			if (pendex.containsKey(entry.getKey())) {
-				pendex.put(entry.getKey(), pendex.get(entry.getKey()) + entry.getValue());
+				pendex.put(entry.getKey(),
+						pendex.get(entry.getKey()) + entry.getValue());
 			} else {
 				pendex.put(entry.getKey(), entry.getValue());
 			}
 
 		}
+
+	}
+
+	public static List<Trait> getPendexTraits() {
+
+		final List<Trait> traits = new ArrayList<Trait>();
+
+		for (final Entry<String, Integer> entry : pendex.entrySet()) {
+			final Trait trait = new Trait();
+
+			trait.setTrait(entry.getKey());
+			trait.setTraitValue(entry.getValue());
+			trait.setSummary(StringUtil.nullToBlank(null));
+
+			traits.add(trait);
+
+		}
+
+		return traits;
 
 	}
 

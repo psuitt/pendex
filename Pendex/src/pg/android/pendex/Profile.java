@@ -1,5 +1,7 @@
 package pg.android.pendex;
 
+import pg.android.pendex.adapters.TraitsListViewAdapter;
+import pg.android.pendex.utils.ProfileUtil;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.os.Bundle;
@@ -10,14 +12,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 public class Profile extends ActionBarActivity {
-
-	/**
-	 * Fragment managing the behaviors, interactions and presentation of the
-	 * navigation drawer.
-	 */
-	private NavigationDrawerFragment mNavigationDrawerFragment;
 
 	/**
 	 * Used to store the last screen title. For use in
@@ -30,14 +27,18 @@ public class Profile extends ActionBarActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_profile);
 
-		// mNavigationDrawerFragment = (NavigationDrawerFragment)
-		// getSupportFragmentManager()
-		// .findFragmentById(R.id.navigation_drawer);
-		// mTitle = getTitle();
+		setUpTraits();
+	}
 
-		// Set up the drawer.
-		// mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
-		// (DrawerLayout) findViewById(R.id.drawer_layout));
+	private void setUpTraits() {
+
+		final ListView myListView = (ListView) findViewById(R.id.traits_view);
+
+		final TraitsListViewAdapter adapter = new TraitsListViewAdapter(this,
+				ProfileUtil.getPendexTraits());
+
+		myListView.setAdapter(adapter);
+
 	}
 
 	public void onSectionAttached(final int number) {

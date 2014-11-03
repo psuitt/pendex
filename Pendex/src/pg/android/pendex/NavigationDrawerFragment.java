@@ -1,6 +1,8 @@
 package pg.android.pendex;
 
+import pg.android.pendex.exceptions.ProfileSaveException;
 import pg.android.pendex.interfaces.INavigationDrawerCallbacks;
+import pg.android.pendex.utils.ProfileUtil;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -93,25 +95,25 @@ public class NavigationDrawerFragment extends Fragment {
 	}
 
 	@Override
-	public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
-			final Bundle savedInstanceState) {
+	public View onCreateView(final LayoutInflater inflater,
+			final ViewGroup container, final Bundle savedInstanceState) {
 		mDrawerListView = (ListView) inflater.inflate(
 				R.layout.fragment_navigation_drawer, container, false);
 		mDrawerListView
-		.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick(final AdapterView<?> parent, final View view,
-					final int position, final long id) {
-				selectItem(position);
-			}
-		});
+				.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+					@Override
+					public void onItemClick(final AdapterView<?> parent,
+							final View view, final int position, final long id) {
+						selectItem(position);
+					}
+				});
 		mDrawerListView.setAdapter(new ArrayAdapter<String>(getActionBar()
 				.getThemedContext(),
 				android.R.layout.simple_list_item_activated_1,
 				android.R.id.text1, new String[] {
-			getString(R.string.title_section1),
-			getString(R.string.title_section2),
-			getString(R.string.title_section3), }));
+						getString(R.string.title_section1),
+						getString(R.string.title_section2),
+						getString(R.string.title_section3), }));
 		mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
 		return mDrawerListView;
 	}
@@ -147,17 +149,17 @@ public class NavigationDrawerFragment extends Fragment {
 		// ActionBarDrawerToggle ties together the the proper interactions
 		// between the navigation drawer and the action bar app icon.
 		mDrawerToggle = new ActionBarDrawerToggle(getActivity(), /* host Activity */
-				mDrawerLayout, /* DrawerLayout object */
-				R.drawable.ic_drawer, /* nav drawer image to replace 'Up' caret */
-				R.string.navigation_drawer_open, /*
-				 * "open drawer" description for
-				 * accessibility
-				 */
-				R.string.navigation_drawer_close /*
-				 * "close drawer" description for
-				 * accessibility
-				 */
-				) {
+		mDrawerLayout, /* DrawerLayout object */
+		R.drawable.ic_drawer, /* nav drawer image to replace 'Up' caret */
+		R.string.navigation_drawer_open, /*
+										 * "open drawer" description for
+										 * accessibility
+										 */
+		R.string.navigation_drawer_close /*
+										 * "close drawer" description for
+										 * accessibility
+										 */
+		) {
 			@Override
 			public void onDrawerClosed(final View drawerView) {
 				super.onDrawerClosed(drawerView);
@@ -184,7 +186,7 @@ public class NavigationDrawerFragment extends Fragment {
 					final SharedPreferences sp = PreferenceManager
 							.getDefaultSharedPreferences(getActivity());
 					sp.edit().putBoolean(PREF_USER_LEARNED_DRAWER, true)
-					.apply();
+							.apply();
 				}
 
 				getActivity().invalidateOptionsMenu(); // calls
@@ -274,8 +276,14 @@ public class NavigationDrawerFragment extends Fragment {
 		}
 
 		if (item.getItemId() == R.id.action_example) {
+			try {
+				ProfileUtil.saveProfile(getActivity());
+			} catch (final ProfileSaveException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			Toast.makeText(getActivity(), "Example action.", Toast.LENGTH_SHORT)
-			.show();
+					.show();
 			return true;
 		}
 

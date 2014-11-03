@@ -3,6 +3,8 @@ package pg.android.pendex;
 import pg.android.pendex.beans.Question;
 import pg.android.pendex.constants.Messages;
 import pg.android.pendex.exceptions.OutOfQuestionsException;
+import pg.android.pendex.exceptions.ProfileLoadException;
+import pg.android.pendex.exceptions.ProfileSaveException;
 import pg.android.pendex.exceptions.QuestionsLoadException;
 import pg.android.pendex.interfaces.INavigationDrawerCallbacks;
 import pg.android.pendex.utils.ProfileUtil;
@@ -53,6 +55,15 @@ public class Pendex extends ActionBarActivity implements
 
 		setUpButtonListeners();
 
+		try {
+			ProfileUtil.loadProfile(getApplicationContext(), "default");
+		} catch (final ProfileLoadException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (final ProfileSaveException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		nextQuestion();
 
 	}

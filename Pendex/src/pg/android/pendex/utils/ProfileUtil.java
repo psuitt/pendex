@@ -3,14 +3,12 @@ package pg.android.pendex.utils;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -18,6 +16,7 @@ import pg.android.pendex.beans.Answer;
 import pg.android.pendex.beans.PendexRating;
 import pg.android.pendex.beans.Question;
 import pg.android.pendex.beans.Trait;
+import pg.android.pendex.comparators.TraitsAlphaComparator;
 import pg.android.pendex.db.File;
 import pg.android.pendex.db.enums.Profile;
 import pg.android.pendex.exceptions.ProfileLoadException;
@@ -34,47 +33,37 @@ public final class ProfileUtil {
 
 	private static String loadedProfileId = "default";
 	private static String loadedProfileName = "default";
-	private static String loadedProfileFileName = "default.json";
-	private static Set<String> answeredIds = new HashSet<String>();
+	private static Map<String, Integer> answeredQuestions = new HashMap<String, Integer>();
 	private static Map<String, Integer> pendex = new HashMap<String, Integer>();
 
 	private static final String PROFILE_FILENAME_SUFFIX = "-profile.json";
 
 	public void reset() {
-		ProfileUtil.loadedProfileId = "default";
+		loadedProfileId = "default";
 		loadedProfileName = "default";
-		loadedProfileFileName = ProfileUtil
-				.getProfileFileName(ProfileUtil.loadedProfileId);
-		ProfileUtil.answeredIds = new HashSet<String>();
+		answeredQuestions = new HashMap<String, Integer>();
 		pendex = new HashMap<String, Integer>();
 	}
 
-	public void loadProfile(final Context context, final String profile)
+	public static void loadProfile(final Context context, final String profile)
 			throws ProfileLoadException, ProfileSaveException {
 
-		ProfileUtil.loadedProfileId = profile;
-		loadedProfileFileName = ProfileUtil
-				.getProfileFileName(ProfileUtil.loadedProfileId);
-		ProfileUtil.answeredIds = new HashSet<String>();
+		loadedProfileId = profile;
+		answeredQuestions = new HashMap<String, Integer>();
 		pendex = new HashMap<String, Integer>();
 
 		try {
 
-			final JSONObject profileObj = new JSONObject(File.loadFileJSON(
-					context, loadedProfileFileName));
+			final JSONObject profileObj = new JSONObject(
+					File.loadInternalFileJSON(context,
+							ProfileUtil.getProfileFileName(loadedProfileId)));
 
 			loadedProfileName = profileObj.getString(Profile.Name.name);
 
-			final JSONArray answers = profileObj
-					.getJSONArray(Profile.Answers.name);
+			final JSONObject answers = profileObj
+					.getJSONObject(Profile.Answers.name);
 
-			for (int i = 0; i < answers.length(); i++) {
-
-				final String answer = answers.getString(i);
-
-				ProfileUtil.answeredIds.add(answer);
-
-			}
+			answeredQuestions.putAll(JsonUtil.createPendexMapFromJson(answers));
 
 			final JSONObject pendexJson = profileObj
 					.getJSONObject(Profile.Pendex.name);
@@ -108,20 +97,34 @@ public final class ProfileUtil {
 	 * @throws IOException
 	 *             - {@link IOException} - when saving fails.
 	 */
-	public void saveProfile(final Context context) throws ProfileSaveException {
+	public static void saveProfile(final Context context)
+			throws ProfileSaveException {
 
 		final Map<String, Object> map = new HashMap<String, Object>();
 
-		map.put(Profile.Id.name, ProfileUtil.loadedProfileId);
+		map.put(Profile.Id.name, loadedProfileId);
 		map.put(Profile.Name.name, loadedProfileName);
-		map.put(Profile.Answers.name, ProfileUtil.answeredIds.toArray());
-		map.put(Profile.Pendex.name, pendex);
 
 		final JSONObject jsonObject = new JSONObject(map);
 
+		// Add the answers and pendex.
 		try {
 
-			File.storeSettingsToFile(context, loadedProfileFileName, jsonObject);
+			jsonObject.put(Profile.Answers.name, new JSONObject(
+					answeredQuestions));
+			jsonObject.put(Profile.Pendex.name, new JSONObject(pendex));
+
+		} catch (final JSONException e) {
+
+			e.printStackTrace();
+			throw new ProfileSaveException();
+		}
+
+		// Now save.
+		try {
+
+			File.storeInternalFileJSON(context,
+					ProfileUtil.getProfileFileName(loadedProfileId), jsonObject);
 
 		} catch (final IOException e) {
 
@@ -144,7 +147,7 @@ public final class ProfileUtil {
 		final Answer answer = selectedQuestion.getAnswers().get(indexOfAnswer);
 		final PendexRating pendexRating = answer.getPendexRating();
 
-		answeredIds.add(selectedQuestion.getId());
+		answeredQuestions.put(selectedQuestion.getId(), indexOfAnswer);
 
 		for (final Entry<String, Integer> entry : pendexRating.getPendex()
 				.entrySet()) {
@@ -169,26 +172,28 @@ public final class ProfileUtil {
 
 			trait.setTrait(entry.getKey());
 			trait.setTraitValue(entry.getValue());
-			trait.setSummary(StringUtil.nullToBlank(null));
+			trait.setSummary(TraitUtil.getTraitSummay(entry.getKey()));
 
 			traits.add(trait);
 
 		}
+
+		Collections.sort(traits, new TraitsAlphaComparator());
 
 		return traits;
 
 	}
 
 	public static String getProfileName() {
-		return ProfileUtil.loadedProfileId;
+		return loadedProfileId;
 	}
 
 	public static boolean hasAnswered(final String s) {
-		return ProfileUtil.answeredIds.contains(s);
+		return answeredQuestions.containsKey(s);
 	}
 
 	public static String getProfileFileName(final String s) {
-		return s.trim() + ProfileUtil.PROFILE_FILENAME_SUFFIX;
+		return s.trim() + PROFILE_FILENAME_SUFFIX;
 	}
 
 }

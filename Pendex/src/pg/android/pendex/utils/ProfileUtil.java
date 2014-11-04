@@ -20,6 +20,7 @@ import pg.android.pendex.comparators.TraitsAlphaComparator;
 import pg.android.pendex.db.File;
 import pg.android.pendex.db.enums.Profile;
 import pg.android.pendex.exceptions.ProfileLoadException;
+import pg.android.pendex.exceptions.ProfileResetException;
 import pg.android.pendex.exceptions.ProfileSaveException;
 import android.content.Context;
 
@@ -38,7 +39,7 @@ public final class ProfileUtil {
 
 	private static final String PROFILE_FILENAME_SUFFIX = "-profile.json";
 
-	public void reset() {
+	public static void reset() {
 		loadedProfileId = "default";
 		loadedProfileName = "default";
 		answeredQuestions = new HashMap<String, Integer>();
@@ -130,6 +131,30 @@ public final class ProfileUtil {
 
 			e.printStackTrace();
 			throw new ProfileSaveException();
+
+		}
+
+	}
+
+	/**
+	 * Resets the loaded profile and saves it.
+	 * 
+	 * @param context
+	 *            - {@link Context} - Usually the application context.
+	 * 
+	 * @throws ProfileResetException
+	 *             - Thrown if the profile fails to save.
+	 */
+	public static void resetLoadedProfile(final Context context)
+			throws ProfileResetException {
+
+		reset();
+		try {
+			saveProfile(context);
+		} catch (final ProfileSaveException e) {
+
+			e.printStackTrace();
+			throw new ProfileResetException();
 
 		}
 

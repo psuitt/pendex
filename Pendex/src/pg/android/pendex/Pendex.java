@@ -134,11 +134,14 @@ public class Pendex extends ActionBarActivity implements
 			break;
 		case 2:
 			mTitle = getString(R.string.title_section2);
-			final Intent intent = new Intent(getBaseContext(), Profile.class);
-			startActivity(intent);
 			break;
 		case 3:
 			mTitle = getString(R.string.title_section3);
+			final Intent intent = new Intent(getBaseContext(), Profile.class);
+			startActivity(intent);
+			break;
+		case 4:
+			mTitle = getString(R.string.title_section4);
 			break;
 		}
 	}

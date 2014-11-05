@@ -133,12 +133,16 @@ public class Pendex extends ActionBarActivity implements
 			mTitle = getString(R.string.title_section1);
 			break;
 		case 2:
-			mTitle = getString(R.string.title_section2);
+			mTitle = getString(R.string.title_activity_profile);
+			final Intent profileIntent = new Intent(getBaseContext(),
+					Profile.class);
+			startActivity(profileIntent);
 			break;
 		case 3:
-			mTitle = getString(R.string.title_section3);
-			final Intent intent = new Intent(getBaseContext(), Profile.class);
-			startActivity(intent);
+			mTitle = getString(R.string.title_activity_traits);
+			final Intent traitsIntent = new Intent(getBaseContext(),
+					Traits.class);
+			startActivity(traitsIntent);
 			break;
 		case 4:
 			mTitle = getString(R.string.title_section4);
@@ -176,6 +180,19 @@ public class Pendex extends ActionBarActivity implements
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	/**
+	 * This should save the profile.
+	 */
+	@Override
+	protected void onDestroy() {
+		try {
+			ProfileUtil.saveProfile(getApplicationContext());
+		} catch (final ProfileSaveException e) {
+			e.printStackTrace();
+		}
+		super.onDestroy();
 	}
 
 	/**

@@ -3,13 +3,14 @@
 
     <string name="app_name">Pendex</string>
     <string name="title_section1">Pendex</string>
-    <string name="title_section2">Profiles</string>
-    <string name="title_section3">Traits</string>
     <string name="title_section4">Achievements</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_example">Example action</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_profile">Profile</string>
+    <string name="title_activity_traits">Traits</string>
+    
+    <string name="profile_button_reset">Reset Profile</string>
 
 </resources>

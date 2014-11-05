@@ -1,18 +1,15 @@
 package pg.android.pendex;
 
-import pg.android.pendex.adapters.TraitsListViewAdapter;
+import pg.android.pendex.exceptions.ProfileResetException;
 import pg.android.pendex.utils.ProfileUtil;
 import android.app.ActionBar;
-import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ListView;
+import android.widget.Button;
+import android.widget.Toast;
 
 public class Profile extends ActionBarActivity {
 
@@ -27,17 +24,27 @@ public class Profile extends ActionBarActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_profile);
 
-		setUpTraits();
+		setUpButtonListeners();
 	}
 
-	private void setUpTraits() {
+	private void setUpButtonListeners() {
 
-		final ListView myListView = (ListView) findViewById(R.id.traits_view);
+		final Button reset = (Button) findViewById(R.id.profile_button_reset);
 
-		final TraitsListViewAdapter adapter = new TraitsListViewAdapter(this,
-				ProfileUtil.getPendexTraits());
-
-		myListView.setAdapter(adapter);
+		reset.setOnClickListener(new Button.OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				try {
+					ProfileUtil.resetLoadedProfile(getApplicationContext());
+					Toast.makeText(getApplicationContext(), "Reset Successful",
+							Toast.LENGTH_SHORT).show();
+				} catch (final ProfileResetException e) {
+					e.printStackTrace();
+					Toast.makeText(getApplicationContext(), "Reset Failed",
+							Toast.LENGTH_SHORT).show();
+				}
+			}
+		});
 
 	}
 
@@ -47,10 +54,10 @@ public class Profile extends ActionBarActivity {
 			mTitle = getString(R.string.title_section1);
 			break;
 		case 2:
-			mTitle = getString(R.string.title_section2);
+			mTitle = getString(R.string.title_activity_profile);
 			break;
 		case 3:
-			mTitle = getString(R.string.title_section3);
+			mTitle = getString(R.string.title_activity_traits);
 			break;
 		}
 	}
@@ -77,46 +84,6 @@ public class Profile extends ActionBarActivity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
-	}
-
-	/**
-	 * A placeholder fragment containing a simple view.
-	 */
-	public static class PlaceholderFragment extends Fragment {
-		/**
-		 * The fragment argument representing the section number for this
-		 * fragment.
-		 */
-		private static final String ARG_SECTION_NUMBER = "section_number";
-
-		/**
-		 * Returns a new instance of this fragment for the given section number.
-		 */
-		public static PlaceholderFragment newInstance(final int sectionNumber) {
-			final PlaceholderFragment fragment = new PlaceholderFragment();
-			final Bundle args = new Bundle();
-			args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-			fragment.setArguments(args);
-			return fragment;
-		}
-
-		public PlaceholderFragment() {
-		}
-
-		@Override
-		public View onCreateView(final LayoutInflater inflater,
-				final ViewGroup container, final Bundle savedInstanceState) {
-			final View rootView = inflater.inflate(R.layout.fragment_profile,
-					container, false);
-			return rootView;
-		}
-
-		@Override
-		public void onAttach(final Activity activity) {
-			super.onAttach(activity);
-			((Profile) activity).onSectionAttached(getArguments().getInt(
-					ARG_SECTION_NUMBER));
-		}
 	}
 
 }

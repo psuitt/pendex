@@ -10,8 +10,7 @@
         android:id="@+id/trait_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="25sp"
-        android:text="test" >
+        android:textSize="25sp" >
     </TextView>
     
 	<TextView
@@ -20,7 +19,6 @@
 	    android:layout_height="wrap_content"
 	    android:layout_alignParentRight="true"
 	    android:gravity="right"
-	    android:text="test"
 	    android:textSize="25sp" >
 
     </TextView>
@@ -30,8 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/trait_title"
-        android:textSize="15sp"
-        android:text="test" >
+        android:textSize="15sp" >
     </TextView>
     
 </RelativeLayout>

@@ -1,8 +1,6 @@
 package pg.android.pendex;
 
-import pg.android.pendex.exceptions.ProfileSaveException;
 import pg.android.pendex.interfaces.INavigationDrawerCallbacks;
-import pg.android.pendex.utils.ProfileUtil;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -112,8 +110,8 @@ public class NavigationDrawerFragment extends Fragment {
 				android.R.layout.simple_list_item_activated_1,
 				android.R.id.text1, new String[] {
 						getString(R.string.title_section1),
-						getString(R.string.title_section2),
-						getString(R.string.title_section3),
+						getString(R.string.title_activity_profile),
+						getString(R.string.title_activity_traits),
 						getString(R.string.title_section4) }));
 		mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
 		return mDrawerListView;
@@ -277,12 +275,6 @@ public class NavigationDrawerFragment extends Fragment {
 		}
 
 		if (item.getItemId() == R.id.action_example) {
-			try {
-				ProfileUtil.saveProfile(getActivity());
-			} catch (final ProfileSaveException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			Toast.makeText(getActivity(), "Example action.", Toast.LENGTH_SHORT)
 					.show();
 			return true;

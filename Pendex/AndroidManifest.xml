@@ -30,6 +30,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="pg.android.pendex.Pendex" />
         </activity>
+        <activity
+            android:name=".Traits"
+            android:label="@string/title_activity_traits"
+            android:parentActivityName=".Pendex" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="pg.android.pendex.Pendex" />
+        </activity>
     </application>
 
 </manifest>

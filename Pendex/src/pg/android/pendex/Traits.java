@@ -3,15 +3,10 @@ package pg.android.pendex;
 import pg.android.pendex.adapters.TraitsListViewAdapter;
 import pg.android.pendex.utils.ProfileUtil;
 import android.app.ActionBar;
-import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ListView;
 
 public class Traits extends ActionBarActivity {
@@ -77,46 +72,6 @@ public class Traits extends ActionBarActivity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
-	}
-
-	/**
-	 * A placeholder fragment containing a simple view.
-	 */
-	public static class PlaceholderFragment extends Fragment {
-		/**
-		 * The fragment argument representing the section number for this
-		 * fragment.
-		 */
-		private static final String ARG_SECTION_NUMBER = "section_number";
-
-		/**
-		 * Returns a new instance of this fragment for the given section number.
-		 */
-		public static PlaceholderFragment newInstance(final int sectionNumber) {
-			final PlaceholderFragment fragment = new PlaceholderFragment();
-			final Bundle args = new Bundle();
-			args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-			fragment.setArguments(args);
-			return fragment;
-		}
-
-		public PlaceholderFragment() {
-		}
-
-		@Override
-		public View onCreateView(final LayoutInflater inflater,
-				final ViewGroup container, final Bundle savedInstanceState) {
-			final View rootView = inflater.inflate(R.layout.fragment_profile,
-					container, false);
-			return rootView;
-		}
-
-		@Override
-		public void onAttach(final Activity activity) {
-			super.onAttach(activity);
-			((Traits) activity).onSectionAttached(getArguments().getInt(
-					ARG_SECTION_NUMBER));
-		}
 	}
 
 }

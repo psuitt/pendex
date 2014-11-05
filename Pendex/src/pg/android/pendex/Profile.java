@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class Profile extends ActionBarActivity {
@@ -24,7 +25,17 @@ public class Profile extends ActionBarActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_profile);
 
+		setUpTextViews();
+
 		setUpButtonListeners();
+	}
+
+	private void setUpTextViews() {
+
+		final TextView name = (TextView) findViewById(R.id.profile_textview_name);
+
+		name.setText(ProfileUtil.getProfileName());
+
 	}
 
 	private void setUpButtonListeners() {

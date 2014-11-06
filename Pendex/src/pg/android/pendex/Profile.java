@@ -4,97 +4,142 @@ import pg.android.pendex.exceptions.ProfileResetException;
 import pg.android.pendex.utils.ProfileUtil;
 import android.app.ActionBar;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class Profile extends ActionBarActivity {
 
-	/**
-	 * Used to store the last screen title. For use in
-	 * {@link #restoreActionBar()}.
-	 */
-	private CharSequence mTitle;
+    /**
+     * Used to store the last screen title. For use in {@link #restoreActionBar()}.
+     */
+    private CharSequence mTitle;
 
-	@Override
-	protected void onCreate(final Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_profile);
+    @Override
+    protected void onCreate(final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_profile);
 
-		setUpTextViews();
+        setUpTextViews();
 
-		setUpButtonListeners();
-	}
+        setUpButtonListeners();
+    }
 
-	private void setUpTextViews() {
+    private void setUpTextViews() {
 
-		final TextView name = (TextView) findViewById(R.id.profile_textview_name);
+        final TextView name = (TextView) findViewById(R.id.profile_textview_name);
 
-		name.setText(ProfileUtil.getProfileName());
+        name.setText(ProfileUtil.getProfileName());
 
-	}
+    }
 
-	private void setUpButtonListeners() {
+    private void setUpButtonListeners() {
 
-		final Button reset = (Button) findViewById(R.id.profile_button_reset);
+        final Button reset = (Button) findViewById(R.id.profile_button_reset);
 
-		reset.setOnClickListener(new Button.OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				try {
-					ProfileUtil.resetLoadedProfile(getApplicationContext());
-					Toast.makeText(getApplicationContext(), "Reset Successful",
-							Toast.LENGTH_SHORT).show();
-				} catch (final ProfileResetException e) {
-					e.printStackTrace();
-					Toast.makeText(getApplicationContext(), "Reset Failed",
-							Toast.LENGTH_SHORT).show();
-				}
-			}
-		});
+        reset.setOnTouchListener(new OnTouchListener() {
 
-	}
+            private CountDownTimer countDownTimer;
 
-	public void onSectionAttached(final int number) {
-		switch (number) {
-		case 1:
-			mTitle = getString(R.string.title_section1);
-			break;
-		case 2:
-			mTitle = getString(R.string.title_activity_profile);
-			break;
-		case 3:
-			mTitle = getString(R.string.title_activity_traits);
-			break;
-		}
-	}
+            @Override
+            public boolean onTouch(final View v, final MotionEvent event) {
 
-	public void restoreActionBar() {
-		final ActionBar actionBar = getActionBar();
-		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-		actionBar.setDisplayShowTitleEnabled(true);
-		actionBar.setTitle(mTitle);
-	}
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        startTimer();
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        stopTimer();
+                        v.performClick();
+                        break;
+                    default:
+                        break;
+                }
 
-	@Override
-	public boolean onCreateOptionsMenu(final Menu menu) {
-		return super.onCreateOptionsMenu(menu);
-	}
+                return true;
 
-	@Override
-	public boolean onOptionsItemSelected(final MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		final int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
+            }
+
+            private void startTimer() {
+                reset.setText("Reset in 10 seconds.");
+                countDownTimer = new CountDownTimer(5000, 1000) {
+
+                    @Override
+                    public void onTick(final long millisUntilFinished) {
+                        reset.setText("Reset in " + millisUntilFinished / 1000 + " seconds.");
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        try {
+                            ProfileUtil.resetLoadedProfile(getApplicationContext());
+                            Toast.makeText(getApplicationContext(), "Reset Successful",
+                                    Toast.LENGTH_SHORT).show();
+                        } catch (final ProfileResetException e) {
+                            e.printStackTrace();
+                            Toast.makeText(getApplicationContext(), "Reset Failed",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                        stopTimer();
+                    }
+                }.start();
+            }
+
+            private void stopTimer() {
+                if (countDownTimer != null) {
+                    countDownTimer.cancel();
+                }
+                countDownTimer = null;
+                reset.setText(R.string.profile_button_reset);
+            }
+
+        });
+
+    }
+
+    public void onSectionAttached(final int number) {
+        switch (number) {
+            case 1:
+                mTitle = getString(R.string.title_section1);
+                break;
+            case 2:
+                mTitle = getString(R.string.title_activity_profile);
+                break;
+            case 3:
+                mTitle = getString(R.string.title_activity_traits);
+                break;
+        }
+    }
+
+    public void restoreActionBar() {
+        final ActionBar actionBar = getActionBar();
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+        actionBar.setDisplayShowTitleEnabled(true);
+        actionBar.setTitle(mTitle);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(final Menu menu) {
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        final int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
 }

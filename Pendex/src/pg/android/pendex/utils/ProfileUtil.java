@@ -39,6 +39,20 @@ public final class ProfileUtil {
 
 	private static final String PROFILE_FILENAME_SUFFIX = "-profile.json";
 
+	public static List<String> getProfilesList(final Context context) {
+
+		final List<String> list = new ArrayList<String>();
+
+		for (final String fileName : context.fileList()) {
+			final String profileName = fileName.replace(
+					PROFILE_FILENAME_SUFFIX, "");
+			list.add(profileName);
+		}
+
+		return list;
+
+	}
+
 	public static void reset() {
 		loadedProfileId = "default";
 		loadedProfileName = "default";

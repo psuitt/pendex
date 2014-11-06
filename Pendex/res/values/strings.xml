@@ -11,6 +11,6 @@
     <string name="title_activity_profile">Profile</string>
     <string name="title_activity_traits">Traits</string>
     
-    <string name="profile_button_reset">Reset Profile</string>
+    <string name="profile_button_reset">Reset Traits</string>
 
 </resources>

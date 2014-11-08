@@ -1,15 +1,15 @@
 package pg.android.pendex;
 
-import pg.android.pendex.adapters.TraitsListViewAdapter;
 import pg.android.pendex.utils.ProfileUtil;
 import android.app.ActionBar;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-public class Traits extends ActionBarActivity {
+public class ChangeProfile extends ActionBarActivity {
 
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
@@ -19,17 +19,18 @@ public class Traits extends ActionBarActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_traits);
+        setContentView(R.layout.activity_change_profile);
 
         setUpTraits();
     }
 
     private void setUpTraits() {
 
-        final ListView myListView = (ListView) findViewById(R.id.traits_view);
+        final ListView myListView = (ListView) findViewById(R.id.change_profile_listview);
 
-        final TraitsListViewAdapter adapter =
-                new TraitsListViewAdapter(this, ProfileUtil.getPendexTraits());
+        final ArrayAdapter<String> adapter =
+                new ArrayAdapter<String>(this, android.R.layout.simple_list_item_activated_1,
+                        ProfileUtil.getProfilesList(this));
 
         myListView.setAdapter(adapter);
 

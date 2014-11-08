@@ -104,20 +104,6 @@ public class Profile extends ActionBarActivity {
 
     }
 
-    public void onSectionAttached(final int number) {
-        switch (number) {
-            case 1:
-                mTitle = getString(R.string.title_section1);
-                break;
-            case 2:
-                mTitle = getString(R.string.title_activity_profile);
-                break;
-            case 3:
-                mTitle = getString(R.string.title_activity_traits);
-                break;
-        }
-    }
-
     public void restoreActionBar() {
         final ActionBar actionBar = getActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);

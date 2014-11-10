@@ -1,15 +1,40 @@
-<!-- A DrawerLayout is intended to be used as the top-level content view using match_parent for both width and height to consume the full space available. --><LinearLayout 
+<!-- A DrawerLayout is intended to be used as the top-level content view using match_parent for both width and height to consume the full space available. -->
+<RelativeLayout 
     xmlns:android="http://schemas.android.com/apk/res/android"
- 	android:layout_width="fill_parent"
-	android:layout_height="fill_parent"
-	android:paddingLeft="8dp"
-    android:paddingRight="8dp"
-	android:orientation="vertical" >
+ 	android:layout_width="match_parent"
+	android:layout_height="wrap_content" >
+    
+    <LinearLayout 
+        android:id="@+id/change_profile_add_section"
+        android:layout_height="wrap_content" 
+        android:orientation="horizontal"
+		android:layout_width="fill_parent">
+		<EditText
+	        android:id="@+id/change_profile_text"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+    		android:layout_width="0dp"
+	        android:ems="10"
+	        android:inputType="textCapWords" >
+	
+	        <requestFocus />
+	    </EditText>
+		<Button 
+		    android:text="+" 
+		    android:id="@+id/change_profile_create"
+		    android:layout_width="wrap_content" 
+		    android:layout_height="wrap_content">
+		</Button>
+		
+	</LinearLayout>
 
     <ListView
         android:id="@+id/change_profile_listview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/change_profile_add_section"
+        android:paddingLeft="8dp"
+    	android:paddingRight="8dp" >
     </ListView>
 
-</LinearLayout>
+</RelativeLayout>

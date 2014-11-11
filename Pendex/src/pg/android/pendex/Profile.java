@@ -36,7 +36,7 @@ public class Profile extends ActionBarActivity {
 
         final TextView name = (TextView) findViewById(R.id.profile_textview_name);
 
-        name.setText(ProfileUtil.getProfileName());
+        name.setText(ProfileUtil.getProfileId());
 
     }
 

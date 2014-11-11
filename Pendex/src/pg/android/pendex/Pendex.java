@@ -54,7 +54,7 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
         setUpButtonListeners();
 
         try {
-            ProfileUtil.loadProfile(getApplicationContext(), "default");
+            ProfileUtil.loadProfile(getApplicationContext());
         } catch (final ProfileLoadException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

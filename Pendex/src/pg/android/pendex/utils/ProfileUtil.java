@@ -17,12 +17,15 @@ import pg.android.pendex.beans.PendexRating;
 import pg.android.pendex.beans.Question;
 import pg.android.pendex.beans.Trait;
 import pg.android.pendex.comparators.TraitsAlphaComparator;
+import pg.android.pendex.constants.Preferences;
 import pg.android.pendex.db.File;
 import pg.android.pendex.db.enums.Profile;
+import pg.android.pendex.exceptions.ProfileExistsException;
 import pg.android.pendex.exceptions.ProfileLoadException;
 import pg.android.pendex.exceptions.ProfileResetException;
 import pg.android.pendex.exceptions.ProfileSaveException;
 import android.content.Context;
+import android.content.SharedPreferences;
 
 /**
  * Utility for loading profiles.
@@ -32,207 +35,236 @@ import android.content.Context;
  */
 public final class ProfileUtil {
 
-	private static String loadedProfileId = "default";
-	private static String loadedProfileName = "default";
-	private static Map<String, Integer> answeredQuestions = new HashMap<String, Integer>();
-	private static Map<String, Integer> pendex = new HashMap<String, Integer>();
+    private static String loadedProfileId = "default";
+    private static String loadedProfileName = "default";
+    private static Map<String, Integer> answeredQuestions = new HashMap<String, Integer>();
+    private static Map<String, Integer> pendex = new HashMap<String, Integer>();
 
-	private static final String PROFILE_FILENAME_SUFFIX = "-profile.json";
+    private static final String PROFILE_FILENAME_SUFFIX = "-profile.json";
 
-	public static List<String> getProfilesList(final Context context) {
+    public static List<String> getProfilesList(final Context context) {
 
-		final List<String> list = new ArrayList<String>();
+        final List<String> list = new ArrayList<String>();
 
-		for (final String fileName : context.fileList()) {
-			final String profileName = fileName.replace(
-					PROFILE_FILENAME_SUFFIX, "");
-			list.add(profileName);
-		}
+        for (final String fileName : context.fileList()) {
+            final String profileName = fileName.replace(PROFILE_FILENAME_SUFFIX, "");
+            if (!fileName.equals(getProfileFileName())) {
+                list.add(profileName);
+            } else {
+                list.add(0, profileName);
+            }
 
-		return list;
+        }
 
-	}
+        return list;
 
-	public static void reset() {
-		loadedProfileId = "default";
-		loadedProfileName = "default";
-		answeredQuestions = new HashMap<String, Integer>();
-		pendex = new HashMap<String, Integer>();
-	}
+    }
 
-	public static void loadProfile(final Context context, final String profile)
-			throws ProfileLoadException, ProfileSaveException {
+    public static void reset() {
+        reset("default");
+    }
 
-		loadedProfileId = profile;
-		answeredQuestions = new HashMap<String, Integer>();
-		pendex = new HashMap<String, Integer>();
+    public static void reset(final String profile) {
+        loadedProfileId = profile;
+        loadedProfileName = profile;
+        answeredQuestions = new HashMap<String, Integer>();
+        pendex = new HashMap<String, Integer>();
+    }
 
-		try {
+    public static void createProfile(final Context context, final String profile)
+            throws ProfileExistsException, ProfileSaveException {
 
-			final JSONObject profileObj = new JSONObject(
-					File.loadInternalFileJSON(context,
-							ProfileUtil.getProfileFileName(loadedProfileId)));
+        if (getProfilesList(context).contains(profile.trim())) {
+            throw new ProfileExistsException();
+        }
 
-			loadedProfileName = profileObj.getString(Profile.Name.name);
+        reset(profile);
+        saveProfile(context);
 
-			final JSONObject answers = profileObj
-					.getJSONObject(Profile.Answers.name);
+    }
 
-			answeredQuestions.putAll(JsonUtil.createPendexMapFromJson(answers));
+    public static void loadProfile(final Context context) throws ProfileLoadException,
+            ProfileSaveException {
 
-			final JSONObject pendexJson = profileObj
-					.getJSONObject(Profile.Pendex.name);
+        final SharedPreferences settings =
+                context.getSharedPreferences(Preferences.PENDEX_PREFERENCES, Context.MODE_PRIVATE);
 
-			pendex.putAll(JsonUtil.createPendexMapFromJson(pendexJson));
+        final String loadedProfileId =
+                settings.getString(Preferences.LAST_PROFILE_ID_STRING, "default");
 
-		} catch (final FileNotFoundException e) {
+        loadProfile(context, loadedProfileId);
 
-			saveProfile(context);
+    }
 
-		} catch (final JSONException e) {
+    public static void loadProfile(final Context context, final String profile)
+            throws ProfileLoadException, ProfileSaveException {
 
-			e.printStackTrace();
-			throw new ProfileLoadException();
+        loadedProfileId = profile;
+        answeredQuestions = new HashMap<String, Integer>();
+        pendex = new HashMap<String, Integer>();
 
-		} catch (final IOException e) {
+        try {
 
-			e.printStackTrace();
-			throw new ProfileLoadException();
+            final JSONObject profileObj =
+                    new JSONObject(File.loadInternalFileJSON(context,
+                            ProfileUtil.getProfileFileName()));
 
-		}
+            loadedProfileName = profileObj.getString(Profile.Name.name);
 
-	}
+            final JSONObject answers = profileObj.getJSONObject(Profile.Answers.name);
 
-	/**
-	 * Saves the profiles throws an IO exception when anything fails.
-	 * 
-	 * @param context
-	 *            - {@link Context} - Usually the application context.
-	 * 
-	 * @throws IOException
-	 *             - {@link IOException} - when saving fails.
-	 */
-	public static void saveProfile(final Context context)
-			throws ProfileSaveException {
+            answeredQuestions.putAll(JsonUtil.createPendexMapFromJson(answers));
 
-		final Map<String, Object> map = new HashMap<String, Object>();
+            final JSONObject pendexJson = profileObj.getJSONObject(Profile.Pendex.name);
 
-		map.put(Profile.Id.name, loadedProfileId);
-		map.put(Profile.Name.name, loadedProfileName);
+            pendex.putAll(JsonUtil.createPendexMapFromJson(pendexJson));
 
-		final JSONObject jsonObject = new JSONObject(map);
+        } catch (final FileNotFoundException e) {
 
-		// Add the answers and pendex.
-		try {
+            saveProfile(context);
 
-			jsonObject.put(Profile.Answers.name, new JSONObject(
-					answeredQuestions));
-			jsonObject.put(Profile.Pendex.name, new JSONObject(pendex));
+        } catch (final JSONException e) {
 
-		} catch (final JSONException e) {
+            e.printStackTrace();
+            throw new ProfileLoadException();
 
-			e.printStackTrace();
-			throw new ProfileSaveException();
-		}
+        } catch (final IOException e) {
 
-		// Now save.
-		try {
+            e.printStackTrace();
+            throw new ProfileLoadException();
 
-			File.storeInternalFileJSON(context,
-					ProfileUtil.getProfileFileName(loadedProfileId), jsonObject);
+        }
 
-		} catch (final IOException e) {
+    }
 
-			e.printStackTrace();
-			throw new ProfileSaveException();
+    /**
+     * Saves the profiles throws an IO exception when anything fails.
+     * 
+     * @param context - {@link Context} - Usually the application context.
+     * 
+     * @throws IOException - {@link IOException} - when saving fails.
+     */
+    public static void saveProfile(final Context context) throws ProfileSaveException {
 
-		}
+        final Map<String, Object> map = new HashMap<String, Object>();
 
-	}
+        map.put(Profile.Id.name, loadedProfileId);
+        map.put(Profile.Name.name, loadedProfileName);
 
-	/**
-	 * Resets the loaded profile and saves it.
-	 * 
-	 * @param context
-	 *            - {@link Context} - Usually the application context.
-	 * 
-	 * @throws ProfileResetException
-	 *             - Thrown if the profile fails to save.
-	 */
-	public static void resetLoadedProfile(final Context context)
-			throws ProfileResetException {
+        final JSONObject jsonObject = new JSONObject(map);
 
-		reset();
-		try {
-			saveProfile(context);
-		} catch (final ProfileSaveException e) {
+        // Add the answers and pendex.
+        try {
 
-			e.printStackTrace();
-			throw new ProfileResetException();
+            jsonObject.put(Profile.Answers.name, new JSONObject(answeredQuestions));
+            jsonObject.put(Profile.Pendex.name, new JSONObject(pendex));
 
-		}
+        } catch (final JSONException e) {
 
-	}
+            e.printStackTrace();
+            throw new ProfileSaveException();
+        }
 
-	public static void answerQuestion(final int indexOfAnswer) {
+        // Now save.
+        try {
 
-		final Question selectedQuestion = QuestionUtil.getSelectedQuestion();
+            File.storeInternalFileJSON(context, ProfileUtil.getProfileFileName(), jsonObject);
 
-		// No question to answer.
-		if (selectedQuestion == null) {
-			return;
-		}
+        } catch (final IOException e) {
 
-		final Answer answer = selectedQuestion.getAnswers().get(indexOfAnswer);
-		final PendexRating pendexRating = answer.getPendexRating();
+            e.printStackTrace();
+            throw new ProfileSaveException();
 
-		answeredQuestions.put(selectedQuestion.getId(), indexOfAnswer);
+        }
 
-		for (final Entry<String, Integer> entry : pendexRating.getPendex()
-				.entrySet()) {
+    }
 
-			if (pendex.containsKey(entry.getKey())) {
-				pendex.put(entry.getKey(),
-						pendex.get(entry.getKey()) + entry.getValue());
-			} else {
-				pendex.put(entry.getKey(), entry.getValue());
-			}
+    /**
+     * Resets the loaded profile and saves it.
+     * 
+     * @param context - {@link Context} - Usually the application context.
+     * 
+     * @throws ProfileResetException - Thrown if the profile fails to save.
+     */
+    public static void resetLoadedProfile(final Context context) throws ProfileResetException {
 
-		}
+        reset();
+        try {
+            saveProfile(context);
+        } catch (final ProfileSaveException e) {
 
-	}
+            e.printStackTrace();
+            throw new ProfileResetException();
 
-	public static List<Trait> getPendexTraits() {
+        }
 
-		final List<Trait> traits = new ArrayList<Trait>();
+    }
 
-		for (final Entry<String, Integer> entry : pendex.entrySet()) {
-			final Trait trait = new Trait();
+    public static void answerQuestion(final int indexOfAnswer) {
 
-			trait.setTrait(entry.getKey());
-			trait.setTraitValue(entry.getValue());
-			trait.setSummary(TraitUtil.getTraitSummay(entry.getKey()));
+        final Question selectedQuestion = QuestionUtil.getSelectedQuestion();
 
-			traits.add(trait);
+        // No question to answer.
+        if (selectedQuestion == null) {
+            return;
+        }
 
-		}
+        final Answer answer = selectedQuestion.getAnswers().get(indexOfAnswer);
+        final PendexRating pendexRating = answer.getPendexRating();
 
-		Collections.sort(traits, new TraitsAlphaComparator());
+        answeredQuestions.put(selectedQuestion.getId(), indexOfAnswer);
 
-		return traits;
+        for (final Entry<String, Integer> entry : pendexRating.getPendex().entrySet()) {
 
-	}
+            if (pendex.containsKey(entry.getKey())) {
+                pendex.put(entry.getKey(), pendex.get(entry.getKey()) + entry.getValue());
+            } else {
+                pendex.put(entry.getKey(), entry.getValue());
+            }
 
-	public static String getProfileName() {
-		return loadedProfileId;
-	}
+        }
 
-	public static boolean hasAnswered(final String s) {
-		return answeredQuestions.containsKey(s);
-	}
+    }
 
-	public static String getProfileFileName(final String s) {
-		return s.trim() + PROFILE_FILENAME_SUFFIX;
-	}
+    public static List<Trait> getPendexTraits() {
+
+        final List<Trait> traits = new ArrayList<Trait>();
+
+        for (final Entry<String, Integer> entry : pendex.entrySet()) {
+            final Trait trait = new Trait();
+
+            trait.setTrait(entry.getKey());
+            trait.setTraitValue(entry.getValue());
+            trait.setSummary(TraitUtil.getTraitSummay(entry.getKey()));
+
+            traits.add(trait);
+
+        }
+
+        Collections.sort(traits, new TraitsAlphaComparator());
+
+        return traits;
+
+    }
+
+    public static String getProfileId() {
+        return loadedProfileId;
+    }
+
+    public static String getProfileName() {
+        return loadedProfileName;
+    }
+
+    public static boolean hasAnswered(final String s) {
+        return answeredQuestions.containsKey(s);
+    }
+
+    public static String getProfileFileName() {
+        return loadedProfileId + PROFILE_FILENAME_SUFFIX;
+    }
+
+    public static String getProfileFileName(final String s) {
+        return s.trim() + PROFILE_FILENAME_SUFFIX;
+    }
 
 }

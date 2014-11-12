@@ -3,6 +3,7 @@ package pg.android.pendex.dialogs;
 import pg.android.pendex.R;
 import pg.android.pendex.exceptions.ProfileExistsException;
 import pg.android.pendex.exceptions.ProfileSaveException;
+import pg.android.pendex.interfaces.IChangeProfileAddDialogCallbacks;
 import pg.android.pendex.utils.ProfileUtil;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -24,10 +25,12 @@ import android.widget.EditText;
 public class ChangeProfileAdd extends DialogFragment {
 
     private final ViewGroup view;
+    private final IChangeProfileAddDialogCallbacks callback;
 
-    public ChangeProfileAdd(final ViewGroup view) {
+    public ChangeProfileAdd(final ViewGroup view, final IChangeProfileAddDialogCallbacks callback) {
         super();
         this.view = view;
+        this.callback = callback;
     }
 
     @Override
@@ -49,7 +52,11 @@ public class ChangeProfileAdd extends DialogFragment {
                         final Dialog dialog = (Dialog) dialogInterface;
                         final Context context = dialog.getContext();
                         try {
-                            ProfileUtil.createProfile(context, userinput.getText().toString());
+                            final String userInputString = userinput.getText().toString();
+                            ProfileUtil.createProfile(context, userInputString);
+                            if (callback != null) {
+                                callback.createdUser(userInputString);
+                            }
                         } catch (final ProfileSaveException e) {
                             // TODO Auto-generated catch block
                             e.printStackTrace();

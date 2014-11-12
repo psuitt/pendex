@@ -4,8 +4,14 @@
 
     <item
         android:id="@+id/change_profile_action_add"
-        android:showAsAction="ifRoom|withText"
+        android:showAsAction="withText|ifRoom"
         android:title="@string/change_profile_action_item_add"
         android:icon="@drawable/ic_action_new"/>
+    
+    <item
+        android:id="@+id/change_profile_action_remove"
+        android:showAsAction="withText|ifRoom"
+        android:title="@string/change_profile_action_item_remove"
+        android:icon="@drawable/ic_action_remove"/>
 
 </menu>

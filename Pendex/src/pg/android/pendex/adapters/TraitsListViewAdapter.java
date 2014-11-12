@@ -14,50 +14,48 @@ import android.widget.TextView;
 
 public class TraitsListViewAdapter extends ArrayAdapter<Trait> {
 
-	private final Context context;
-	private final List<Trait> list;
+    private final Context context;
+    private final List<Trait> list;
 
-	public TraitsListViewAdapter(final Context context, final List<Trait> list) {
-		super(context, R.layout.traits_layout, list);
-		this.context = context;
-		this.list = list;
-	}
+    public TraitsListViewAdapter(final Context context, final List<Trait> list) {
+        super(context, R.layout.traits_layout, list);
+        this.context = context;
+        this.list = list;
+    }
 
-	@Override
-	public View getView(final int position, final View convertView,
-			final ViewGroup parent) {
+    @Override
+    public View getView(final int position, final View convertView, final ViewGroup parent) {
 
-		View row = convertView;
-		TraitHolder holder = null;
+        View row = convertView;
+        TraitHolder holder = null;
 
-		if (row == null) {
-			final LayoutInflater inflater = ((Activity) context)
-					.getLayoutInflater();
-			row = inflater.inflate(R.layout.traits_layout, parent, false);
+        if (row == null) {
+            final LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+            row = inflater.inflate(R.layout.traits_layout, parent, false);
 
-			holder = new TraitHolder();
-			holder.traitTitle = (TextView) row.findViewById(R.id.trait_title);
-			holder.traitValue = (TextView) row.findViewById(R.id.trait_value);
-			holder.summary = (TextView) row.findViewById(R.id.trait_summary);
+            holder = new TraitHolder();
+            holder.traitTitle = (TextView) row.findViewById(R.id.trait_title);
+            holder.traitValue = (TextView) row.findViewById(R.id.trait_value);
+            holder.summary = (TextView) row.findViewById(R.id.trait_summary);
 
-			row.setTag(holder);
-		} else {
-			holder = (TraitHolder) row.getTag();
-		}
+            row.setTag(holder);
+        } else {
+            holder = (TraitHolder) row.getTag();
+        }
 
-		final Trait trait = list.get(position);
-		holder.traitTitle.setText(trait.getTrait());
-		holder.traitValue.setText(String.valueOf(trait.getTraitValue()));
-		holder.summary.setText(trait.getSummary());
+        final Trait trait = list.get(position);
+        holder.traitTitle.setText(trait.getTrait());
+        holder.traitValue.setText(String.valueOf(trait.getTraitValue()));
+        holder.summary.setText(trait.getSummary());
 
-		return row;
+        return row;
 
-	}
+    }
 
-	static class TraitHolder {
-		TextView traitTitle;
-		TextView traitValue;
-		TextView summary;
-	}
+    static class TraitHolder {
+        TextView traitTitle;
+        TextView traitValue;
+        TextView summary;
+    }
 
 }

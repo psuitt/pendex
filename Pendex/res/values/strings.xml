@@ -17,6 +17,7 @@
     <string name="title_activity_traits">Traits</string>
     
     <string name="change_profile_action_item_add">Add</string>
+    <string name="change_profile_action_item_remove">Remove</string>
     
     <string name="profile_button_reset">Reset Traits</string>
     

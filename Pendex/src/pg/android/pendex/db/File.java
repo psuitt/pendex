@@ -6,6 +6,8 @@ import java.io.InputStream;
 
 import org.json.JSONObject;
 
+import pg.android.pendex.constants.Assets;
+import pg.android.pendex.constants.Constants;
 import android.content.Context;
 
 /**
@@ -16,68 +18,68 @@ import android.content.Context;
  */
 public final class File {
 
-	private static final String FILE_NAME_JSON = "questions.json";
+    public static void storeInternalFileJSON(final Context context, final String fileName,
+            final JSONObject jsonObject) throws IOException {
 
-	// private static final String FILE_NAME_SETTINGS = "settings.json";
+        // MODE_PRIVATE will create the file (or replace a file of the same
+        // name) and make it private to your application.
+        final FileOutputStream fos = context.openFileOutput(fileName, Context.MODE_PRIVATE);
+        fos.write(jsonObject.toString().getBytes());
+        fos.close();
 
-	public static void storeInternalFileJSON(final Context context,
-			final String fileName, final JSONObject jsonObject)
-			throws IOException {
+    }
 
-		// MODE_PRIVATE will create the file (or replace a file of the same
-		// name) and make it private to your application.
-		final FileOutputStream fos = context.openFileOutput(fileName,
-				Context.MODE_PRIVATE);
-		fos.write(jsonObject.toString().getBytes());
-		fos.close();
+    public static String loadQuestionsFromFile(final Context context) throws IOException {
 
-	}
+        return File.loadAssetsFileJSON(context, Assets.QUESTIONS_JSON);
 
-	public static String loadQuestionsFromFile(final Context context)
-			throws IOException {
+    }
 
-		return File.loadAssetsFileJSON(context, File.FILE_NAME_JSON);
+    public static String loadInternalFileJSON(final Context context, final String fileName)
+            throws IOException {
 
-	}
+        // Get the file input steam.
+        final InputStream is = context.openFileInput(fileName);
 
-	public static String loadInternalFileJSON(final Context context,
-			final String fileName) throws IOException {
+        final int size = is.available();
 
-		// Get the file input steam.
-		final InputStream is = context.openFileInput(fileName);
+        final byte[] buffer = new byte[size];
 
-		final int size = is.available();
+        // Read to buffer
+        is.read(buffer);
 
-		final byte[] buffer = new byte[size];
+        // Close the input stream.
+        is.close();
 
-		// Read to buffer
-		is.read(buffer);
+        return new String(buffer, Constants.STRING_UTF_8);
 
-		// Close the input stream.
-		is.close();
+    }
 
-		return new String(buffer, "UTF-8");
+    public static String loadAssetsFileJSON(final Context context, final String fileName)
+            throws IOException {
 
-	}
+        // Get the file input steam.
+        final InputStream is = context.getAssets().open(fileName);
 
-	public static String loadAssetsFileJSON(final Context context,
-			final String fileName) throws IOException {
+        final int size = is.available();
 
-		// Get the file input steam.
-		final InputStream is = context.getAssets().open(fileName);
+        final byte[] buffer = new byte[size];
 
-		final int size = is.available();
+        // Read to buffer
+        is.read(buffer);
 
-		final byte[] buffer = new byte[size];
+        // Close the input stream.
+        is.close();
 
-		// Read to buffer
-		is.read(buffer);
+        return new String(buffer, Constants.STRING_UTF_8);
 
-		// Close the input stream.
-		is.close();
+    }
 
-		return new String(buffer, "UTF-8");
+    public static void deleteInternalFile(final Context context, final String fileName) {
 
-	}
+        context.deleteFile(fileName);
+
+    }
+
 
 }

@@ -200,6 +200,16 @@ public final class ProfileUtil {
 
     }
 
+    public static void removeProfile(final Context context, final String profileId) {
+
+        if (profileId.contains(".json")) {
+            File.deleteInternalFile(context, profileId);
+        } else {
+            File.deleteInternalFile(context, getProfileFileName(profileId));
+        }
+
+    }
+
     public static void answerQuestion(final int indexOfAnswer) {
 
         final Question selectedQuestion = QuestionUtil.getSelectedQuestion();

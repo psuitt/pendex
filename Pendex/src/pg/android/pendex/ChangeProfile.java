@@ -18,14 +18,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 public class ChangeProfile extends ActionBarActivity {
 
     private ListView profileListView;
     private List<String> allProfiles;
-    private ArrayAdapter<String> adapter;
+    private ChangeProfileListViewAdapter adapter;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -94,7 +93,7 @@ public class ChangeProfile extends ActionBarActivity {
                 return true;
 
             case R.id.change_profile_action_remove:
-
+                adapter.toggleMode();
                 break;
 
             default:

@@ -3,18 +3,26 @@ package pg.android.pendex.adapters;
 import java.util.List;
 
 import pg.android.pendex.R;
+import pg.android.pendex.listeners.RemoveProfileOnClickListener;
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 
 public class ChangeProfileListViewAdapter extends ArrayAdapter<String> {
 
     private final Context context;
     private final List<String> list;
+    private ChangeProfileListViewAdapterMode mode = ChangeProfileListViewAdapterMode.Normal;
+    private ChangeProfileHolder holder;
+
+    public enum ChangeProfileListViewAdapterMode {
+        Normal, Remove;
+    }
 
     public ChangeProfileListViewAdapter(final Context context, final List<String> list) {
         super(context, R.layout.change_profile_listview_item, list);
@@ -26,7 +34,6 @@ public class ChangeProfileListViewAdapter extends ArrayAdapter<String> {
     public View getView(final int position, final View convertView, final ViewGroup parent) {
 
         View row = convertView;
-        ChangeProfileHolder holder = null;
 
         if (row == null) {
             final LayoutInflater inflater = ((Activity) context).getLayoutInflater();
@@ -34,6 +41,9 @@ public class ChangeProfileListViewAdapter extends ArrayAdapter<String> {
 
             holder = new ChangeProfileHolder();
             holder.profileName = (TextView) row.findViewById(R.id.change_profile_listview_name);
+            holder.removeButton = (Button) row.findViewById(R.id.change_profile_listview_remove);
+            holder.removeButton.setOnClickListener(new RemoveProfileOnClickListener(context, this,
+                    list.get(position)));
 
             row.setTag(holder);
         } else {
@@ -43,12 +53,41 @@ public class ChangeProfileListViewAdapter extends ArrayAdapter<String> {
         final String profileName = list.get(position);
         holder.profileName.setText(profileName);
 
+        switch (mode) {
+            case Remove:
+                holder.removeButton.setVisibility(View.VISIBLE);
+                break;
+            default:
+                holder.removeButton.setVisibility(View.GONE);
+                break;
+        }
+
         return row;
 
     }
 
-    static class ChangeProfileHolder {
-        TextView profileName;
+    public void toggleMode() {
+        switch (mode) {
+            case Remove:
+                changeMode(ChangeProfileListViewAdapterMode.Normal);
+                break;
+            default:
+                changeMode(ChangeProfileListViewAdapterMode.Remove);
+                break;
+        }
     }
 
+    public void changeMode(final ChangeProfileListViewAdapterMode mode) {
+        this.mode = mode;
+        notifyDataSetChanged();
+    }
+
+    public void removeFromList(final String profileId) {
+        list.remove(profileId);
+    }
+
+    static class ChangeProfileHolder {
+        TextView profileName;
+        Button removeButton;
+    }
 }

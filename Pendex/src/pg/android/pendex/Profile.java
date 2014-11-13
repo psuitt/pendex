@@ -35,8 +35,12 @@ public class Profile extends ActionBarActivity {
     private void setUpTextViews() {
 
         final TextView name = (TextView) findViewById(R.id.profile_textview_name);
+        final TextView created = (TextView) findViewById(R.id.profile_textview_created);
+        final TextView lastAnswered = (TextView) findViewById(R.id.profile_textview_last_answered);
 
         name.setText(ProfileUtil.getProfileId());
+        created.setText(ProfileUtil.getCreatedSimple());
+        lastAnswered.setText(ProfileUtil.getLastAnswered());
 
     }
 

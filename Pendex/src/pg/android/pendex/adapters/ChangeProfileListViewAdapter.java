@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 public class ChangeProfileListViewAdapter extends ArrayAdapter<String> {
 
+    private int selected = 0;
     private final Context context;
     private final List<String> list;
     private ChangeProfileListViewAdapterMode mode = ChangeProfileListViewAdapterMode.Normal;
@@ -62,6 +63,13 @@ public class ChangeProfileListViewAdapter extends ArrayAdapter<String> {
                 break;
         }
 
+        if (selected == position) {
+            holder.profileName.setTextColor(context.getResources().getColor(R.color.white));
+            row.setBackgroundResource(R.color.blue);
+        } else {
+            row.setBackgroundResource(0);
+        }
+
         return row;
 
     }
@@ -75,6 +83,11 @@ public class ChangeProfileListViewAdapter extends ArrayAdapter<String> {
                 changeMode(ChangeProfileListViewAdapterMode.Remove);
                 break;
         }
+    }
+
+    public void setSelected(final String profileId) {
+        selected = list.indexOf(profileId);
+        notifyDataSetChanged();
     }
 
     public void changeMode(final ChangeProfileListViewAdapterMode mode) {

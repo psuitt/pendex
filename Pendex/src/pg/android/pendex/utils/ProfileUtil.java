@@ -4,8 +4,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -37,6 +39,8 @@ public final class ProfileUtil {
 
     private static String loadedProfileId = "default";
     private static String loadedProfileName = "default";
+    private static Date created = new Date();
+    private static String lastAnswered = "Start answering questions!";
     private static Map<String, Integer> answeredQuestions = new HashMap<String, Integer>();
     private static Map<String, Integer> pendex = new HashMap<String, Integer>();
 
@@ -64,9 +68,14 @@ public final class ProfileUtil {
         reset("default");
     }
 
-    public static void reset(final String profile) {
-        loadedProfileId = profile;
-        loadedProfileName = profile;
+    /**
+     * This only resets the profile id, name, answered questions, and pendex.
+     * 
+     * @param profileId - String - Profile id.
+     */
+    public static void reset(final String profileId) {
+        loadedProfileId = profileId;
+        loadedProfileName = profileId;
         answeredQuestions = new HashMap<String, Integer>();
         pendex = new HashMap<String, Integer>();
     }
@@ -79,6 +88,7 @@ public final class ProfileUtil {
         }
 
         reset(profile);
+        created = new Date();
         saveProfile(context);
 
     }
@@ -110,6 +120,10 @@ public final class ProfileUtil {
                             ProfileUtil.getProfileFileName()));
 
             loadedProfileName = profileObj.getString(Profile.Name.name);
+            created =
+                    FormatUtil.getDateFromSimple(profileObj.getString(Profile.Created.name),
+                            Locale.getDefault());
+            lastAnswered = profileObj.getString(Profile.LastAnswered.name);
 
             final JSONObject answers = profileObj.getJSONObject(Profile.Answers.name);
 
@@ -150,6 +164,8 @@ public final class ProfileUtil {
 
         map.put(Profile.Id.name, loadedProfileId);
         map.put(Profile.Name.name, loadedProfileName);
+        map.put(Profile.Created.name, FormatUtil.getDateSimple(created, Locale.getDefault()));
+        map.put(Profile.LastAnswered.name, lastAnswered);
 
         final JSONObject jsonObject = new JSONObject(map);
 
@@ -221,6 +237,26 @@ public final class ProfileUtil {
 
         final Answer answer = selectedQuestion.getAnswers().get(indexOfAnswer);
         final PendexRating pendexRating = answer.getPendexRating();
+        final String question = selectedQuestion.getQuestion();
+
+        final StringBuilder lastAnsweredSB = new StringBuilder();
+
+        if (question.isEmpty()) {
+            lastAnsweredSB.append("You choose ");
+            lastAnsweredSB.append(answer.getAnswer());
+            lastAnsweredSB.append(" over ");
+            if (indexOfAnswer == 0) {
+                lastAnsweredSB.append(selectedQuestion.getAnswers().get(1).getAnswer());
+            } else {
+                lastAnsweredSB.append(selectedQuestion.getAnswers().get(0).getAnswer());
+            }
+        } else {
+            lastAnsweredSB.append(question);
+            lastAnsweredSB.append(" ");
+            lastAnsweredSB.append(answer.getAnswer());
+        }
+
+        lastAnswered = lastAnsweredSB.toString();
 
         answeredQuestions.put(selectedQuestion.getId(), indexOfAnswer);
 
@@ -263,6 +299,14 @@ public final class ProfileUtil {
 
     public static String getProfileName() {
         return loadedProfileName;
+    }
+
+    public static String getCreatedSimple() {
+        return FormatUtil.getDateSimple(created, Locale.getDefault());
+    }
+
+    public static String getLastAnswered() {
+        return lastAnswered;
     }
 
     public static boolean hasAnswered(final String s) {

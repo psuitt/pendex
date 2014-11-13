@@ -12,11 +12,11 @@ import pg.android.pendex.utils.ProfileUtil;
 import android.app.DialogFragment;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
@@ -51,8 +51,13 @@ public class ChangeProfile extends ActionBarActivity {
                     final int position, final long id) {
 
                 try {
-                    ProfileUtil.loadProfile(ChangeProfile.this, allProfiles.get(position));
+                    final String profileId = allProfiles.get(position);
+                    // Load the selected profile.
+                    ProfileUtil.loadProfile(ChangeProfile.this, profileId);
+                    // Save the new default in the preferences.
                     updateLoadedUser();
+                    // Move to parent.
+                    NavUtils.navigateUpFromSameTask(ChangeProfile.this);
                 } catch (final ProfileLoadException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -64,13 +69,8 @@ public class ChangeProfile extends ActionBarActivity {
             }
         });
 
-        setListSelected(1);
+        adapter.setSelected(ProfileUtil.getProfileId());
 
-    }
-
-    private void setListSelected(final int index) {
-        profileListView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
-        profileListView.setItemChecked(index, true);
     }
 
     @Override
@@ -114,8 +114,7 @@ public class ChangeProfile extends ActionBarActivity {
                     public void createdUser(final String newUserId) {
                         allProfiles.clear();
                         allProfiles.addAll(ProfileUtil.getProfilesList(ChangeProfile.this));
-                        adapter.notifyDataSetChanged();
-                        setListSelected(1);
+                        adapter.setSelected(newUserId);
                     }
 
                 });
@@ -126,9 +125,6 @@ public class ChangeProfile extends ActionBarActivity {
     @Override
     protected void onStop() {
         super.onStop();
-
-        updateLoadedUser();
-
     }
 
     private void updateLoadedUser() {

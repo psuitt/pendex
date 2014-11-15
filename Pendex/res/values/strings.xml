@@ -16,6 +16,8 @@
     <string name="title_activity_profile">Profile</string>
     <string name="title_activity_traits">Traits</string>
     
+    <string name="pendex_click_to_begin">Click To Begin</string>
+    
     <string name="change_profile_action_item_add">Add</string>
     <string name="change_profile_action_item_remove">Remove</string>
     

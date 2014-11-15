@@ -1,6 +1,7 @@
 package pg.android.pendex;
 
 import pg.android.pendex.beans.Question;
+import pg.android.pendex.constants.Constants;
 import pg.android.pendex.constants.Messages;
 import pg.android.pendex.exceptions.OutOfQuestionsException;
 import pg.android.pendex.exceptions.ProfileLoadException;
@@ -22,7 +23,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class Pendex extends ActionBarActivity implements INavigationDrawerCallbacks {
@@ -51,10 +54,43 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
-        setUpButtonListeners();
+        final Button p1_button = (Button) findViewById(R.id.button1);
+
+        p1_button.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+
+                final LinearLayout container = (LinearLayout) findViewById(R.id.pendex_container);
+                final TextView questionTextView = (TextView) findViewById(R.id.textView1);
+                final Button button1 = (Button) findViewById(R.id.button1);
+                final Button button2 = (Button) findViewById(R.id.button2);
+
+                final int height = container.getHeight();
+                final int buttonHeight = height / 4;
+                final int textHeight = height - 2 * buttonHeight;
+
+                questionTextView.setLayoutParams(new LinearLayout.LayoutParams(
+                        LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+                questionTextView.setHeight(textHeight);
+                button1.setHeight(buttonHeight);
+                button2.setHeight(buttonHeight);
+
+                questionTextView.setVisibility(View.VISIBLE);
+                button2.setVisibility(View.VISIBLE);
+
+                init();
+
+
+            }
+        });
+
+    }
+
+    private void init() {
 
         try {
             ProfileUtil.loadProfile(getApplicationContext());
+            nextQuestion();
         } catch (final ProfileLoadException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -62,7 +98,8 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        nextQuestion();
+
+        setUpButtonListeners();
 
     }
 
@@ -98,7 +135,11 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
 
             final Question question = QuestionUtil.getRandomQuestion(getApplicationContext());
 
-            text_view.setText(question.getQuestion());
+            if (Constants.EMPTY_STRING.equals(question.getQuestion())) {
+                text_view.setText("Choose Wisely!");
+            } else {
+                text_view.setText(question.getQuestion());
+            }
             p1_button.setText(question.getAnswers().get(0).getAnswer());
             p2_button.setText(question.getAnswers().get(1).getAnswer());
 
@@ -119,7 +160,8 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
         // update the main content by replacing fragments
         final FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1)).commit();
+                .replace(R.id.pendex_container, PlaceholderFragment.newInstance(position + 1))
+                .commit();
     }
 
     public void onSectionAttached(final int number) {

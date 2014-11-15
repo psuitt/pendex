@@ -18,6 +18,7 @@
         android:id="@+id/profile_textview_created"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:paddingBottom="50dip"
         android:textSize="18sp"
         android:textColor="@color/darkblue" />
     
@@ -32,6 +33,7 @@
         android:id="@+id/profile_button_reset"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="50dip"
         android:textColor="#FFFFFF"
         android:background="@drawable/button_rectangle_green"
         android:text="@string/profile_button_reset" />

@@ -55,6 +55,10 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
         final Button p1_button = (Button) findViewById(R.id.button1);
+        final TextView questionTextView = (TextView) findViewById(R.id.textView1);
+
+        p1_button.setText(R.string.pendex_click_to_begin);
+        questionTextView.setText(R.string.pendex_default_start_text);
 
         p1_button.setOnClickListener(new Button.OnClickListener() {
             @Override
@@ -85,7 +89,6 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
 
         try {
             ProfileUtil.loadProfile(getApplicationContext());
-            nextQuestion();
         } catch (final ProfileLoadException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -100,6 +103,7 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
     private void init() {
 
         setUpButtonListeners();
+        nextQuestion();
 
     }
 

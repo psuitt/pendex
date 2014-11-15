@@ -75,7 +75,6 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
                 button1.setHeight(buttonHeight);
                 button2.setHeight(buttonHeight);
 
-                questionTextView.setVisibility(View.VISIBLE);
                 button2.setVisibility(View.VISIBLE);
 
                 init();
@@ -83,10 +82,6 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
 
             }
         });
-
-    }
-
-    private void init() {
 
         try {
             ProfileUtil.loadProfile(getApplicationContext());
@@ -98,6 +93,11 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+
+
+    }
+
+    private void init() {
 
         setUpButtonListeners();
 

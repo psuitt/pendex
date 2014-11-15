@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingLeft="8dp"
@@ -15,14 +16,14 @@
         android:textSize="35sp" >
     </TextView>
     
-	<Button
+	<ImageButton
 	    android:id="@+id/change_profile_listview_remove"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
-	    android:paddingLeft="2dp"
-    	android:paddingRight="2dp"
 	    android:layout_alignParentRight="true"
-	    android:text="@string/change_profile_action_item_remove"
-	    android:background="@drawable/button_rectangle_red"/>
+	    android:gravity="center_vertical"
+	    android:src="@drawable/ic_action_discard"
+	    android:contentDescription="@string/change_profile_action_item_remove"
+	    android:background="@color/darkred"/>
 
 </RelativeLayout>

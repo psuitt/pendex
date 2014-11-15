@@ -10,7 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 public class ChangeProfileListViewAdapter extends ArrayAdapter<String> {
@@ -42,7 +42,8 @@ public class ChangeProfileListViewAdapter extends ArrayAdapter<String> {
 
             holder = new ChangeProfileHolder();
             holder.profileName = (TextView) row.findViewById(R.id.change_profile_listview_name);
-            holder.removeButton = (Button) row.findViewById(R.id.change_profile_listview_remove);
+            holder.removeButton =
+                    (ImageButton) row.findViewById(R.id.change_profile_listview_remove);
             holder.removeButton.setOnClickListener(new RemoveProfileOnClickListener(context, this,
                     list.get(position)));
 
@@ -101,6 +102,6 @@ public class ChangeProfileListViewAdapter extends ArrayAdapter<String> {
 
     static class ChangeProfileHolder {
         TextView profileName;
-        Button removeButton;
+        ImageButton removeButton;
     }
 }

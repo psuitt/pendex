@@ -1,6 +1,11 @@
 package pg.android.pendex;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import pg.android.pendex.adapters.TraitsListViewAdapter;
+import pg.android.pendex.beans.Trait;
+import pg.android.pendex.exceptions.TraitLoadException;
 import pg.android.pendex.utils.ProfileUtil;
 import android.app.ActionBar;
 import android.os.Bundle;
@@ -28,9 +33,19 @@ public class Traits extends ActionBarActivity {
 
         final ListView myListView = (ListView) findViewById(R.id.traits_view);
 
-        final TraitsListViewAdapter adapter =
-                new TraitsListViewAdapter(this, ProfileUtil.getPendexTraits());
+        List<Trait> pendexTraits;
 
+        try {
+            pendexTraits = ProfileUtil.getPendexTraits(getApplicationContext());
+
+        } catch (final TraitLoadException e) {
+            pendexTraits = new ArrayList<Trait>();
+            final Trait trait = new Trait();
+            trait.setTrait("THIS FAILED TO LOAD");
+            pendexTraits.add(trait);
+        }
+
+        final TraitsListViewAdapter adapter = new TraitsListViewAdapter(this, pendexTraits);
         myListView.setAdapter(adapter);
 
     }

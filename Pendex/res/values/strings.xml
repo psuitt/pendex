@@ -3,6 +3,8 @@
 
     <string name="app_name">Pendex</string>
     
+    <string name="test">Test Text</string>
+    
     <string name="add">Add</string>
     <string name="cancel">Cancel</string>
     
@@ -16,6 +18,8 @@
     <string name="title_activity_profile">Profile</string>
     <string name="title_activity_traits">Traits</string>
     
+    <string name="pendex_default_start_text">Start building up your traits by clicking below!</string>
+    <string name="pendex_skip">Skip</string>
     <string name="pendex_click_to_begin">Click To Begin</string>
     
     <string name="change_profile_action_item_add">Add</string>

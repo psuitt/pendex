@@ -26,6 +26,7 @@ import pg.android.pendex.exceptions.ProfileExistsException;
 import pg.android.pendex.exceptions.ProfileLoadException;
 import pg.android.pendex.exceptions.ProfileResetException;
 import pg.android.pendex.exceptions.ProfileSaveException;
+import pg.android.pendex.exceptions.TraitLoadException;
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -272,7 +273,7 @@ public final class ProfileUtil {
 
     }
 
-    public static List<Trait> getPendexTraits() {
+    public static List<Trait> getPendexTraits(final Context context) throws TraitLoadException {
 
         final List<Trait> traits = new ArrayList<Trait>();
 
@@ -281,7 +282,7 @@ public final class ProfileUtil {
 
             trait.setTrait(entry.getKey());
             trait.setTraitValue(entry.getValue());
-            trait.setSummary(TraitUtil.getTraitSummay(entry.getKey()));
+            trait.setSummary(TraitUtil.getTraitSummay(context, entry.getKey()));
 
             traits.add(trait);
 

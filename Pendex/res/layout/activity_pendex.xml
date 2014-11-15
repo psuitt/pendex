@@ -21,7 +21,7 @@
             android:gravity="center"
   			android:textSize="20sp"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:visibility="invisible" />
+            android:text="@string/pendex_default_start_text" />
         
         <Button
             android:id="@+id/button1"

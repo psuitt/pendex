@@ -7,23 +7,23 @@
     android:paddingRight="8dp"
     android:paddingTop="8dp"
     android:paddingBottom="8dp"
+    android:descendantFocusability="blocksDescendants" 
     android:orientation="vertical" >
     
 	<TextView
-        android:id="@+id/change_profile_listview_name"
+        android:id="@+id/navigation_menu_listview_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="35sp" >
+        android:textColor="@color/darkgreen"
+        android:textSize="30sp" >
     </TextView>
     
 	<ImageButton
-	    android:id="@+id/change_profile_listview_remove"
+	    android:id="@+id/navigation_menu_listview_icon"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:layout_alignParentRight="true"
 	    android:layout_centerVertical="true"
-	    android:background="@color/darkred"
-	    android:contentDescription="@string/change_profile_action_item_remove"
-	    android:src="@drawable/ic_action_discard" />
+	    android:contentDescription="@string/test" />
 
 </RelativeLayout>

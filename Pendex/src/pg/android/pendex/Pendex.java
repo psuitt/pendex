@@ -30,6 +30,8 @@ import android.widget.TextView;
 
 public class Pendex extends ActionBarActivity implements INavigationDrawerCallbacks {
 
+    private static final String CHOOSE_WISELY = "Choose Wisely!";
+
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
@@ -54,13 +56,13 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
-        final Button p1_button = (Button) findViewById(R.id.button1);
+        final Button button1 = (Button) findViewById(R.id.button1);
         final TextView questionTextView = (TextView) findViewById(R.id.textView1);
 
-        p1_button.setText(R.string.pendex_click_to_begin);
+        button1.setText(R.string.pendex_click_to_begin);
         questionTextView.setText(R.string.pendex_default_start_text);
 
-        p1_button.setOnClickListener(new Button.OnClickListener() {
+        button1.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(final View v) {
 
@@ -109,10 +111,10 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
 
     private void setUpButtonListeners() {
 
-        final Button p1_button = (Button) findViewById(R.id.button1);
-        final Button p2_button = (Button) findViewById(R.id.button2);
+        final Button button1 = (Button) findViewById(R.id.button1);
+        final Button button2 = (Button) findViewById(R.id.button2);
 
-        p1_button.setOnClickListener(new Button.OnClickListener() {
+        button1.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(final View v) {
                 ProfileUtil.answerQuestion(0);
@@ -120,7 +122,7 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
             }
         });
 
-        p2_button.setOnClickListener(new Button.OnClickListener() {
+        button2.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(final View v) {
                 ProfileUtil.answerQuestion(1);
@@ -131,30 +133,30 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
 
     private void nextQuestion() {
 
-        final Button p1_button = (Button) findViewById(R.id.button1);
-        final Button p2_button = (Button) findViewById(R.id.button2);
-        final TextView text_view = (TextView) findViewById(R.id.textView1);
+        final Button button1 = (Button) findViewById(R.id.button1);
+        final Button button2 = (Button) findViewById(R.id.button2);
+        final TextView questionTextViw = (TextView) findViewById(R.id.textView1);
 
         try {
 
             final Question question = QuestionUtil.getRandomQuestion(getApplicationContext());
 
             if (Constants.EMPTY_STRING.equals(question.getQuestion())) {
-                text_view.setText("Choose Wisely!");
+                questionTextViw.setText(CHOOSE_WISELY);
             } else {
-                text_view.setText(question.getQuestion());
+                questionTextViw.setText(question.getQuestion());
             }
-            p1_button.setText(question.getAnswers().get(0).getAnswer());
-            p2_button.setText(question.getAnswers().get(1).getAnswer());
+            button1.setText(question.getAnswers().get(0).getAnswer());
+            button2.setText(question.getAnswers().get(1).getAnswer());
 
         } catch (final QuestionsLoadException e) {
 
             e.printStackTrace();
 
         } catch (final OutOfQuestionsException e) {
-            text_view.setText(Messages.COMPLETED_MESSAGE);
-            p1_button.setText("");
-            p2_button.setText("");
+            questionTextViw.setText(Messages.COMPLETED_MESSAGE);
+            button1.setText("");
+            button2.setText("");
         }
 
     }

@@ -10,7 +10,9 @@
         android:id="@+id/change_profile_listview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:choiceMode="singleChoice" >
+        android:choiceMode="singleChoice"
+        android:divider="@android:color/transparent"
+    	android:dividerHeight="0dp" >
     </ListView>
 
 </LinearLayout>

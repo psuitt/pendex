@@ -11,21 +11,23 @@
     android:orientation="vertical"
     android:background="@drawable/selector_change_profile" >
     
-	<TextView
-        android:id="@+id/navigation_menu_listview_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/menu_item_profile"
-        android:textSize="30sp" >
-    </TextView>
-    
-	<ImageButton
+    <ImageButton
 	    android:id="@+id/navigation_menu_listview_icon"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
-	    android:layout_alignParentRight="true"
 	    android:layout_centerVertical="true"
-	    android:contentDescription="@string/test"
-	    android:background="@drawable/ic_action_group" />
+	    android:contentDescription="@string/test" />
+    
+	<TextView
+	    android:id="@+id/navigation_menu_listview_text"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_centerVertical="true"
+	    android:layout_toRightOf="@id/navigation_menu_listview_icon"
+	    android:paddingLeft="10dp"
+	    android:textColor="@color/menu_item"
+        android:textSize="20sp" >
+
+    </TextView>
 
 </RelativeLayout>

@@ -36,9 +36,12 @@ public class NavigationMenuAdapter extends BaseAdapter {
 
         menuItems.add(new Menu(r.getString(R.string.title_section1), MenuType.Title));
         menuItems.add(new Menu(ProfileUtil.getProfileId(), MenuType.Profile));
-        menuItems.add(new Menu(r.getString(R.string.title_activity_profile)));
-        menuItems.add(new Menu(r.getString(R.string.title_activity_traits)));
-        menuItems.add(new Menu(r.getString(R.string.title_section4)));
+        menuItems.add(new Menu(r.getString(R.string.title_activity_profile), MenuType.Normal,
+                R.drawable.ic_action_person));
+        menuItems.add(new Menu(r.getString(R.string.title_activity_traits), MenuType.Normal,
+                R.drawable.ic_action_view_as_list));
+        menuItems.add(new Menu(r.getString(R.string.title_section4), MenuType.Normal,
+                R.drawable.ic_action_important));
 
     }
 
@@ -70,24 +73,31 @@ public class NavigationMenuAdapter extends BaseAdapter {
 
             holder = new TraitHolder();
 
-            if (menuItem.getType() == MenuType.Profile) {
-                row =
-                        inflater.inflate(R.layout.navigation_menu_listview_item_profile, parent,
-                                false);
-            } else {
-                row = inflater.inflate(R.layout.navigation_menu_listview_item, parent, false);
-            }
-
-            holder.textView = (TextView) row.findViewById(R.id.navigation_menu_listview_text);
-
             switch (menuItem.getType()) {
                 case Profile:
+                    row =
+                            inflater.inflate(R.layout.navigation_menu_listview_item_profile,
+                                    parent, false);
+                    holder.textView =
+                            (TextView) row.findViewById(R.id.navigation_menu_listview_text);
+
                     break;
                 case Title:
-                    holder.textView.setTextSize(25f);
+                    row = inflater.inflate(R.layout.navigation_menu_listview_item, parent, false);
+                    holder.textView =
+                            (TextView) row.findViewById(R.id.navigation_menu_listview_text);
+                    holder.textView.setTextSize(30f);
                     break;
                 default:
-                    holder.textView.setPadding(50, 0, 0, 0);
+                    row =
+                            inflater.inflate(R.layout.navigation_menu_listview_item_sub, parent,
+                                    false);
+
+                    holder.textView =
+                            (TextView) row.findViewById(R.id.navigation_menu_listview_text);
+                    holder.button =
+                            (ImageButton) row.findViewById(R.id.navigation_menu_listview_icon);
+                    holder.button.setBackgroundResource(menuItem.getIcon());
                     break;
             }
 

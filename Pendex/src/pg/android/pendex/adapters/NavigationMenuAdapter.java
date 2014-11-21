@@ -34,14 +34,15 @@ public class NavigationMenuAdapter extends BaseAdapter {
 
         final Resources r = context.getResources();
 
-        menuItems.add(new Menu(r.getString(R.string.title_section1), MenuType.Title));
+        menuItems.add(new Menu(r.getString(R.string.menu_activity_pendex), MenuType.Title));
         menuItems.add(new Menu(ProfileUtil.getProfileId(), MenuType.Profile));
-        menuItems.add(new Menu(r.getString(R.string.title_activity_profile), MenuType.Normal,
+        menuItems.add(new Menu(r.getString(R.string.menu_activity_profile), MenuType.Sublist,
                 R.drawable.ic_action_person));
-        menuItems.add(new Menu(r.getString(R.string.title_activity_traits), MenuType.Normal,
+        menuItems.add(new Menu(r.getString(R.string.menu_activity_traits), MenuType.Sublist,
                 R.drawable.ic_action_view_as_list));
-        menuItems.add(new Menu(r.getString(R.string.title_section4), MenuType.Normal,
+        menuItems.add(new Menu(r.getString(R.string.menu_activity_achievements), MenuType.Sublist,
                 R.drawable.ic_action_important));
+        menuItems.add(new Menu(r.getString(R.string.menu_activity_about)));
 
     }
 
@@ -88,7 +89,7 @@ public class NavigationMenuAdapter extends BaseAdapter {
                             (TextView) row.findViewById(R.id.navigation_menu_listview_text);
                     holder.textView.setTextSize(30f);
                     break;
-                default:
+                case Sublist:
                     row =
                             inflater.inflate(R.layout.navigation_menu_listview_item_sub, parent,
                                     false);
@@ -98,6 +99,11 @@ public class NavigationMenuAdapter extends BaseAdapter {
                     holder.button =
                             (ImageButton) row.findViewById(R.id.navigation_menu_listview_icon);
                     holder.button.setBackgroundResource(menuItem.getIcon());
+                    break;
+                default:
+                    row = inflater.inflate(R.layout.navigation_menu_listview_item, parent, false);
+                    holder.textView =
+                            (TextView) row.findViewById(R.id.navigation_menu_listview_text);
                     break;
             }
 

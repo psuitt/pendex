@@ -24,7 +24,7 @@
 	    android:layout_height="wrap_content"
 	    android:layout_centerVertical="true"
 	    android:layout_toRightOf="@id/navigation_menu_listview_icon"
-	    android:paddingLeft="10dp"
+	    android:paddingLeft="15dp"
 	    android:textColor="@color/menu_item"
         android:textSize="20sp" >
 

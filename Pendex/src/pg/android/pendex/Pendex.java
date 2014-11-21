@@ -173,26 +173,26 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
     public void onSectionAttached(final int number) {
         switch (number) {
             case 1:
-                mTitle = getString(R.string.title_section1);
+                mTitle = getString(R.string.menu_activity_pendex);
                 break;
             case 2:
-                mTitle = getString(R.string.title_activity_change_profile);
+                mTitle = getString(R.string.menu_activity_change_profile);
                 final Intent changeProfileIntent =
                         new Intent(getBaseContext(), ChangeProfile.class);
                 startActivity(changeProfileIntent);
                 break;
             case 3:
-                mTitle = getString(R.string.title_activity_profile);
+                mTitle = getString(R.string.menu_activity_profile);
                 final Intent profileIntent = new Intent(getBaseContext(), Profile.class);
                 startActivity(profileIntent);
                 break;
             case 4:
-                mTitle = getString(R.string.title_activity_traits);
+                mTitle = getString(R.string.menu_activity_traits);
                 final Intent traitsIntent = new Intent(getBaseContext(), Traits.class);
                 startActivity(traitsIntent);
                 break;
             case 5:
-                mTitle = getString(R.string.title_section4);
+                mTitle = getString(R.string.menu_activity_achievements);
                 break;
         }
     }

@@ -13,7 +13,7 @@ public class Menu {
     private int icon;
 
     public enum MenuType {
-        Normal, Profile, Title;
+        Normal, Profile, Sublist, Title;
     }
 
     public Menu() {

@@ -7,14 +7,15 @@
     android:paddingRight="8dp"
     android:paddingTop="8dp"
     android:paddingBottom="8dp"
-    android:descendantFocusability="blocksDescendants" 
-    android:orientation="vertical" >
+    android:descendantFocusability="blocksDescendants"
+    android:orientation="vertical"
+    android:background="@drawable/selector_change_profile" >
     
 	<TextView
         android:id="@+id/navigation_menu_listview_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/darkgreen"
+        android:textColor="@color/menu_item_profile"
         android:textSize="30sp" >
     </TextView>
     

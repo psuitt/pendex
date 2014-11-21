@@ -7,13 +7,14 @@
     android:paddingRight="8dp"
     android:paddingTop="8dp"
     android:paddingBottom="8dp"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:background="@drawable/selector_change_profile" >
     
 	<TextView
         android:id="@+id/navigation_menu_listview_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/blue"
+        android:textColor="@color/menu_item"
         android:textSize="20sp" >
     </TextView>
 

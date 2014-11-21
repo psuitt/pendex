@@ -100,8 +100,6 @@ public class NavigationDrawerFragment extends Fragment {
             }
         });
 
-        mDrawerListView.setSelector(R.drawable.selector_change_profile);
-
         mDrawerListView.setAdapter(new NavigationMenuAdapter(getActivity()));
         // mDrawerListView.setAdapter(new ArrayAdapter<String>(getActionBar().getThemedContext(),
         // android.R.layout.simple_list_item_activated_1, android.R.id.text1, menuList));

@@ -278,4 +278,10 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
         }
     }
 
+    @Override
+    public void skip() {
+        ProfileUtil.skipQuestion();
+        nextQuestion();
+    }
+
 }

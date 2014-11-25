@@ -19,9 +19,10 @@ import pg.android.pendex.beans.PendexRating;
 import pg.android.pendex.beans.Question;
 import pg.android.pendex.beans.Trait;
 import pg.android.pendex.comparators.TraitsAlphaComparator;
+import pg.android.pendex.constants.Constants;
 import pg.android.pendex.constants.Preferences;
 import pg.android.pendex.db.File;
-import pg.android.pendex.db.enums.Profile;
+import pg.android.pendex.db.enums.PROFILE;
 import pg.android.pendex.exceptions.ProfileExistsException;
 import pg.android.pendex.exceptions.ProfileLoadException;
 import pg.android.pendex.exceptions.ProfileResetException;
@@ -120,17 +121,17 @@ public final class ProfileUtil {
                     new JSONObject(File.loadInternalFileJSON(context,
                             ProfileUtil.getProfileFileName()));
 
-            loadedProfileName = profileObj.getString(Profile.Name.name);
+            loadedProfileName = profileObj.getString(PROFILE.Name.getName());
             created =
-                    FormatUtil.getDateFromSimple(profileObj.getString(Profile.Created.name),
+                    FormatUtil.getDateFromSimple(profileObj.getString(PROFILE.Created.getName()),
                             Locale.getDefault());
-            lastAnswered = profileObj.getString(Profile.LastAnswered.name);
+            lastAnswered = profileObj.getString(PROFILE.LastAnswered.getName());
 
-            final JSONObject answers = profileObj.getJSONObject(Profile.Answers.name);
+            final JSONObject answers = profileObj.getJSONObject(PROFILE.Answers.getName());
 
             answeredQuestions.putAll(JsonUtil.createPendexMapFromJson(answers));
 
-            final JSONObject pendexJson = profileObj.getJSONObject(Profile.Pendex.name);
+            final JSONObject pendexJson = profileObj.getJSONObject(PROFILE.Pendex.getName());
 
             pendex.putAll(JsonUtil.createPendexMapFromJson(pendexJson));
 
@@ -150,6 +151,8 @@ public final class ProfileUtil {
 
         }
 
+        QuestionUtil.resetQuestions();
+
     }
 
     /**
@@ -163,18 +166,18 @@ public final class ProfileUtil {
 
         final Map<String, Object> map = new HashMap<String, Object>();
 
-        map.put(Profile.Id.name, loadedProfileId);
-        map.put(Profile.Name.name, loadedProfileName);
-        map.put(Profile.Created.name, FormatUtil.getDateSimple(created, Locale.getDefault()));
-        map.put(Profile.LastAnswered.name, lastAnswered);
+        map.put(PROFILE.Id.getName(), loadedProfileId);
+        map.put(PROFILE.Name.getName(), loadedProfileName);
+        map.put(PROFILE.Created.getName(), FormatUtil.getDateSimple(created, Locale.getDefault()));
+        map.put(PROFILE.LastAnswered.getName(), lastAnswered);
 
         final JSONObject jsonObject = new JSONObject(map);
 
         // Add the answers and pendex.
         try {
 
-            jsonObject.put(Profile.Answers.name, new JSONObject(answeredQuestions));
-            jsonObject.put(Profile.Pendex.name, new JSONObject(pendex));
+            jsonObject.put(PROFILE.Answers.getName(), new JSONObject(answeredQuestions));
+            jsonObject.put(PROFILE.Pendex.getName(), new JSONObject(pendex));
 
         } catch (final JSONException e) {
 
@@ -215,6 +218,8 @@ public final class ProfileUtil {
 
         }
 
+        QuestionUtil.resetQuestions();
+
     }
 
     public static void removeProfile(final Context context, final String profileId) {
@@ -227,6 +232,18 @@ public final class ProfileUtil {
 
     }
 
+    /**
+     * Skips the current question by answering with the skip constant.
+     */
+    public static void skipQuestion() {
+        answerQuestion(Constants.SKIP);
+    }
+
+    /**
+     * Answers the question with the index of the answer 0 for the first answer.
+     * 
+     * @param indexOfAnswer - int - 0 Index means the first answer. -1 is the value to skip.
+     */
     public static void answerQuestion(final int indexOfAnswer) {
 
         final Question selectedQuestion = QuestionUtil.getSelectedQuestion();
@@ -236,9 +253,22 @@ public final class ProfileUtil {
             return;
         }
 
+        if (Constants.SKIP == indexOfAnswer) {
+            answeredQuestions.put(selectedQuestion.getId(), indexOfAnswer);
+            return;
+        }
+
         final Answer answer = selectedQuestion.getAnswers().get(indexOfAnswer);
+        Answer notAnswered;
         final PendexRating pendexRating = answer.getPendexRating();
         final String question = selectedQuestion.getQuestion();
+
+        if (indexOfAnswer == 0) {
+            notAnswered = selectedQuestion.getAnswers().get(1);
+        } else {
+            notAnswered = selectedQuestion.getAnswers().get(0);
+        }
+
 
         final StringBuilder lastAnsweredSB = new StringBuilder();
 
@@ -246,11 +276,7 @@ public final class ProfileUtil {
             lastAnsweredSB.append("You choose ");
             lastAnsweredSB.append(answer.getAnswer());
             lastAnsweredSB.append(" over ");
-            if (indexOfAnswer == 0) {
-                lastAnsweredSB.append(selectedQuestion.getAnswers().get(1).getAnswer());
-            } else {
-                lastAnsweredSB.append(selectedQuestion.getAnswers().get(0).getAnswer());
-            }
+            lastAnsweredSB.append(notAnswered.getAnswer());
         } else {
             lastAnsweredSB.append(question);
             lastAnsweredSB.append(" ");
@@ -269,6 +295,19 @@ public final class ProfileUtil {
                 pendex.put(entry.getKey(), entry.getValue());
             }
 
+        }
+
+        // Set the next question to the subsequent question
+        if (!answer.getLinked().isEmpty()) {
+            QuestionUtil.setQuestionById(answer.getLinked());
+        } else {
+            QuestionUtil.removeLinked();
+        }
+
+        // Skip the not answered.
+        if (!notAnswered.getLinked().isEmpty()) {
+            answeredQuestions.put(notAnswered.getLinked(), Constants.SKIP);
+            QuestionUtil.removeQuestionById(notAnswered.getLinked());
         }
 
     }

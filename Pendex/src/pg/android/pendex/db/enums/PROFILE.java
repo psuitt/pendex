@@ -6,15 +6,19 @@ package pg.android.pendex.db.enums;
  * @author Sora
  * 
  */
-public enum Profile {
+public enum PROFILE {
 
     Id("id"), Name("name"), Answers("answers"), Pendex("pendex"), Created("created"), LastAnswered(
             "lastanswered");
 
-    public String name;
+    private String name;
 
-    Profile(final String name) {
+    PROFILE(final String name) {
         this.name = name;
+    }
+
+    public String getName() {
+        return name;
     }
 
 }

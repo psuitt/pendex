@@ -17,6 +17,9 @@ public final class Constants {
 
     public static final String STRING_UTF_8 = "UTF-8";
 
+    public static final int FIRST = 0;
+    public static final int SKIP = -1;
+
     /**
      * Hidden constructor.
      */

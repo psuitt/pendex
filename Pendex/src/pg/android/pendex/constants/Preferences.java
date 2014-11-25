@@ -6,6 +6,8 @@ public final class Preferences {
 
     public static final String LAST_PROFILE_ID_STRING = "lastLoadedProfileId";
 
+    public static final String LAST_QUESTION_ID_STRING = "lastQuestionId";
+
     /**
      * Hidden constructor.
      */

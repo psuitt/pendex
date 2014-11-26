@@ -306,8 +306,10 @@ public final class ProfileUtil {
 
         // Skip the not answered.
         if (!notAnswered.getLinked().isEmpty()) {
-            answeredQuestions.put(notAnswered.getLinked(), Constants.SKIP);
-            QuestionUtil.removeQuestionById(notAnswered.getLinked());
+            final List<String> removed = QuestionUtil.removeQuestionById(notAnswered.getLinked());
+            for (final String removedId : removed) {
+                answeredQuestions.put(removedId, Constants.SKIP);
+            }
         }
 
     }

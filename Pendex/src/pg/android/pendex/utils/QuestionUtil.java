@@ -44,6 +44,7 @@ public final class QuestionUtil {
      */
     public static void resetQuestions() {
         done = false;
+        linked = null;
         selectedQuestion = null;
         questions.clear();
         questionsMap.clear();
@@ -110,11 +111,14 @@ public final class QuestionUtil {
 
                     added++;
 
-                    if (!q.getAnswers().get(0).getLinked().isEmpty()) {
+                    final String linked1 = q.getAnswers().get(0).getLinked();
+                    final String linked2 = q.getAnswers().get(1).getLinked();
+
+                    if (!linked1.isEmpty()) {
                         added--;
                     }
 
-                    if (!q.getAnswers().get(1).getLinked().isEmpty()) {
+                    if (!linked2.isEmpty()) {
                         added--;
                     }
 
@@ -229,10 +233,27 @@ public final class QuestionUtil {
      * Removes the question from the map and list.
      * 
      * @param id - String - Id of the question.
+     * 
+     * @return List&lt;String&gt; - The questions if there are links this will be more than 1.
      */
-    public static void removeQuestionById(final String id) {
+    public static List<String> removeQuestionById(final String id) {
+        final List<String> removed = new ArrayList<String>();
         final Question question = questionsMap.get(id);
         removeQuestion(question);
+        removed.add(id);
+
+        final Answer answer1 = question.getAnswers().get(0);
+        final Answer answer2 = question.getAnswers().get(1);
+
+        if (!answer1.getLinked().isEmpty()) {
+            removed.addAll(removeQuestionById(answer1.getLinked()));
+        }
+
+        if (!answer2.getLinked().isEmpty()) {
+            removed.addAll(removeQuestionById(answer2.getLinked()));
+        }
+
+        return removed;
     }
 
     /**

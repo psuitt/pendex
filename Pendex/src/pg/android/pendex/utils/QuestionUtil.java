@@ -242,15 +242,10 @@ public final class QuestionUtil {
         removeQuestion(question);
         removed.add(id);
 
-        final Answer answer1 = question.getAnswers().get(0);
-        final Answer answer2 = question.getAnswers().get(1);
-
-        if (!answer1.getLinked().isEmpty()) {
-            removed.addAll(removeQuestionById(answer1.getLinked()));
-        }
-
-        if (!answer2.getLinked().isEmpty()) {
-            removed.addAll(removeQuestionById(answer2.getLinked()));
+        for (final Answer answer : question.getAnswers()) {
+            if (!answer.getLinked().isEmpty()) {
+                removed.addAll(removeQuestionById(answer.getLinked()));
+            }
         }
 
         return removed;

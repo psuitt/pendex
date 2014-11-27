@@ -70,7 +70,7 @@ public final class TraitUtil {
      * @return String - Summary of trait.
      * @throws TraitLoadException - If the traits can't load.
      */
-    public static String getTraitSummay(final Context context, final String trait)
+    public static String getTraitSummary(final Context context, final String trait)
             throws TraitLoadException {
 
         if (!loaded) {

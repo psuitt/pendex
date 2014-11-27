@@ -1,6 +1,6 @@
 package pg.android.pendex;
 
-import pg.android.pendex.exceptions.ProfileResetException;
+import pg.android.pendex.exceptions.profile.ProfileResetException;
 import pg.android.pendex.utils.ProfileUtil;
 import android.app.ActionBar;
 import android.os.Bundle;

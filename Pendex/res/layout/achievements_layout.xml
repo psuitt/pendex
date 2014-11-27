@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
+    android:orientation="vertical" >
+    
+	<TextView
+        android:id="@+id/achievement_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="25sp" >
+    </TextView>
+    
+	<TextView
+	    android:id="@+id/achievement_value"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentRight="true"
+	    android:gravity="right"
+	    android:textSize="25sp" >
+
+    </TextView>
+    
+	<TextView
+        android:id="@+id/achievement_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/achievement_title"
+        android:textSize="15sp"
+        android:textColor="@color/darkgreen" >
+    </TextView>
+
+    <TextView
+        android:id="@+id/achievement_summary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/achievement_date"
+        android:textSize="15sp" >
+    </TextView>
+    
+</RelativeLayout>

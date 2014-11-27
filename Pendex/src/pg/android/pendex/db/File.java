@@ -4,6 +4,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import pg.android.pendex.constants.Assets;
@@ -25,6 +26,17 @@ public final class File {
         // name) and make it private to your application.
         final FileOutputStream fos = context.openFileOutput(fileName, Context.MODE_PRIVATE);
         fos.write(jsonObject.toString().getBytes());
+        fos.close();
+
+    }
+
+    public static void storeInternalFileJSON(final Context context, final String fileName,
+            final JSONArray jsonArray) throws IOException {
+
+        // MODE_PRIVATE will create the file (or replace a file of the same
+        // name) and make it private to your application.
+        final FileOutputStream fos = context.openFileOutput(fileName, Context.MODE_PRIVATE);
+        fos.write(jsonArray.toString().getBytes());
         fos.close();
 
     }

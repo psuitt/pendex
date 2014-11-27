@@ -1,8 +1,8 @@
 package pg.android.pendex.dialogs;
 
 import pg.android.pendex.R;
-import pg.android.pendex.exceptions.ProfileExistsException;
-import pg.android.pendex.exceptions.ProfileSaveException;
+import pg.android.pendex.exceptions.profile.ProfileExistsException;
+import pg.android.pendex.exceptions.profile.ProfileSaveException;
 import pg.android.pendex.interfaces.IChangeProfileAddDialogCallbacks;
 import pg.android.pendex.utils.ProfileUtil;
 import android.app.AlertDialog;

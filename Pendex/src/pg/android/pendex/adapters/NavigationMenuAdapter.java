@@ -65,14 +65,14 @@ public class NavigationMenuAdapter extends BaseAdapter {
     public View getView(final int position, final View convertView, final ViewGroup parent) {
 
         View row = convertView;
-        TraitHolder holder = null;
+        MenuHolder holder = null;
 
         final Menu menuItem = menuItems.get(position);
 
         if (row == null) {
             final LayoutInflater inflater = ((Activity) context).getLayoutInflater();
 
-            holder = new TraitHolder();
+            holder = new MenuHolder();
 
             switch (menuItem.getType()) {
                 case Profile:
@@ -109,7 +109,7 @@ public class NavigationMenuAdapter extends BaseAdapter {
 
             row.setTag(holder);
         } else {
-            holder = (TraitHolder) row.getTag();
+            holder = (MenuHolder) row.getTag();
         }
 
         holder.textView.setText(menuItem.getText());
@@ -128,7 +128,7 @@ public class NavigationMenuAdapter extends BaseAdapter {
         return true;
     }
 
-    static class TraitHolder {
+    static class MenuHolder {
         TextView textView;
         ImageButton button;
     }

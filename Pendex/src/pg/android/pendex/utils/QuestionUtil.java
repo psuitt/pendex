@@ -53,6 +53,7 @@ public final class QuestionUtil {
     public static Question getRandomQuestion(final Context context) throws QuestionsLoadException,
             OutOfQuestionsException {
 
+        // This will only occur after finishing the questions.
         if (done) {
             throw new OutOfQuestionsException();
         }
@@ -76,6 +77,8 @@ public final class QuestionUtil {
         final int max = questions.size();
         Question q = questions.get(index);
 
+        // If there is a parent and you have not answered it yet skip this.
+        // TODO: Clean up unattached parents.
         while (!q.getParentId().isEmpty() && !ProfileUtil.hasAnswered(q.getParentId())
                 && index < max) {
             index++;

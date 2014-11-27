@@ -46,6 +46,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="pg.android.pendex.Pendex" />
         </activity>
+        <activity
+            android:name=".Achievements"
+            android:label="@string/menu_activity_achievements"
+            android:parentActivityName=".Pendex" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="pg.android.pendex.Pendex" />
+        </activity>
     </application>
 
 </manifest>

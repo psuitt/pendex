@@ -1,4 +1,4 @@
-package pg.android.pendex.exceptions;
+package pg.android.pendex.exceptions.profile;
 
 /**
  * Exception while loading profile.

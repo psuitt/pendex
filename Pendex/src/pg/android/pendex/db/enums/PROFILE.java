@@ -8,8 +8,13 @@ package pg.android.pendex.db.enums;
  */
 public enum PROFILE {
 
-    Id("id"), Name("name"), Answers("answers"), Pendex("pendex"), Created("created"), LastAnswered(
-            "lastanswered");
+    Id("id"), 
+    Name("name"), 
+    Answers("answers"), 
+    Pendex("pendex"), 
+    Created("created"), 
+    LastAnswered("lastanswered"), 
+    Achievements("achievements");
 
     private String name;
 

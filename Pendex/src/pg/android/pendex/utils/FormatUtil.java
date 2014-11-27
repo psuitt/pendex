@@ -15,8 +15,26 @@ import pg.android.pendex.constants.Constants;
  */
 public final class FormatUtil {
 
+    public static final String getDateSimple(final String stringDate) {
+        if (stringDate == null || stringDate.isEmpty()) {
+            return Constants.EMPTY_STRING;
+        }
+        return new SimpleDateFormat(Constants.DATE_FORMAT, Locale.getDefault()).format(stringDate);
+    }
+
+    public static final String getDateSimple(final Date date) {
+        return getDateSimple(date, Locale.getDefault());
+    }
+
     public static final String getDateSimple(final Date date, final Locale locale) {
+        if (date == null) {
+            return Constants.EMPTY_STRING;
+        }
         return new SimpleDateFormat(Constants.DATE_FORMAT, locale).format(date);
+    }
+
+    public static final Date getDateFromSimple(final String stringDate) {
+        return getDateFromSimple(stringDate, Locale.getDefault());
     }
 
     public static final Date getDateFromSimple(final String stringDate, final Locale locale) {

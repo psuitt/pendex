@@ -23,11 +23,13 @@ import pg.android.pendex.constants.Constants;
 import pg.android.pendex.constants.Preferences;
 import pg.android.pendex.db.File;
 import pg.android.pendex.db.enums.PROFILE;
-import pg.android.pendex.exceptions.ProfileExistsException;
-import pg.android.pendex.exceptions.ProfileLoadException;
-import pg.android.pendex.exceptions.ProfileResetException;
-import pg.android.pendex.exceptions.ProfileSaveException;
 import pg.android.pendex.exceptions.TraitLoadException;
+import pg.android.pendex.exceptions.achievement.AchievementLoadException;
+import pg.android.pendex.exceptions.achievement.AchievementSaveException;
+import pg.android.pendex.exceptions.profile.ProfileExistsException;
+import pg.android.pendex.exceptions.profile.ProfileLoadException;
+import pg.android.pendex.exceptions.profile.ProfileResetException;
+import pg.android.pendex.exceptions.profile.ProfileSaveException;
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -151,6 +153,23 @@ public final class ProfileUtil {
 
         }
 
+        try {
+
+            AchievementUtil.loadAchievements(context);
+
+        } catch (final AchievementLoadException e) {
+
+            e.printStackTrace();
+            throw new ProfileLoadException();
+
+        } catch (final AchievementSaveException e) {
+
+            e.printStackTrace();
+            throw new ProfileLoadException();
+
+        }
+
+        // Reset the loaded questions as to change it up.
         QuestionUtil.resetQuestions();
 
     }
@@ -168,7 +187,7 @@ public final class ProfileUtil {
 
         map.put(PROFILE.Id.getName(), loadedProfileId);
         map.put(PROFILE.Name.getName(), loadedProfileName);
-        map.put(PROFILE.Created.getName(), FormatUtil.getDateSimple(created, Locale.getDefault()));
+        map.put(PROFILE.Created.getName(), FormatUtil.getDateSimple(created));
         map.put(PROFILE.LastAnswered.getName(), lastAnswered);
 
         final JSONObject jsonObject = new JSONObject(map);
@@ -191,6 +210,17 @@ public final class ProfileUtil {
             File.storeInternalFileJSON(context, ProfileUtil.getProfileFileName(), jsonObject);
 
         } catch (final IOException e) {
+
+            e.printStackTrace();
+            throw new ProfileSaveException();
+
+        }
+
+        try {
+
+            AchievementUtil.saveAchievement(context);
+
+        } catch (final AchievementSaveException e) {
 
             e.printStackTrace();
             throw new ProfileSaveException();
@@ -323,7 +353,7 @@ public final class ProfileUtil {
 
             trait.setTrait(entry.getKey());
             trait.setTraitValue(entry.getValue());
-            trait.setSummary(TraitUtil.getTraitSummay(context, entry.getKey()));
+            trait.setSummary(TraitUtil.getTraitSummary(context, entry.getKey()));
 
             traits.add(trait);
 

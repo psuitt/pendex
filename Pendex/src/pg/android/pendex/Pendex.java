@@ -4,9 +4,9 @@ import pg.android.pendex.beans.Question;
 import pg.android.pendex.constants.Constants;
 import pg.android.pendex.constants.Messages;
 import pg.android.pendex.exceptions.OutOfQuestionsException;
-import pg.android.pendex.exceptions.ProfileLoadException;
-import pg.android.pendex.exceptions.ProfileSaveException;
 import pg.android.pendex.exceptions.QuestionsLoadException;
+import pg.android.pendex.exceptions.profile.ProfileLoadException;
+import pg.android.pendex.exceptions.profile.ProfileSaveException;
 import pg.android.pendex.interfaces.INavigationDrawerCallbacks;
 import pg.android.pendex.utils.ProfileUtil;
 import pg.android.pendex.utils.QuestionUtil;
@@ -193,6 +193,8 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
                 break;
             case 5:
                 mTitle = getString(R.string.menu_activity_achievements);
+                final Intent achievementsIntent = new Intent(getBaseContext(), Achievements.class);
+                startActivity(achievementsIntent);
                 break;
         }
     }
@@ -262,7 +264,8 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
             return fragment;
         }
 
-        public PlaceholderFragment() {}
+        public PlaceholderFragment() {
+        }
 
         @Override
         public View onCreateView(final LayoutInflater inflater, final ViewGroup container,

@@ -1,5 +1,6 @@
 package pg.android.pendex.adapters;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import pg.android.pendex.R;
@@ -21,7 +22,8 @@ public class AchievementsListViewAdapter extends BaseAdapter {
 
     public AchievementsListViewAdapter(final Context context) {
         this.context = context;
-        achievements = AchievementUtil.getAchievements(context);
+        achievements = new ArrayList<Achievement>();
+        achievements.addAll(AchievementUtil.getAchievements(context));
 
         if (achievements.isEmpty()) {
             final Achievement achievement = new Achievement();

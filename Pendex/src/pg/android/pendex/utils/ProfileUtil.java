@@ -55,6 +55,9 @@ public final class ProfileUtil {
         final List<String> list = new ArrayList<String>();
 
         for (final String fileName : context.fileList()) {
+            if (!fileName.contains(PROFILE_FILENAME_SUFFIX)) {
+                continue;
+            }
             final String profileName = fileName.replace(PROFILE_FILENAME_SUFFIX, "");
             if (!fileName.equals(getProfileFileName())) {
                 list.add(profileName);
@@ -340,6 +343,10 @@ public final class ProfileUtil {
             for (final String removedId : removed) {
                 answeredQuestions.put(removedId, Constants.SKIP);
             }
+        }
+
+        if (!answer.getAchievement().isEmpty()) {
+            AchievementUtil.addAchievements(answer.getAchievement());
         }
 
     }

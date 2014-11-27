@@ -19,7 +19,7 @@ public final class FormatUtil {
         if (stringDate == null || stringDate.isEmpty()) {
             return Constants.EMPTY_STRING;
         }
-        return new SimpleDateFormat(Constants.DATE_FORMAT, Locale.getDefault()).format(stringDate);
+        return getDateSimple(getDateFromSimple(stringDate));
     }
 
     public static final String getDateSimple(final Date date) {

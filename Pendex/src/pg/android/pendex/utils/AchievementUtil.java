@@ -95,7 +95,7 @@ public class AchievementUtil {
         // Now save.
         try {
 
-            File.storeInternalFileJSON(context, ProfileUtil.getProfileFileName(), jsonObject);
+            File.storeInternalFileJSON(context, getAchievementFileName(), jsonObject);
 
         } catch (final IOException e) {
 
@@ -116,15 +116,17 @@ public class AchievementUtil {
 
     }
 
-    public static void addAchievements(final String... achievements) {
+    public static void addAchievements(final String... arr) {
 
-        for (final String achievement : achievements) {
+        for (final String achievement : arr) {
 
             final Achievement achievementToAdd = new Achievement();
 
             achievementToAdd.setAchievement(achievement);
             achievementToAdd.setDate(FormatUtil.getDateSimple(new Date()));
             achievementToAdd.setValue(1);
+
+            achievements.add(achievementToAdd);
 
         }
 

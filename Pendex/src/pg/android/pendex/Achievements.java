@@ -1,12 +1,14 @@
 package pg.android.pendex;
 
 import pg.android.pendex.adapters.AchievementsListViewAdapter;
+import pg.android.pendex.utils.AchievementUtil;
 import android.app.ActionBar;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.TextView;
 
 public class Achievements extends ActionBarActivity {
 
@@ -31,6 +33,11 @@ public class Achievements extends ActionBarActivity {
         final AchievementsListViewAdapter adapter = new AchievementsListViewAdapter(this);
 
         myListView.setAdapter(adapter);
+
+        final TextView textView = (TextView) findViewById(R.id.achievements_title);
+
+        textView.setText("Total Points: "
+                + String.valueOf(AchievementUtil.getTotalAchievementPoints()));
 
     }
 

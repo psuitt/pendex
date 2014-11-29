@@ -27,12 +27,13 @@ import android.content.Context;
  */
 public class AchievementUtil {
 
+    private static int totalAchievementPoints = 0;
+
     private static List<Achievement> achievements = new ArrayList<Achievement>();
 
     private static final Map<String, String> achievementSummaryMap = new HashMap<String, String>();
 
-    private static final String NO_SUMMAY_TEXT =
-            "A description of this achievement is not available please add one.";
+    private static final String NO_SUMMAY_TEXT = "";
 
     private static final String ACHIEVEMENT_FILENAME_SUFFIX = "-achievement.json";
 
@@ -61,6 +62,7 @@ public class AchievementUtil {
                 achievement.setValue(value);
 
                 achievements.add(achievement);
+                totalAchievementPoints += value;
 
             }
 
@@ -157,6 +159,10 @@ public class AchievementUtil {
 
     public static List<Achievement> getAchievements(final Context context) {
         return achievements;
+    }
+
+    public static int getTotalAchievementPoints() {
+        return totalAchievementPoints;
     }
 
     public static String getAchievementFileName() {

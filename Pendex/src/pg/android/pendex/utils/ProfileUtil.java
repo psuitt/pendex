@@ -42,8 +42,8 @@ import android.content.SharedPreferences;
 public final class ProfileUtil {
 
     private static boolean profileReload = true;
-    private static String loadedProfileId = "default";
-    private static String loadedProfileName = "default";
+    private static String loadedProfileId = Constants.DEFAULT_USER;
+    private static String loadedProfileName = Constants.DEFAULT_USER;
     private static Date created = new Date(System.currentTimeMillis());
     private static String lastAnswered = "Start answering questions!";
     private static Map<String, Integer> answeredQuestions = new HashMap<String, Integer>();
@@ -272,7 +272,7 @@ public final class ProfileUtil {
 
     public static void removeProfile(final Context context, final String profileId) {
 
-        if (profileId.contains(".json")) {
+        if (profileId.contains(Constants.JSON_FILE_ENDING)) {
             File.deleteInternalFile(context, profileId);
         } else {
             File.deleteInternalFile(context, getProfileFileName(profileId));

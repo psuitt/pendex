@@ -41,9 +41,10 @@ import android.content.SharedPreferences;
  */
 public final class ProfileUtil {
 
+    private static boolean profileReload = true;
     private static String loadedProfileId = "default";
     private static String loadedProfileName = "default";
-    private static Date created = new Date();
+    private static Date created = new Date(System.currentTimeMillis());
     private static String lastAnswered = "Start answering questions!";
     private static Map<String, Integer> answeredQuestions = new HashMap<String, Integer>();
     private static Map<String, Integer> pendex = new HashMap<String, Integer>();
@@ -72,7 +73,7 @@ public final class ProfileUtil {
     }
 
     public static void reset() {
-        reset("default");
+        reset(loadedProfileId);
     }
 
     /**
@@ -95,13 +96,17 @@ public final class ProfileUtil {
         }
 
         reset(profile);
-        created = new Date();
+        created = new Date(System.currentTimeMillis());
         saveProfile(context);
 
     }
 
     public static void loadProfile(final Context context) throws ProfileLoadException,
             ProfileSaveException {
+
+        if (!profileReload) {
+            return;
+        }
 
         final SharedPreferences settings =
                 context.getSharedPreferences(Preferences.PENDEX_PREFERENCES, Context.MODE_PRIVATE);
@@ -171,6 +176,16 @@ public final class ProfileUtil {
             throw new ProfileLoadException();
 
         }
+
+        // We need an Editor object to make preference changes.
+        // All objects are from android.context.Context
+        final SharedPreferences settings =
+                context.getSharedPreferences(Preferences.PENDEX_PREFERENCES, 0);
+        final SharedPreferences.Editor editor = settings.edit();
+        editor.putString(Preferences.LAST_PROFILE_ID_STRING, ProfileUtil.getProfileId());
+
+        // Commit the edits!
+        editor.commit();
 
         // Reset the loaded questions as to change it up.
         QuestionUtil.resetQuestions();
@@ -262,6 +277,8 @@ public final class ProfileUtil {
         } else {
             File.deleteInternalFile(context, getProfileFileName(profileId));
         }
+
+        AchievementUtil.removeAchievements(context);
 
     }
 
@@ -372,6 +389,10 @@ public final class ProfileUtil {
 
     }
 
+    public static void triggerProfileReload() {
+        profileReload = true;
+    }
+
     public static String getProfileId() {
         return loadedProfileId;
     }
@@ -392,7 +413,7 @@ public final class ProfileUtil {
         return answeredQuestions.containsKey(s);
     }
 
-    public static String getProfileFileName() {
+    private static String getProfileFileName() {
         return loadedProfileId + PROFILE_FILENAME_SUFFIX;
     }
 

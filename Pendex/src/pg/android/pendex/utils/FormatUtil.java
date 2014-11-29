@@ -43,7 +43,7 @@ public final class FormatUtil {
         } catch (final ParseException e) {
             e.printStackTrace();
         }
-        return new Date();
+        return new Date(System.currentTimeMillis());
     }
 
     /**

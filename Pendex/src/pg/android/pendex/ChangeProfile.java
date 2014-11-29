@@ -3,14 +3,12 @@ package pg.android.pendex;
 import java.util.List;
 
 import pg.android.pendex.adapters.ChangeProfileListViewAdapter;
-import pg.android.pendex.constants.Preferences;
 import pg.android.pendex.dialogs.ChangeProfileAdd;
 import pg.android.pendex.exceptions.profile.ProfileLoadException;
 import pg.android.pendex.exceptions.profile.ProfileSaveException;
 import pg.android.pendex.interfaces.IChangeProfileAddDialogCallbacks;
 import pg.android.pendex.utils.ProfileUtil;
 import android.app.DialogFragment;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
@@ -54,8 +52,6 @@ public class ChangeProfile extends ActionBarActivity {
                     final String profileId = allProfiles.get(position);
                     // Load the selected profile.
                     ProfileUtil.loadProfile(ChangeProfile.this, profileId);
-                    // Save the new default in the preferences.
-                    updateLoadedUser();
                     // Move to parent.
                     NavUtils.navigateUpFromSameTask(ChangeProfile.this);
                 } catch (final ProfileLoadException e) {
@@ -115,6 +111,19 @@ public class ChangeProfile extends ActionBarActivity {
                         allProfiles.clear();
                         allProfiles.addAll(ProfileUtil.getProfilesList(ChangeProfile.this));
                         adapter.setSelected(newUserId);
+                        // Load the selected profile.
+                        try {
+                            ProfileUtil.loadProfile(ChangeProfile.this, newUserId);
+                            // Move to parent.
+                            NavUtils.navigateUpFromSameTask(ChangeProfile.this);
+                        } catch (final ProfileLoadException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        } catch (final ProfileSaveException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+
                     }
 
                 });
@@ -125,17 +134,6 @@ public class ChangeProfile extends ActionBarActivity {
     @Override
     protected void onStop() {
         super.onStop();
-    }
-
-    private void updateLoadedUser() {
-        // We need an Editor object to make preference changes.
-        // All objects are from android.context.Context
-        final SharedPreferences settings = getSharedPreferences(Preferences.PENDEX_PREFERENCES, 0);
-        final SharedPreferences.Editor editor = settings.edit();
-        editor.putString(Preferences.LAST_PROFILE_ID_STRING, ProfileUtil.getProfileId());
-
-        // Commit the edits!
-        editor.commit();
     }
 
 }

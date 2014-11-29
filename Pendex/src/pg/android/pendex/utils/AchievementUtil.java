@@ -60,6 +60,8 @@ public class AchievementUtil {
                 achievement.setDate(date);
                 achievement.setValue(value);
 
+                achievements.add(achievement);
+
             }
 
         } catch (final FileNotFoundException e) {
@@ -90,12 +92,26 @@ public class AchievementUtil {
     public static void saveAchievement(final Context context) throws AchievementSaveException {
 
 
-        final JSONArray jsonObject = new JSONArray(achievements);
+        final JSONArray jsonArray = new JSONArray();
 
         // Now save.
         try {
 
-            File.storeInternalFileJSON(context, getAchievementFileName(), jsonObject);
+            for (final Achievement achieve : achievements) {
+
+                final Map<String, Object> map = new HashMap<String, Object>();
+
+                map.put(ACHIEVEMENT.Achievement.getName(), achieve.getAchievement());
+                map.put(ACHIEVEMENT.Date.getName(), achieve.getDate());
+                map.put(ACHIEVEMENT.Value.getName(), achieve.getValue());
+
+                final JSONObject obj = new JSONObject(map);
+
+                jsonArray.put(obj);
+
+            }
+
+            File.storeInternalFileJSON(context, getAchievementFileName(), jsonArray);
 
         } catch (final IOException e) {
 
@@ -123,12 +139,19 @@ public class AchievementUtil {
             final Achievement achievementToAdd = new Achievement();
 
             achievementToAdd.setAchievement(achievement);
-            achievementToAdd.setDate(FormatUtil.getDateSimple(new Date()));
+            achievementToAdd
+                    .setDate(FormatUtil.getDateSimple(new Date(System.currentTimeMillis())));
             achievementToAdd.setValue(1);
 
             achievements.add(achievementToAdd);
 
         }
+
+    }
+
+    public static void removeAchievements(final Context context) {
+
+        File.deleteInternalFile(context, getAchievementFileName());
 
     }
 

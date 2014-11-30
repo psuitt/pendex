@@ -85,7 +85,6 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
 
                 init();
 
-
             }
         });
 
@@ -117,18 +116,31 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
         button1.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                ProfileUtil.answerQuestion(0);
-                nextQuestion();
+                processNextQuestion(0);
             }
         });
 
         button2.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                ProfileUtil.answerQuestion(1);
-                nextQuestion();
+                processNextQuestion(1);
             }
         });
+    }
+
+    /**
+     * Sets the next question and answers the input.
+     * 
+     * @param answer - int - Index of answer.
+     */
+    private void processNextQuestion(final int answer) {
+        try {
+            ProfileUtil.answerQuestion(getApplicationContext(), answer);
+        } catch (final QuestionsLoadException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        nextQuestion();
     }
 
     private void nextQuestion() {
@@ -283,7 +295,12 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
 
     @Override
     public void skip() {
-        ProfileUtil.skipQuestion();
+        try {
+            ProfileUtil.skipQuestion(getApplicationContext());
+        } catch (final QuestionsLoadException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         nextQuestion();
     }
 

@@ -41,6 +41,7 @@ public class AchievementUtil {
             AchievementSaveException {
 
         achievements = new ArrayList<Achievement>();
+        totalAchievementPoints = 0;
 
         try {
 

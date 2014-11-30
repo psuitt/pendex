@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import pg.android.pendex.beans.Answer;
 import pg.android.pendex.beans.PendexRating;
 import pg.android.pendex.beans.Question;
+import pg.android.pendex.constants.Assets;
 import pg.android.pendex.constants.Constants;
 import pg.android.pendex.db.File;
 import pg.android.pendex.db.enums.ANSWER;
@@ -77,8 +78,6 @@ public final class QuestionUtil {
         final int max = questions.size();
         Question q = questions.get(index);
 
-        // If there is a parent and you have not answered it yet skip this.
-        // TODO: Clean up unattached parents.
         while (!q.getParentId().isEmpty() && !ProfileUtil.hasAnswered(q.getParentId())
                 && index < max) {
             index++;
@@ -91,40 +90,67 @@ public final class QuestionUtil {
     }
 
     private static void loadQuestions(final Context context) throws QuestionsLoadException {
+        loadQuestions(context, null);
+    }
+
+    private static void loadQuestions(final Context context, final String s)
+            throws QuestionsLoadException {
 
         try {
 
-            final JSONArray array = new JSONArray(File.loadQuestionsFromFile(context));
-            int added = 0;
+            int maxQuestionsToLoad = MAX_QUESTIONS_LOADED;
+            int start = 0;
+            JSONArray array = null;
+            int length = 0;
 
-            for (int i = 0; i < array.length(); i++) {
+            if (s == null) {
+                array = new JSONArray(File.loadQuestionsFromFile(context));
+            } else {
+                array =
+                        new JSONArray(File.loadAssetsFileJSON(context, Assets.getFileNameFromId(s)));
+                maxQuestionsToLoad = 1;
+                start = Assets.getIndexFromId(s);
+            }
+
+            int added = 0;
+            length = array.length();
+
+            for (int i = start; i < length; i++) {
 
                 final JSONObject object = array.getJSONObject(i);
-                final String id = object.getString("id");
+                final String id = object.getString(QUESTION.Id.getName());
+                final String parentId = object.getString(QUESTION.ParentId.getName());
 
-                if (added >= MAX_QUESTIONS_LOADED) {
+                if (added >= maxQuestionsToLoad) {
                     break;
                 }
 
-                if (!ProfileUtil.hasAnswered(id)) {
-                    final Question q = convertJsonToQuestion(object);
+                /*
+                 * If the user has answered the question before skip or if there is a parent and the
+                 * parent is not in the questions map and they have not already answered the parent
+                 * skip this.
+                 */
+                if (ProfileUtil.hasAnswered(id) || !parentId.isEmpty()
+                        && !questionsMap.containsKey(parentId) && !ProfileUtil.hasAnswered(id)) {
+                    continue;
+                }
 
-                    questions.add(q);
-                    questionsMap.put(id, q);
+                final Question q = convertJsonToQuestion(object);
 
-                    added++;
+                questions.add(q);
+                questionsMap.put(id, q);
 
-                    final String linked1 = q.getAnswers().get(0).getLinked();
-                    final String linked2 = q.getAnswers().get(1).getLinked();
+                added++;
 
-                    if (!linked1.isEmpty()) {
-                        added--;
-                    }
+                final String linked1 = q.getAnswers().get(0).getLinked();
+                final String linked2 = q.getAnswers().get(1).getLinked();
 
-                    if (!linked2.isEmpty()) {
-                        added--;
-                    }
+                if (!linked1.isEmpty()) {
+                    added--;
+                }
 
+                if (!linked2.isEmpty()) {
+                    added--;
                 }
 
             }
@@ -223,10 +249,18 @@ public final class QuestionUtil {
      * Sets the current question to the input id.
      * 
      * @param id - String - Id of the question.
+     * @throws QuestionsLoadException - Thrown if cant find the question.
      * 
      */
-    public static void setQuestionById(final String id) {
-        final Question question = questionsMap.get(id);
+    public static void setQuestionById(final Context context, final String id)
+            throws QuestionsLoadException {
+        Question question = questionsMap.get(id);
+
+        if (question == null) {
+            loadQuestions(context, id);
+            question = questionsMap.get(id);
+        }
+
         // Now set the current question.
         setQuestion(question);
         linked = id;

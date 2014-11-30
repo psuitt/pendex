@@ -23,6 +23,7 @@ import pg.android.pendex.constants.Constants;
 import pg.android.pendex.constants.Preferences;
 import pg.android.pendex.db.File;
 import pg.android.pendex.db.enums.PROFILE;
+import pg.android.pendex.exceptions.QuestionsLoadException;
 import pg.android.pendex.exceptions.TraitLoadException;
 import pg.android.pendex.exceptions.achievement.AchievementLoadException;
 import pg.android.pendex.exceptions.achievement.AchievementSaveException;
@@ -115,6 +116,8 @@ public final class ProfileUtil {
                 settings.getString(Preferences.LAST_PROFILE_ID_STRING, "default");
 
         loadProfile(context, loadedProfileId);
+
+        profileReload = false;
 
     }
 
@@ -284,17 +287,23 @@ public final class ProfileUtil {
 
     /**
      * Skips the current question by answering with the skip constant.
+     * 
+     * @param context - {@link Context} - Where files are located.
+     * @throws QuestionsLoadException - If question isn't found.
      */
-    public static void skipQuestion() {
-        answerQuestion(Constants.SKIP);
+    public static void skipQuestion(final Context context) throws QuestionsLoadException {
+        answerQuestion(context, Constants.SKIP);
     }
 
     /**
      * Answers the question with the index of the answer 0 for the first answer.
      * 
+     * @param context - {@link Context} - Where files are located.
      * @param indexOfAnswer - int - 0 Index means the first answer. -1 is the value to skip.
+     * @throws QuestionsLoadException - If question isn't found.
      */
-    public static void answerQuestion(final int indexOfAnswer) {
+    public static void answerQuestion(final Context context, final int indexOfAnswer)
+            throws QuestionsLoadException {
 
         final Question selectedQuestion = QuestionUtil.getSelectedQuestion();
 
@@ -349,7 +358,7 @@ public final class ProfileUtil {
 
         // Set the next question to the subsequent question
         if (!answer.getLinked().isEmpty()) {
-            QuestionUtil.setQuestionById(answer.getLinked());
+            QuestionUtil.setQuestionById(context, answer.getLinked());
         } else {
             QuestionUtil.removeLinked();
         }

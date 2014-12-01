@@ -29,7 +29,7 @@ public final class Assets {
 
         final Matcher match = Pattern.compile("[a-zA-Z]+|[0-9]+").matcher(str);
 
-        final int fileIndex = (Integer.getInteger(match.group(2))) / MAX_ROWS_PER_FILE + 1;
+        final int fileIndex = (Integer.getInteger(match.group(2))) / MAX_ROWS_PER_FILE;
 
         return fileIndex - 1;
 

@@ -3,6 +3,7 @@ package pg.android.pendex.db;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Random;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -18,6 +19,10 @@ import android.content.Context;
  * 
  */
 public final class File {
+
+    private static final Random random = new Random();
+
+    private static String[] files;
 
     public static void storeInternalFileJSON(final Context context, final String fileName,
             final JSONObject jsonObject) throws IOException {
@@ -43,8 +48,24 @@ public final class File {
 
     public static String loadQuestionsFromFile(final Context context) throws IOException {
 
-        return File.loadAssetsFileJSON(context, Assets.QUESTIONS_JSON);
+        loadFiles(context);
 
+        final int index = random.nextInt(files.length);
+
+        final StringBuilder sb = new StringBuilder();
+
+        sb.append(Assets.PATH_QUESTIONS);
+        sb.append(Assets.PATH_DELIMITER);
+        sb.append(files[index]);
+
+        return File.loadAssetsFileJSON(context, sb.toString());
+
+    }
+
+    private static void loadFiles(final Context context) throws IOException {
+        if (files == null) {
+            files = context.getAssets().list(Assets.PATH_QUESTIONS);
+        }
     }
 
     public static String loadInternalFileJSON(final Context context, final String fileName)

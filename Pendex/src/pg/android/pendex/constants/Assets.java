@@ -1,5 +1,6 @@
 package pg.android.pendex.constants;
 
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,6 +18,9 @@ public final class Assets {
     private static int MAX_ROWS_PER_FILE = 10000;
 
     private static final String DELIMITER = "-";
+
+    public static final String PATH_DELIMITER = "/";
+    public static final String PATH_QUESTIONS = "questions";
 
     /**
      * Hidden constructor.
@@ -39,7 +43,7 @@ public final class Assets {
 
         final Matcher match = Pattern.compile("[a-zA-Z]+|[0-9]+").matcher(str);
 
-        final String filePrefix = match.group(1);
+        final String filePrefix = match.group(1).toLowerCase(Locale.getDefault());
         final int fileIndex = (Integer.getInteger(match.group(2))) / MAX_ROWS_PER_FILE + 1;
 
 

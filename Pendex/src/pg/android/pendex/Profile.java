@@ -37,10 +37,14 @@ public class Profile extends ActionBarActivity {
         final TextView name = (TextView) findViewById(R.id.profile_textview_name);
         final TextView created = (TextView) findViewById(R.id.profile_textview_created);
         final TextView lastAnswered = (TextView) findViewById(R.id.profile_textview_last_answered);
+        final TextView totalAnswered =
+                (TextView) findViewById(R.id.profile_textview_total_answered);
 
         name.setText(ProfileUtil.getProfileId());
         created.setText(ProfileUtil.getCreatedSimple());
         lastAnswered.setText(ProfileUtil.getLastAnswered());
+        totalAnswered.setText(String.valueOf(ProfileUtil.getTotalAnswered())
+                + " Total Questions Answered");
 
     }
 

@@ -28,6 +28,13 @@
         android:layout_height="wrap_content"
         android:textSize="20sp"
         android:textColor="@color/black" />
+    
+     <TextView
+        android:id="@+id/profile_textview_total_answered"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textColor="@color/black" />
 
     <Button
         android:id="@+id/profile_button_reset"

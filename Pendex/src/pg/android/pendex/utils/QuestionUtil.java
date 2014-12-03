@@ -74,6 +74,8 @@ public final class QuestionUtil {
             throw new OutOfQuestionsException();
         }
 
+        Collections.shuffle(questions);
+
         int index = Constants.FIRST;
         final int max = questions.size();
         Question q = questions.get(index);
@@ -101,10 +103,11 @@ public final class QuestionUtil {
             int maxQuestionsToLoad = MAX_QUESTIONS_LOADED;
             int start = 0;
             JSONArray array = null;
-            int length = 0;
 
             if (s == null) {
-                array = new JSONArray(File.loadQuestionsFromFile(context));
+                array =
+                        new JSONArray(File.loadQuestionsFromFile(context,
+                                ProfileUtil.getFinishedLists()));
             } else {
                 array =
                         new JSONArray(File.loadAssetsFileJSON(context, Assets.getFileNameFromId(s)));
@@ -113,9 +116,13 @@ public final class QuestionUtil {
             }
 
             int added = 0;
-            length = array.length();
+            int count = 0;
+            final int length = array.length();
+            String lastId = Constants.EMPTY_STRING;
 
             for (int i = start; i < length; i++) {
+
+                count++;
 
                 final JSONObject object = array.getJSONObject(i);
                 final String id = object.getString(QUESTION.Id.getName());
@@ -153,9 +160,20 @@ public final class QuestionUtil {
                     added--;
                 }
 
+                lastId = id;
+
             }
 
-            Collections.shuffle(questions);
+            if (!lastId.isEmpty()) {
+                if (count == (length - 1)) {
+                    ProfileUtil.addToFinishedLists(Assets.getFileNameFromId(lastId));
+                }
+                if (added == 0
+                        && ProfileUtil.getFinishedLists().size() != File.getQuestionFilesLength()) {
+                    // Try a different set of questions.
+                    loadQuestions(context);
+                }
+            }
 
         } catch (final JSONException e) {
 

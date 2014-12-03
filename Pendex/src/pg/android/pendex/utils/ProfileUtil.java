@@ -47,6 +47,7 @@ public final class ProfileUtil {
     private static String loadedProfileName = Constants.DEFAULT_USER;
     private static Date created = new Date(System.currentTimeMillis());
     private static String lastAnswered = "Start answering questions!";
+    private static List<String> finishedLists = new ArrayList<String>();
     private static Map<String, Integer> answeredQuestions = new HashMap<String, Integer>();
     private static Map<String, Integer> pendex = new HashMap<String, Integer>();
 
@@ -85,6 +86,7 @@ public final class ProfileUtil {
     public static void reset(final String profileId) {
         loadedProfileId = profileId;
         loadedProfileName = profileId;
+        finishedLists = new ArrayList<String>();
         answeredQuestions = new HashMap<String, Integer>();
         pendex = new HashMap<String, Integer>();
     }
@@ -139,6 +141,8 @@ public final class ProfileUtil {
                     FormatUtil.getDateFromSimple(profileObj.getString(PROFILE.Created.getName()),
                             Locale.getDefault());
             lastAnswered = profileObj.getString(PROFILE.LastAnswered.getName());
+
+            finishedLists = JsonUtil.getListString(profileObj, PROFILE.FinishedLists.getName());
 
             final JSONObject answers = profileObj.getJSONObject(PROFILE.Answers.getName());
 
@@ -210,6 +214,7 @@ public final class ProfileUtil {
         map.put(PROFILE.Name.getName(), loadedProfileName);
         map.put(PROFILE.Created.getName(), FormatUtil.getDateSimple(created));
         map.put(PROFILE.LastAnswered.getName(), lastAnswered);
+        map.put(PROFILE.FinishedLists.getName(), JsonUtil.stringListToJSONArray(finishedLists));
 
         final JSONObject jsonObject = new JSONObject(map);
 
@@ -416,6 +421,22 @@ public final class ProfileUtil {
 
     public static String getLastAnswered() {
         return lastAnswered;
+    }
+
+    public static void addToFinishedLists(final String s) {
+        finishedLists.add(s);
+    }
+
+    public static List<String> getFinishedLists() {
+        return finishedLists;
+    }
+
+    public static boolean hasFinishedLists(final String s) {
+        return finishedLists.contains(s);
+    }
+
+    public static int getTotalAnswered() {
+        return answeredQuestions.size();
     }
 
     public static boolean hasAnswered(final String s) {

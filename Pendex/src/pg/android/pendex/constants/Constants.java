@@ -13,7 +13,7 @@ public final class Constants {
 
     public static final String DEFAULT_USER = "Pendex";
 
-    public static final String DATE_FORMAT = "MMMM dd, yyyy HH:mm a";
+    public static final String DATE_FORMAT = "MMMM dd, yyyy H:mm a";
 
     public static final String EMPTY_STRING = "";
 

@@ -3,6 +3,8 @@ package pg.android.pendex.db;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import org.json.JSONArray;
@@ -22,7 +24,7 @@ public final class File {
 
     private static final Random random = new Random();
 
-    private static String[] files;
+    private static String[] questionFiles;
 
     public static void storeInternalFileJSON(final Context context, final String fileName,
             final JSONObject jsonObject) throws IOException {
@@ -46,25 +48,58 @@ public final class File {
 
     }
 
+    /**
+     * This will pick a random file and pull all data.
+     * 
+     * @param context - {@link Context} - Context where assets are.
+     * @return String - String object from file this is usually a jsonObject.
+     * @throws IOException
+     */
     public static String loadQuestionsFromFile(final Context context) throws IOException {
 
+        return loadQuestionsFromFile(context, new ArrayList<String>());
+
+    }
+
+    /**
+     * This will pick a random file and pull all data.
+     * 
+     * @param context - {@link Context} - Context where assets are.
+     * @param toSkip - List&lt;String&gt; - Question filenames to skip.
+     * 
+     * @return String - String object from file this is usually a jsonObject.
+     * 
+     * @throws IOException
+     */
+    public static String loadQuestionsFromFile(final Context context, final List<String> toSkip)
+            throws IOException {
+
+        // TODO: Track question files when completed.
         loadFiles(context);
 
-        final int index = random.nextInt(files.length);
+        final List<String> filesToRandom = new ArrayList<String>();
+
+        for (final String fileName : questionFiles) {
+            if (!toSkip.contains(fileName)) {
+                filesToRandom.add(fileName);
+            }
+        }
+
+        final int index = random.nextInt(filesToRandom.size());
 
         final StringBuilder sb = new StringBuilder();
 
         sb.append(Assets.PATH_QUESTIONS);
         sb.append(Assets.PATH_DELIMITER);
-        sb.append(files[index]);
+        sb.append(filesToRandom.get(index));
 
         return File.loadAssetsFileJSON(context, sb.toString());
 
     }
 
     private static void loadFiles(final Context context) throws IOException {
-        if (files == null) {
-            files = context.getAssets().list(Assets.PATH_QUESTIONS);
+        if (questionFiles == null) {
+            questionFiles = context.getAssets().list(Assets.PATH_QUESTIONS);
         }
     }
 
@@ -112,6 +147,15 @@ public final class File {
 
         context.deleteFile(fileName);
 
+    }
+
+    /**
+     * Returns the length of the questions assets.
+     * 
+     * @return int - Length of the question files.
+     */
+    public static int getQuestionFilesLength() {
+        return questionFiles.length;
     }
 
 

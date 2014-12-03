@@ -142,6 +142,11 @@ public class AchievementUtil {
             final Achievement achievementToAdd = new Achievement();
 
             achievementToAdd.setAchievement(achievement);
+
+            if (achievements.contains(achievementToAdd)) {
+                continue;
+            }
+
             achievementToAdd
                     .setDate(FormatUtil.getDateSimple(new Date(System.currentTimeMillis())));
             achievementToAdd.setValue(1);

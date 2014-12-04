@@ -27,6 +27,7 @@
     <string name="change_profile_action_item_add">Add</string>
     <string name="change_profile_action_item_remove">Remove</string>
     
+    <string name="profile_switch_safe">Safe Mode</string>
     <string name="profile_button_reset">Reset Traits</string>
     
     <string name="dialog_change_profile_name_field">Name</string>

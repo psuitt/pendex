@@ -1,21 +1,27 @@
 package pg.android.pendex;
 
 import pg.android.pendex.exceptions.profile.ProfileResetException;
+import pg.android.pendex.exceptions.profile.ProfileSaveException;
 import pg.android.pendex.utils.ProfileUtil;
 import android.app.ActionBar;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class Profile extends ActionBarActivity {
+
+    private static final String TAG = "ProfileActivity";
 
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
@@ -39,16 +45,31 @@ public class Profile extends ActionBarActivity {
         final TextView lastAnswered = (TextView) findViewById(R.id.profile_textview_last_answered);
         final TextView totalAnswered =
                 (TextView) findViewById(R.id.profile_textview_total_answered);
+        final Switch safeSwitch = (Switch) findViewById(R.id.profile_switch_safe);
 
         name.setText(ProfileUtil.getProfileId());
         created.setText(ProfileUtil.getCreatedSimple());
         lastAnswered.setText(ProfileUtil.getLastAnswered());
         totalAnswered.setText(String.valueOf(ProfileUtil.getTotalAnswered())
                 + " Total Questions Answered");
+        safeSwitch.setChecked(ProfileUtil.isSafe());
 
     }
 
     private void setUpButtonListeners() {
+
+        final Switch safeSwitch = (Switch) findViewById(R.id.profile_switch_safe);
+        safeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
+                ProfileUtil.setSafe(isChecked);
+                try {
+                    ProfileUtil.saveProfile(Profile.this);
+                } catch (final ProfileSaveException e) {
+                    Log.e(TAG, "Profile failed to update for safe flag.");
+                }
+            }
+        });
 
         final Button reset = (Button) findViewById(R.id.profile_button_reset);
 

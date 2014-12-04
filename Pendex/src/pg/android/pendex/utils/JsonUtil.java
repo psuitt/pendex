@@ -11,8 +11,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import pg.android.pendex.constants.Constants;
+import android.util.Log;
 
 public final class JsonUtil {
+
+    private static final String TAG = "JsonUtil";
 
     public static Map<String, Integer> createPendexMapFromJson(final JSONObject pendex)
             throws JSONException {
@@ -57,7 +60,7 @@ public final class JsonUtil {
             }
 
         } catch (final JSONException e) {
-            e.printStackTrace();
+            Log.w(TAG, "This object doesn't contain the input field [field=" + field + "]");
         }
 
         return list;
@@ -76,10 +79,21 @@ public final class JsonUtil {
         try {
             return object.getString(field);
         } catch (final JSONException e) {
-            e.printStackTrace();
+            Log.w(TAG, "This object doesn't contain the input field [field=" + field + "]");
         }
 
         return Constants.EMPTY_STRING;
+    }
+
+
+    public static boolean getBoolean(final JSONObject profileObj, final String field,
+            final boolean defaultValue) {
+        try {
+            return profileObj.getBoolean(field);
+        } catch (final JSONException e) {
+            Log.w(TAG, "This object doesn't contain the input field [field=" + field + "]");
+        }
+        return defaultValue;
     }
 
 }

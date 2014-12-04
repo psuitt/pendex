@@ -21,11 +21,18 @@
         android:paddingBottom="50dip"
         android:textSize="18sp"
         android:textColor="@color/darkblue" />
+
+    <Switch
+        android:id="@+id/profile_switch_safe"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/profile_switch_safe" />
     
     <TextView
         android:id="@+id/profile_textview_last_answered"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="50dip"
         android:textSize="20sp"
         android:textColor="@color/black" />
     

@@ -47,6 +47,7 @@ public final class ProfileUtil {
     private static String loadedProfileName = Constants.DEFAULT_USER;
     private static Date created = new Date(System.currentTimeMillis());
     private static String lastAnswered = "Start answering questions!";
+    private static boolean safe = true;
     private static List<String> finishedLists = new ArrayList<String>();
     private static Map<String, Integer> answeredQuestions = new HashMap<String, Integer>();
     private static Map<String, Integer> pendex = new HashMap<String, Integer>();
@@ -142,6 +143,7 @@ public final class ProfileUtil {
                     FormatUtil.getDateFromSimple(profileObj.getString(PROFILE.Created.getName()),
                             Locale.getDefault());
             lastAnswered = profileObj.getString(PROFILE.LastAnswered.getName());
+            safe = JsonUtil.getBoolean(profileObj, PROFILE.Safe.getName(), true);
 
             finishedLists = JsonUtil.getListString(profileObj, PROFILE.FinishedLists.getName());
 
@@ -224,6 +226,7 @@ public final class ProfileUtil {
         map.put(PROFILE.Name.getName(), loadedProfileName);
         map.put(PROFILE.Created.getName(), FormatUtil.getDateSimple(created));
         map.put(PROFILE.LastAnswered.getName(), lastAnswered);
+        map.put(PROFILE.Safe.getName(), safe);
         map.put(PROFILE.FinishedLists.getName(), JsonUtil.stringListToJSONArray(finishedLists));
 
         final JSONObject jsonObject = new JSONObject(map);
@@ -439,6 +442,14 @@ public final class ProfileUtil {
 
     public static String getLastAnswered() {
         return lastAnswered;
+    }
+
+    public static boolean isSafe() {
+        return safe;
+    }
+
+    public static void setSafe(final boolean safe) {
+        ProfileUtil.safe = safe;
     }
 
     public static void addToFinishedLists(final String s) {

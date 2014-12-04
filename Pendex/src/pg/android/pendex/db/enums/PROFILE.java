@@ -14,6 +14,7 @@ public enum PROFILE {
     Pendex("pendex"), 
     Created("created"), 
     LastAnswered("lastanswered"), 
+    Safe("safe"),
     FinishedLists("finishedlists"),
     Achievements("achievements");
 

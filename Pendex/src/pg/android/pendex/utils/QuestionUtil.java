@@ -242,6 +242,14 @@ public final class QuestionUtil {
         return question;
     }
 
+
+    private static void safeQuestion(final Question question) {
+        question.setQuestion(SafeUtil.secureString(question.getQuestion()));
+        for (final Answer answer : question.getAnswers()) {
+            answer.setAnswer(SafeUtil.secureString(answer.getAnswer()));
+        }
+    }
+
     public static void removeLinked() {
         linked = null;
     }
@@ -254,6 +262,9 @@ public final class QuestionUtil {
     private static void setQuestion(final Question q) {
         removeQuestion(q);
         selectedQuestion = q;
+        if (ProfileUtil.isSafe()) {
+            safeQuestion(selectedQuestion);
+        }
     }
 
     /**

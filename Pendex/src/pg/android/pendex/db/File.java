@@ -5,13 +5,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import pg.android.pendex.constants.Assets;
 import pg.android.pendex.constants.Constants;
+import pg.android.pendex.utils.Utils;
 import android.content.Context;
 
 /**
@@ -21,8 +21,6 @@ import android.content.Context;
  * 
  */
 public final class File {
-
-    private static final Random random = new Random();
 
     private static String[] questionFiles;
 
@@ -85,13 +83,11 @@ public final class File {
             }
         }
 
-        final int index = random.nextInt(filesToRandom.size());
-
         final StringBuilder sb = new StringBuilder();
 
         sb.append(Assets.PATH_QUESTIONS);
         sb.append(Assets.PATH_DELIMITER);
-        sb.append(filesToRandom.get(index));
+        sb.append(Utils.randomFromList(filesToRandom));
 
         return File.loadAssetsFileJSON(context, sb.toString());
 

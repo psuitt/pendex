@@ -61,11 +61,12 @@ public final class ProfileUtil {
             if (!fileName.contains(PROFILE_FILENAME_SUFFIX)) {
                 continue;
             }
-            final String profileName = fileName.replace(PROFILE_FILENAME_SUFFIX, "");
+            final String profileName =
+                    fileName.replace(PROFILE_FILENAME_SUFFIX, Constants.EMPTY_STRING);
             if (!fileName.equals(getProfileFileName())) {
                 list.add(profileName);
             } else {
-                list.add(0, profileName);
+                list.add(Constants.FIRST, profileName);
             }
 
         }
@@ -115,7 +116,7 @@ public final class ProfileUtil {
                 context.getSharedPreferences(Preferences.PENDEX_PREFERENCES, Context.MODE_PRIVATE);
 
         final String loadedProfileId =
-                settings.getString(Preferences.LAST_PROFILE_ID_STRING, "default");
+                settings.getString(Preferences.LAST_PROFILE_ID_STRING, Constants.DEFAULT_USER);
 
         loadProfile(context, loadedProfileId);
 
@@ -184,6 +185,19 @@ public final class ProfileUtil {
 
         }
 
+        updatePreferences(context);
+
+        // Reset the loaded questions as to change it up.
+        QuestionUtil.resetQuestions();
+
+    }
+
+    /**
+     * This will update the preferences with the new loaded user id.
+     * 
+     * @param context - {@link Context} - Usually the application context.
+     */
+    private static void updatePreferences(final Context context) {
         // We need an Editor object to make preference changes.
         // All objects are from android.context.Context
         final SharedPreferences settings =
@@ -193,10 +207,6 @@ public final class ProfileUtil {
 
         // Commit the edits!
         editor.commit();
-
-        // Reset the loaded questions as to change it up.
-        QuestionUtil.resetQuestions();
-
     }
 
     /**
@@ -256,7 +266,7 @@ public final class ProfileUtil {
     }
 
     /**
-     * Resets the loaded profile and saves it.
+     * Resets the loaded profile and saves it. This will also reset the loaded questions.
      * 
      * @param context - {@link Context} - Usually the application context.
      * 
@@ -278,15 +288,23 @@ public final class ProfileUtil {
 
     }
 
+    /**
+     * If the profile ends in .json is will just delete the file if not it will determine the
+     * filename and delete it. This will also chain deleting achievements.
+     * 
+     * @param context - {@link Context} - Location of files.
+     * @param profileId - String - Id of the profile.
+     */
     public static void removeProfile(final Context context, final String profileId) {
 
         if (profileId.contains(Constants.JSON_FILE_ENDING)) {
+            // This may be a bad file.
             File.deleteInternalFile(context, profileId);
         } else {
+            // Standard delete so do achievements too.
             File.deleteInternalFile(context, getProfileFileName(profileId));
+            AchievementUtil.removeAchievements(context, profileId);
         }
-
-        AchievementUtil.removeAchievements(context);
 
     }
 

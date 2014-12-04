@@ -157,9 +157,9 @@ public class AchievementUtil {
 
     }
 
-    public static void removeAchievements(final Context context) {
+    public static void removeAchievements(final Context context, final String profileId) {
 
-        File.deleteInternalFile(context, getAchievementFileName());
+        File.deleteInternalFile(context, getAchievementFileName(profileId));
 
     }
 
@@ -169,6 +169,10 @@ public class AchievementUtil {
 
     public static int getTotalAchievementPoints() {
         return totalAchievementPoints;
+    }
+
+    public static String getAchievementFileName(final String profileId) {
+        return profileId + ACHIEVEMENT_FILENAME_SUFFIX;
     }
 
     public static String getAchievementFileName() {

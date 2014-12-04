@@ -22,6 +22,7 @@ import pg.android.pendex.db.enums.QUESTION;
 import pg.android.pendex.exceptions.OutOfQuestionsException;
 import pg.android.pendex.exceptions.QuestionsLoadException;
 import android.content.Context;
+import android.util.Log;
 
 /**
  * Utility for generating questions.
@@ -30,6 +31,8 @@ import android.content.Context;
  * 
  */
 public final class QuestionUtil {
+
+    private static final String TAG = "QuestionUtil";
 
     private static boolean done = false;
     private static String linked;
@@ -294,8 +297,16 @@ public final class QuestionUtil {
     public static List<String> removeQuestionById(final String id) {
         final List<String> removed = new ArrayList<String>();
         final Question question = questionsMap.get(id);
-        removeQuestion(question);
+
         removed.add(id);
+
+        if (question == null) {
+            Log.e(TAG, "This id is not in the questions list. [id=" + id + "]");
+            return removed;
+        }
+
+        removeQuestion(question);
+
 
         for (final Answer answer : question.getAnswers()) {
             if (!answer.getLinked().isEmpty()) {

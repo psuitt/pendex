@@ -4,6 +4,8 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import android.util.Log;
+
 /**
  * Asset filenames.
  * 
@@ -12,6 +14,9 @@ import java.util.regex.Pattern;
  */
 public final class Assets {
 
+    private static final String TAG = "Assets";
+
+    private static final String ID_PATTERN = "(\\D+)(\\d+)";
     public static final String QUESTIONS_JSON = "questions.json";
     public static final String TRAITS_JSON = "traits.json";
 
@@ -31,21 +36,28 @@ public final class Assets {
 
     public static int getIndexFromId(final String str) {
 
-        final Matcher match = Pattern.compile("[a-zA-Z]+|[0-9]+").matcher(str);
+        final Matcher match = Pattern.compile(ID_PATTERN).matcher(str);
 
-        final int fileIndex = (Integer.getInteger(match.group(2))) / MAX_ROWS_PER_FILE;
+        if (!match.matches()) {
+            Log.e(TAG, "This id doesn't match the pattern. [id=" + str + "]");
+        }
 
-        return fileIndex - 1;
+        final int rowIndex = (Integer.valueOf(match.group(2)) - 1) % MAX_ROWS_PER_FILE;
+
+        return rowIndex;
 
     }
 
     public static String getFileNameFromId(final String str) {
 
-        final Matcher match = Pattern.compile("[a-zA-Z]+|[0-9]+").matcher(str);
+        final Matcher match = Pattern.compile(ID_PATTERN).matcher(str);
+
+        if (!match.matches()) {
+            Log.e(TAG, "This id doesn't match the pattern. [id=" + str + "]");
+        }
 
         final String filePrefix = match.group(1).toLowerCase(Locale.getDefault());
-        final int fileIndex = (Integer.getInteger(match.group(2))) / MAX_ROWS_PER_FILE + 1;
-
+        final int fileIndex = (Integer.valueOf(match.group(2)) - 1) / MAX_ROWS_PER_FILE + 1;
 
         final StringBuilder sb = new StringBuilder();
 

@@ -17,12 +17,15 @@ public final class SafeUtil {
 
     private static final Map<String, List<String>> map = new HashMap<String, List<String>>();
 
+    private static final String REGEX_IGNORE_CASE = "(?i)";
+    private static final String REGEX_NOT_CHARACTER = "([^a-z]|$)";
+
     static {
         final ArrayList<String> arrayList = new ArrayList<String>();
 
-        arrayList.add("Dangit!");
-        arrayList.add("Blast!");
-        arrayList.add("Water Bearing Shield!");
+        arrayList.add("Dangit! ");
+        arrayList.add("Blast! ");
+        arrayList.add("Water Bearing Shield! ");
 
         map.put("damn", arrayList);
     }
@@ -42,7 +45,9 @@ public final class SafeUtil {
         for (final Entry<String, List<String>> badWordEntry : map.entrySet()) {
             if (lowerCase.contains(badWordEntry.getKey())) {
                 final String replacement = Utils.randomFromList(badWordEntry.getValue());
-                newString = newString.replaceAll("(?i)" + badWordEntry.getKey(), replacement);
+                newString =
+                        newString.replaceAll(REGEX_IGNORE_CASE + badWordEntry.getKey()
+                                + REGEX_NOT_CHARACTER, replacement);
             }
         }
 

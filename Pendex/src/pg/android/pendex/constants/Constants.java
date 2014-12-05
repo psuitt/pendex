@@ -10,6 +10,7 @@ package pg.android.pendex.constants;
 public final class Constants {
 
     public static final boolean DEBUG_MODE = true;
+    public static final boolean DEBUG_QUESTIONS = true;
 
     public static final String DEFAULT_USER = "Pendex";
 

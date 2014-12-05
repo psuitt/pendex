@@ -72,6 +72,10 @@ public final class File {
     public static String loadQuestionsFromFile(final Context context, final List<String> toSkip)
             throws IOException {
 
+        if (Constants.DEBUG_QUESTIONS) {
+            return File.loadAssetsFileJSON(context, Assets.QUESTIONS_JSON);
+        }
+
         // TODO: Track question files when completed.
         loadFiles(context);
 

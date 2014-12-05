@@ -14,9 +14,11 @@ public class Question {
     private String parentId;
     private int random;
     private String question;
+    private String type;
     private List<Answer> answers;
 
-    public Question() {}
+    public Question() {
+    }
 
     public String getId() {
         return id;
@@ -48,6 +50,14 @@ public class Question {
 
     public void setQuestion(final String question) {
         this.question = question;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(final String type) {
+        this.type = type;
     }
 
     public List<Answer> getAnswers() {

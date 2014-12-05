@@ -358,7 +358,7 @@ public final class ProfileUtil {
         final StringBuilder lastAnsweredSB = new StringBuilder();
 
         if (question.isEmpty()) {
-            lastAnsweredSB.append("You choose ");
+            lastAnsweredSB.append("You chose ");
             lastAnsweredSB.append(answer.getAnswer());
             lastAnsweredSB.append(" over ");
             lastAnsweredSB.append(notAnswered.getAnswer());

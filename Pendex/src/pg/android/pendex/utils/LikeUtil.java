@@ -3,7 +3,6 @@ package pg.android.pendex.utils;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,12 +11,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import pg.android.pendex.beans.Achievement;
+import pg.android.pendex.beans.Like;
 import pg.android.pendex.db.File;
-import pg.android.pendex.db.enums.ACHIEVEMENT;
-import pg.android.pendex.exceptions.achievement.AchievementLoadException;
-import pg.android.pendex.exceptions.achievement.AchievementSaveException;
+import pg.android.pendex.db.enums.LIKE;
+import pg.android.pendex.exceptions.like.LikeLoadException;
+import pg.android.pendex.exceptions.like.LikeSaveException;
 import android.content.Context;
+import android.util.Log;
 
 /**
  * Achievement util for pulling back achievments.
@@ -27,18 +27,24 @@ import android.content.Context;
  */
 public class LikeUtil {
 
-    private static List<Achievement> achievements = new ArrayList<Achievement>();
+    private static final String TAG = "LikeUtil";
 
-    private static final Map<String, String> achievementSummaryMap = new HashMap<String, String>();
-
-    private static final String NO_SUMMAY_TEXT = "";
+    private static List<Like> likes = new ArrayList<Like>();
 
     private static final String LIKE_FILENAME_SUFFIX = "-likes.json";
 
-    public static void loadAchievements(final Context context) throws AchievementLoadException,
-            AchievementSaveException {
+    /**
+     * Loads the likes.
+     * 
+     * @param context - {@link Context} - Load context for the files.
+     * 
+     * @throws LikeLoadException - Thrown if the load fails.
+     * @throws LikeSaveException - Thrown if there is not a save file and the initial save fails.
+     */
+    public static void loadAchievements(final Context context) throws LikeLoadException,
+            LikeSaveException {
 
-        achievements = new ArrayList<Achievement>();
+        likes = new ArrayList<Like>();
 
         try {
 
@@ -47,48 +53,43 @@ public class LikeUtil {
 
             for (int i = 0; i < array.length(); i++) {
 
-                final Achievement achievement = new Achievement();
+                final Like like = new Like();
 
                 final JSONObject object = array.getJSONObject(i);
 
-                final String name = object.getString(ACHIEVEMENT.Achievement.getName());
-                final String date = object.getString(ACHIEVEMENT.Date.getName());
-                final int value = object.getInt(ACHIEVEMENT.Value.getName());
+                like.setLike(JsonUtil.getString(object, LIKE.Like.getName()));
+                like.setLikeMap(JsonUtil.createStringIntMapFromJson(object, LIKE.LikeMap.getName()));
 
-                achievement.setAchievement(name);
-                achievement.setDate(date);
-                achievement.setValue(value);
-
-                achievements.add(achievement);
+                likes.add(like);
 
             }
 
         } catch (final FileNotFoundException e) {
 
-            saveAchievement(context);
+            saveLikes(context);
 
         } catch (final JSONException e) {
 
-            e.printStackTrace();
-            throw new AchievementLoadException();
+            Log.e(TAG, "Field did not load correctly.");
+            throw new LikeLoadException();
 
         } catch (final IOException e) {
 
-            e.printStackTrace();
-            throw new AchievementLoadException();
+            Log.e(TAG, "File failed to load.");
+            throw new LikeLoadException();
 
         }
 
     }
 
     /**
-     * Saves the profiles throws an IO exception when anything fails.
+     * Save the likes.
      * 
-     * @param context - {@link Context} - Usually the application context.
+     * @param context - {@link Context} - Load context for the files.
      * 
-     * @throws IOException - {@link IOException} - when saving fails.
+     * @throws LikeSaveException - Thrown if the save fails.
      */
-    public static void saveAchievement(final Context context) throws AchievementSaveException {
+    public static void saveLikes(final Context context) throws LikeSaveException {
 
 
         final JSONArray jsonArray = new JSONArray();
@@ -96,15 +97,16 @@ public class LikeUtil {
         // Now save.
         try {
 
-            for (final Achievement achieve : achievements) {
+            for (final Like like : likes) {
 
                 final Map<String, Object> map = new HashMap<String, Object>();
 
-                map.put(ACHIEVEMENT.Achievement.getName(), achieve.getAchievement());
-                map.put(ACHIEVEMENT.Date.getName(), achieve.getDate());
-                map.put(ACHIEVEMENT.Value.getName(), achieve.getValue());
+                map.put(LIKE.Like.getName(), like.getLikeMap());
 
                 final JSONObject obj = new JSONObject(map);
+
+                // This could throw a json exception.
+                obj.put(LIKE.LikeMap.getName(), new JSONObject(like.getLikeMap()));
 
                 jsonArray.put(obj);
 
@@ -114,53 +116,66 @@ public class LikeUtil {
 
         } catch (final IOException e) {
 
-            e.printStackTrace();
-            throw new AchievementSaveException();
+            Log.e(TAG, "File failed to save.");
+            throw new LikeSaveException();
+
+        } catch (final JSONException e) {
+
+            Log.e(TAG, "File failed convert the like map to json object");
+            throw new LikeSaveException();
 
         }
 
     }
 
-    public static String getAchievementSummary(final String achievement) {
+    /**
+     * Increments the like map for the like.
+     * 
+     * @param likeType - String - Type of like.
+     * @param value - String - Value that is preferred to others.
+     */
+    public static void addLike(final String likeType, final String value) {
 
-        if (achievementSummaryMap.containsKey(achievement)) {
-            return achievementSummaryMap.get(achievement);
-        }
+        Like like = new Like();
 
-        return NO_SUMMAY_TEXT;
+        like.setLike(likeType);
 
-    }
+        final int indexOf = likes.indexOf(like);
 
-    public static void addAchievements(final String... arr) {
+        if (indexOf != -1) {
 
-        for (final String achievement : arr) {
+            like = likes.get(indexOf);
+            final Map<String, Integer> likeMap = like.getLikeMap();
 
-            final Achievement achievementToAdd = new Achievement();
-
-            achievementToAdd.setAchievement(achievement);
-
-            if (achievements.contains(achievementToAdd)) {
-                continue;
+            if (likeMap.containsKey(value)) {
+                likeMap.put(value, likeMap.get(value) + 1);
+            } else {
+                likeMap.put(value, 1);
             }
 
-            achievementToAdd
-                    .setDate(FormatUtil.getDateSimple(new Date(System.currentTimeMillis())));
-            achievementToAdd.setValue(1);
-
-            achievements.add(achievementToAdd);
-
+        } else {
+            final Map<String, Integer> likeMap = new HashMap<String, Integer>();
+            likeMap.put(value, 1);
+            like.setLikeMap(likeMap);
+            likes.add(like);
         }
 
     }
 
-    public static void removeAchievements(final Context context, final String profileId) {
+    /**
+     * Deletes the like file.
+     * 
+     * @param context - {@link Context} - Context of file.
+     * @param profileId - String - Profile the file is for.
+     */
+    public static void removeLikes(final Context context, final String profileId) {
 
         File.deleteInternalFile(context, getLikeFileName(profileId));
 
     }
 
-    public static List<Achievement> getAchievements(final Context context) {
-        return achievements;
+    public static List<Like> getLikes(final Context context) {
+        return likes;
     }
 
     public static String getLikeFileName(final String profileId) {

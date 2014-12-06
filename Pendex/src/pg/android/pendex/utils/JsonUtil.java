@@ -17,20 +17,35 @@ public final class JsonUtil {
 
     private static final String TAG = "JsonUtil";
 
-    public static Map<String, Integer> createPendexMapFromJson(final JSONObject pendex)
-            throws JSONException {
-
-        final Iterator<String> pendexKeyIter = pendex.keys();
+    public static Map<String, Integer> createStringIntMapFromJson(final JSONObject object,
+            final String field) {
 
         final Map<String, Integer> map = new HashMap<String, Integer>();
 
-        while (pendexKeyIter.hasNext()) {
+        try {
+            return createStringIntMapFromJson(object.getJSONObject(field));
+        } catch (final JSONException e) {
+            Log.w(TAG, "This object doesn't contain the input field [field=" + field + "]");
+        }
 
-            final String pendexText = pendexKeyIter.next();
+        return map;
 
-            final int val = pendex.getInt(pendexText);
+    }
 
-            map.put(pendexText, val);
+    public static Map<String, Integer> createStringIntMapFromJson(final JSONObject object)
+            throws JSONException {
+
+        final Iterator<String> keyItr = object.keys();
+
+        final Map<String, Integer> map = new HashMap<String, Integer>();
+
+        while (keyItr.hasNext()) {
+
+            final String key = keyItr.next();
+
+            final int val = object.getInt(key);
+
+            map.put(key, val);
 
         }
 

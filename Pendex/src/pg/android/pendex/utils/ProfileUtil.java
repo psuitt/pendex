@@ -23,16 +23,17 @@ import pg.android.pendex.constants.Constants;
 import pg.android.pendex.constants.Preferences;
 import pg.android.pendex.db.File;
 import pg.android.pendex.db.enums.PROFILE;
+import pg.android.pendex.exceptions.AbstractLoadException;
+import pg.android.pendex.exceptions.AbstractSaveException;
 import pg.android.pendex.exceptions.QuestionsLoadException;
 import pg.android.pendex.exceptions.TraitLoadException;
-import pg.android.pendex.exceptions.achievement.AchievementLoadException;
-import pg.android.pendex.exceptions.achievement.AchievementSaveException;
 import pg.android.pendex.exceptions.profile.ProfileExistsException;
 import pg.android.pendex.exceptions.profile.ProfileLoadException;
 import pg.android.pendex.exceptions.profile.ProfileResetException;
 import pg.android.pendex.exceptions.profile.ProfileSaveException;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 /**
  * Utility for loading profiles.
@@ -41,6 +42,8 @@ import android.content.SharedPreferences;
  * 
  */
 public final class ProfileUtil {
+
+    private static final String TAG = "ProfileUtil";
 
     private static boolean profileReload = true;
     private static String loadedProfileId = Constants.DEFAULT_USER;
@@ -59,16 +62,15 @@ public final class ProfileUtil {
         final List<String> list = new ArrayList<String>();
 
         for (final String fileName : context.fileList()) {
+
             if (!fileName.contains(PROFILE_FILENAME_SUFFIX)) {
                 continue;
             }
+
             final String profileName =
                     fileName.replace(PROFILE_FILENAME_SUFFIX, Constants.EMPTY_STRING);
-            if (!fileName.equals(getProfileFileName())) {
-                list.add(profileName);
-            } else {
-                list.add(Constants.FIRST, profileName);
-            }
+
+            list.add(profileName);
 
         }
 
@@ -149,11 +151,11 @@ public final class ProfileUtil {
 
             final JSONObject answers = profileObj.getJSONObject(PROFILE.Answers.getName());
 
-            answeredQuestions.putAll(JsonUtil.createPendexMapFromJson(answers));
+            answeredQuestions.putAll(JsonUtil.createStringIntMapFromJson(answers));
 
             final JSONObject pendexJson = profileObj.getJSONObject(PROFILE.Pendex.getName());
 
-            pendex.putAll(JsonUtil.createPendexMapFromJson(pendexJson));
+            pendex.putAll(JsonUtil.createStringIntMapFromJson(pendexJson));
 
         } catch (final FileNotFoundException e) {
 
@@ -161,12 +163,12 @@ public final class ProfileUtil {
 
         } catch (final JSONException e) {
 
-            e.printStackTrace();
+            Log.e(TAG, "Unable to load objects");
             throw new ProfileLoadException();
 
         } catch (final IOException e) {
 
-            e.printStackTrace();
+            Log.e(TAG, "Unable to load file");
             throw new ProfileLoadException();
 
         }
@@ -174,15 +176,16 @@ public final class ProfileUtil {
         try {
 
             AchievementUtil.loadAchievements(context);
+            LikeUtil.loadAchievements(context);
 
-        } catch (final AchievementLoadException e) {
+        } catch (final AbstractLoadException e) {
 
-            e.printStackTrace();
+            Log.e(TAG, "Loading other profile data failed.");
             throw new ProfileLoadException();
 
-        } catch (final AchievementSaveException e) {
+        } catch (final AbstractSaveException e) {
 
-            e.printStackTrace();
+            Log.e(TAG, "Saving other profile data failed while creating new files.");
             throw new ProfileLoadException();
 
         }
@@ -239,8 +242,9 @@ public final class ProfileUtil {
 
         } catch (final JSONException e) {
 
-            e.printStackTrace();
+            Log.e(TAG, "Error while creating profile to save");
             throw new ProfileSaveException();
+
         }
 
         // Now save.
@@ -250,7 +254,7 @@ public final class ProfileUtil {
 
         } catch (final IOException e) {
 
-            e.printStackTrace();
+            Log.e(TAG, "Unable to save profile");
             throw new ProfileSaveException();
 
         }
@@ -258,10 +262,11 @@ public final class ProfileUtil {
         try {
 
             AchievementUtil.saveAchievement(context);
+            LikeUtil.saveLikes(context);
 
-        } catch (final AchievementSaveException e) {
+        } catch (final AbstractSaveException e) {
 
-            e.printStackTrace();
+            Log.e(TAG, "Save achievments and likes information");
             throw new ProfileSaveException();
 
         }

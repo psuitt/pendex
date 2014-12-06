@@ -229,7 +229,7 @@ public final class QuestionUtil {
 
             final PendexRating pendexRating = new PendexRating();
 
-            pendexRating.setPendex(JsonUtil.createPendexMapFromJson(pendex));
+            pendexRating.setPendex(JsonUtil.createStringIntMapFromJson(pendex));
 
             answer.setPendexRating(pendexRating);
 

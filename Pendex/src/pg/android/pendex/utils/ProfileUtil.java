@@ -176,7 +176,7 @@ public final class ProfileUtil {
         try {
 
             AchievementUtil.loadAchievements(context);
-            LikeUtil.loadAchievements(context);
+            LikeUtil.loadLikes(context);
 
         } catch (final AbstractLoadException e) {
 
@@ -285,6 +285,7 @@ public final class ProfileUtil {
         reset();
         try {
             saveProfile(context);
+            LikeUtil.removeLikes(context, loadedProfileId);
         } catch (final ProfileSaveException e) {
 
             e.printStackTrace();
@@ -312,6 +313,7 @@ public final class ProfileUtil {
             // Standard delete so do achievements too.
             File.deleteInternalFile(context, getProfileFileName(profileId));
             AchievementUtil.removeAchievements(context, profileId);
+            LikeUtil.removeLikes(context, profileId);
         }
 
     }
@@ -404,6 +406,11 @@ public final class ProfileUtil {
 
         if (!answer.getAchievement().isEmpty()) {
             AchievementUtil.addAchievements(answer.getAchievement());
+        }
+
+        // Handle the likes.
+        if (!selectedQuestion.getType().isEmpty()) {
+            LikeUtil.addLike(selectedQuestion.getType(), answer.getAnswer());
         }
 
     }

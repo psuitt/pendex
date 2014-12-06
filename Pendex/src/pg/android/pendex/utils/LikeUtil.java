@@ -41,8 +41,7 @@ public class LikeUtil {
      * @throws LikeLoadException - Thrown if the load fails.
      * @throws LikeSaveException - Thrown if there is not a save file and the initial save fails.
      */
-    public static void loadAchievements(final Context context) throws LikeLoadException,
-            LikeSaveException {
+    public static void loadLikes(final Context context) throws LikeLoadException, LikeSaveException {
 
         likes = new ArrayList<Like>();
 
@@ -101,7 +100,7 @@ public class LikeUtil {
 
                 final Map<String, Object> map = new HashMap<String, Object>();
 
-                map.put(LIKE.Like.getName(), like.getLikeMap());
+                map.put(LIKE.Like.getName(), like.getLike());
 
                 final JSONObject obj = new JSONObject(map);
 
@@ -169,9 +168,7 @@ public class LikeUtil {
      * @param profileId - String - Profile the file is for.
      */
     public static void removeLikes(final Context context, final String profileId) {
-
         File.deleteInternalFile(context, getLikeFileName(profileId));
-
     }
 
     public static List<Like> getLikes(final Context context) {

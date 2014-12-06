@@ -18,6 +18,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,6 +30,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class Pendex extends ActionBarActivity implements INavigationDrawerCallbacks {
+
+    private static final String TAG = "PendexActivity";
 
     private static final String CHOOSE_WISELY = "Choose Wisely!";
 
@@ -183,6 +186,13 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
     }
 
     public void onSectionAttached(final int number) {
+
+        try {
+            ProfileUtil.saveProfile(getApplicationContext());
+        } catch (final ProfileSaveException e) {
+            Log.e(TAG, "Unable to save.");
+        }
+
         switch (number) {
             case 1:
                 mTitle = getString(R.string.menu_activity_pendex);
@@ -199,11 +209,16 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
                 startActivity(profileIntent);
                 break;
             case 4:
+                mTitle = getString(R.string.menu_activity_likes);
+                final Intent likesIntent = new Intent(getBaseContext(), Likes.class);
+                startActivity(likesIntent);
+                break;
+            case 5:
                 mTitle = getString(R.string.menu_activity_traits);
                 final Intent traitsIntent = new Intent(getBaseContext(), Traits.class);
                 startActivity(traitsIntent);
                 break;
-            case 5:
+            case 6:
                 mTitle = getString(R.string.menu_activity_achievements);
                 final Intent achievementsIntent = new Intent(getBaseContext(), Achievements.class);
                 startActivity(achievementsIntent);
@@ -251,7 +266,7 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
         try {
             ProfileUtil.saveProfile(getApplicationContext());
         } catch (final ProfileSaveException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Unable to save.");
         }
         super.onDestroy();
     }

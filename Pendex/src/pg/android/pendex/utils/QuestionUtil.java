@@ -199,12 +199,14 @@ public final class QuestionUtil {
         final String id = object.getString(QUESTION.Id.getName());
         final String parentId = object.getString(QUESTION.ParentId.getName());
         final String questionText = object.getString(QUESTION.Question.getName());
+        final String type = JsonUtil.getString(object, QUESTION.Type.getName());
         final Integer random = object.getInt(QUESTION.Random.getName());
 
         question.setId(id);
         question.setParentId(parentId);
         question.setRandom(random);
         question.setQuestion(questionText);
+        question.setType(type);
 
         final JSONArray answers = object.getJSONArray(QUESTION.Answers.getName());
         final List<Answer> answersList = new ArrayList<Answer>();

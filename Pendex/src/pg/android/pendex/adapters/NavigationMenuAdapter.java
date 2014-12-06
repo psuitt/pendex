@@ -38,6 +38,8 @@ public class NavigationMenuAdapter extends BaseAdapter {
         menuItems.add(new Menu(ProfileUtil.getProfileId(), MenuType.Profile));
         menuItems.add(new Menu(r.getString(R.string.menu_activity_profile), MenuType.Sublist,
                 R.drawable.ic_action_person));
+        menuItems.add(new Menu(r.getString(R.string.menu_activity_likes), MenuType.Sublist,
+                R.drawable.ic_action_view_as_list));
         menuItems.add(new Menu(r.getString(R.string.menu_activity_traits), MenuType.Sublist,
                 R.drawable.ic_action_view_as_list));
         menuItems.add(new Menu(r.getString(R.string.menu_activity_achievements), MenuType.Sublist,

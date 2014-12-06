@@ -38,6 +38,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="pg.android.pendex.Pendex" />
         </activity>
+         <activity
+            android:name=".Likes"
+            android:label="@string/menu_activity_likes"
+            android:parentActivityName=".Pendex" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="pg.android.pendex.Pendex" />
+        </activity>
         <activity
             android:name=".Traits"
             android:label="@string/menu_activity_traits"

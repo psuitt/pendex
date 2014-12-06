@@ -9,7 +9,8 @@ package pg.android.pendex.db.enums;
  */
 public enum QUESTION {
 
-    Id("id"), ParentId("parentid"), Random("random"), Question("question"), Answers("answers");
+    Id("id"), ParentId("parentid"), Random("random"), Question("question"), Type("type"), Answers(
+            "answers");
 
     private String name;
 

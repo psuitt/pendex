@@ -16,6 +16,7 @@
     <string name="menu_activity_pendex">Pendex</string>
     <string name="menu_activity_change_profile">Change Profile</string>
     <string name="menu_activity_profile">Profile</string>
+    <string name="menu_activity_likes">Likes</string>
     <string name="menu_activity_traits">Traits</string>
     <string name="menu_activity_achievements">Achievements</string>
     <string name="menu_activity_about">About</string>

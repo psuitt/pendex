@@ -5,6 +5,7 @@ import java.util.List;
 
 import pg.android.pendex.R;
 import pg.android.pendex.beans.Achievement;
+import pg.android.pendex.exceptions.achievement.AchievementLoadException;
 import pg.android.pendex.utils.AchievementUtil;
 import pg.android.pendex.utils.FormatUtil;
 import android.app.Activity;
@@ -76,7 +77,13 @@ public class AchievementsListViewAdapter extends BaseAdapter {
         holder.title.setText(achievement.getAchievement());
         holder.date.setText(FormatUtil.getDateSimple(achievement.getDate()));
         holder.value.setText(String.valueOf(achievement.getValue()));
-        holder.summary.setText(AchievementUtil.getAchievementSummary(achievement.getAchievement()));
+        try {
+            holder.summary.setText(AchievementUtil.getAchievementSummary(context,
+                    achievement.getAchievement()));
+        } catch (final AchievementLoadException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
         return row;
 

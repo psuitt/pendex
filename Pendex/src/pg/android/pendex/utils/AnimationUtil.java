@@ -32,7 +32,7 @@ public class AnimationUtil {
     private static final int FADE_IN_DURATION = 1000;
     private static final int FADE_OUT_DURATION = 2000;
 
-    private static final String ACHIEVEMENT_PREFIX = "Acheivement: ";
+    private static final String ACHIEVEMENT_PREFIX = "Achievement:";
 
     public enum AnimationType {
         Pendex, Achievement;
@@ -104,7 +104,6 @@ public class AnimationUtil {
                             animation.getAnimationType(), animation.getText());
             textView.setVisibility(View.INVISIBLE);
             layout.addView(textView);
-            textView.setText(animation.getText());
 
             Animation fadeInAnimation = null;
             final AlphaAnimation fadeOutAnimation =

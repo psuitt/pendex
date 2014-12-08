@@ -13,6 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import pg.android.pendex.beans.Achievement;
+import pg.android.pendex.constants.Assets;
 import pg.android.pendex.db.File;
 import pg.android.pendex.db.enums.ACHIEVEMENT;
 import pg.android.pendex.exceptions.achievement.AchievementLoadException;
@@ -27,6 +28,8 @@ import android.content.Context;
  */
 public class AchievementUtil {
 
+    private static boolean loaded = false;
+
     private static int totalAchievementPoints = 0;
 
     private static List<Achievement> achievements = new ArrayList<Achievement>();
@@ -36,6 +39,40 @@ public class AchievementUtil {
     private static final String NO_SUMMAY_TEXT = "";
 
     private static final String ACHIEVEMENT_FILENAME_SUFFIX = "-achievement.json";
+
+    private static void loadAchievementSummaryMap(final Context context)
+            throws AchievementLoadException {
+
+        try {
+
+            final JSONArray array =
+                    new JSONArray(File.loadAssetsFileJSON(context, Assets.ACHIEVEMENTS_JSON));
+
+            for (int i = 0; i < array.length(); i++) {
+
+                final JSONObject object = array.getJSONObject(i);
+                final String trait = JsonUtil.getString(object, "achievement");
+                final String summary = JsonUtil.getString(object, "summary");
+
+                if (summary.length() > 0) {
+                    achievementSummaryMap.put(trait, summary);
+                }
+
+            }
+
+        } catch (final JSONException e) {
+
+            e.printStackTrace();
+            throw new AchievementLoadException();
+
+        } catch (final IOException e) {
+
+            e.printStackTrace();
+            throw new AchievementLoadException();
+
+        }
+
+    }
 
     public static void loadAchievements(final Context context) throws AchievementLoadException,
             AchievementSaveException {
@@ -125,7 +162,21 @@ public class AchievementUtil {
 
     }
 
-    public static String getAchievementSummary(final String achievement) {
+    /**
+     * Returns the summary and loads the summary from the context if not loaded.
+     * 
+     * @param context - {@link Context} - Where to get the summary.
+     * @param achievement - String - Which achievements to get the summary for.
+     * 
+     * @return String - Summary.
+     * @throws AchievementLoadException - Thrown if achievements summary fails to load.
+     */
+    public static String getAchievementSummary(final Context context, final String achievement)
+            throws AchievementLoadException {
+
+        if (!loaded) {
+            loadAchievementSummaryMap(context);
+        }
 
         if (achievementSummaryMap.containsKey(achievement)) {
             return achievementSummaryMap.get(achievement);

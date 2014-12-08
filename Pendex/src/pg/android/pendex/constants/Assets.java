@@ -18,6 +18,7 @@ public final class Assets {
 
     private static final String ID_PATTERN = "(\\D+)(\\d+)";
     public static final String QUESTIONS_JSON = "questions.json";
+    public static final String ACHIEVEMENTS_JSON = "achievements.json";
     public static final String TRAITS_JSON = "traits.json";
 
     private static int MAX_ROWS_PER_FILE = 10000;

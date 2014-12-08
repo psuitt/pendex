@@ -15,6 +15,26 @@ import pg.android.pendex.constants.Constants;
  */
 public final class FormatUtil {
 
+    /**
+     * Hidden constructor.
+     */
+    private FormatUtil() {
+
+    }
+
+    public static final String spaceDelimiter(final Object... obj) {
+
+        final StringBuilder builder = new StringBuilder();
+
+        for (final Object s : obj) {
+            builder.append(s);
+            builder.append(Constants.SPACE);
+        }
+
+        return builder.toString().trim();
+
+    }
+
     public static final String getDateSimple(final String stringDate) {
         if (stringDate == null || stringDate.isEmpty()) {
             return Constants.EMPTY_STRING;
@@ -44,13 +64,6 @@ public final class FormatUtil {
             e.printStackTrace();
         }
         return new Date(System.currentTimeMillis());
-    }
-
-    /**
-     * Hidden constructor.
-     */
-    private FormatUtil() {
-
     }
 
 }

@@ -16,6 +16,7 @@ import org.json.JSONObject;
 
 import pg.android.pendex.beans.Answer;
 import pg.android.pendex.beans.PendexRating;
+import pg.android.pendex.beans.ProfileAnswered;
 import pg.android.pendex.beans.Question;
 import pg.android.pendex.beans.Trait;
 import pg.android.pendex.comparators.TraitsAlphaComparator;
@@ -322,10 +323,13 @@ public final class ProfileUtil {
      * Skips the current question by answering with the skip constant.
      * 
      * @param context - {@link Context} - Where files are located.
+     * 
+     * @return {@link ProfileAnswered} - Response from the answered question.
+     * 
      * @throws QuestionsLoadException - If question isn't found.
      */
-    public static void skipQuestion(final Context context) throws QuestionsLoadException {
-        answerQuestion(context, Constants.SKIP);
+    public static ProfileAnswered skipQuestion(final Context context) throws QuestionsLoadException {
+        return answerQuestion(context, Constants.SKIP);
     }
 
     /**
@@ -333,21 +337,26 @@ public final class ProfileUtil {
      * 
      * @param context - {@link Context} - Where files are located.
      * @param indexOfAnswer - int - 0 Index means the first answer. -1 is the value to skip.
+     * 
+     * @return {@link ProfileAnswered} - Response from the answered question.
+     * 
      * @throws QuestionsLoadException - If question isn't found.
      */
-    public static void answerQuestion(final Context context, final int indexOfAnswer)
+    public static ProfileAnswered answerQuestion(final Context context, final int indexOfAnswer)
             throws QuestionsLoadException {
+
+        final ProfileAnswered profileAnswered = new ProfileAnswered();
 
         final Question selectedQuestion = QuestionUtil.getSelectedQuestion();
 
         // No question to answer.
         if (selectedQuestion == null) {
-            return;
+            return profileAnswered;
         }
 
         if (Constants.SKIP == indexOfAnswer) {
             answeredQuestions.put(selectedQuestion.getId(), indexOfAnswer);
-            return;
+            return profileAnswered;
         }
 
         final Answer answer = selectedQuestion.getAnswers().get(indexOfAnswer);
@@ -381,6 +390,9 @@ public final class ProfileUtil {
 
         for (final Entry<String, Integer> entry : pendexRating.getPendex().entrySet()) {
 
+            profileAnswered.addPendexList(FormatUtil.spaceDelimiter(entry.getKey(),
+                    entry.getValue()));
+
             if (pendex.containsKey(entry.getKey())) {
                 pendex.put(entry.getKey(), pendex.get(entry.getKey()) + entry.getValue());
             } else {
@@ -406,12 +418,15 @@ public final class ProfileUtil {
 
         if (!answer.getAchievement().isEmpty()) {
             AchievementUtil.addAchievements(answer.getAchievement());
+            profileAnswered.addAchievement(answer.getAchievement());
         }
 
         // Handle the likes.
         if (!selectedQuestion.getType().isEmpty()) {
             LikeUtil.addLike(selectedQuestion.getType(), answer.getAnswer());
         }
+
+        return profileAnswered;
 
     }
 

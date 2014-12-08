@@ -16,6 +16,7 @@ public final class Constants {
 
     public static final String DATE_FORMAT = "MMMM dd, yyyy H:mm a";
 
+    public static final String SPACE = " ";
     public static final String EMPTY_STRING = "";
 
     public static final String STRING_UTF_8 = "UTF-8";

@@ -1,5 +1,9 @@
 package pg.android.pendex;
 
+import java.util.List;
+
+import pg.android.pendex.beans.PendexAnimation;
+import pg.android.pendex.beans.ProfileAnswered;
 import pg.android.pendex.beans.Question;
 import pg.android.pendex.constants.Constants;
 import pg.android.pendex.constants.Messages;
@@ -8,6 +12,8 @@ import pg.android.pendex.exceptions.QuestionsLoadException;
 import pg.android.pendex.exceptions.profile.ProfileLoadException;
 import pg.android.pendex.exceptions.profile.ProfileSaveException;
 import pg.android.pendex.interfaces.INavigationDrawerCallbacks;
+import pg.android.pendex.utils.AnimationUtil;
+import pg.android.pendex.utils.AnimationUtil.AnimationType;
 import pg.android.pendex.utils.ProfileUtil;
 import pg.android.pendex.utils.QuestionUtil;
 import android.app.Activity;
@@ -26,7 +32,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class Pendex extends ActionBarActivity implements INavigationDrawerCallbacks {
@@ -34,6 +40,8 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
     private static final String TAG = "PendexActivity";
 
     private static final String CHOOSE_WISELY = "Choose Wisely!";
+
+    private RelativeLayout mainRelativeLayout;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -50,6 +58,7 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pendex);
 
+        mainRelativeLayout = (RelativeLayout) findViewById(R.id.pendex_container);
         mNavigationDrawerFragment =
                 (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(
                         R.id.navigation_drawer);
@@ -69,7 +78,8 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
             @Override
             public void onClick(final View v) {
 
-                final LinearLayout container = (LinearLayout) findViewById(R.id.pendex_container);
+                final RelativeLayout container =
+                        (RelativeLayout) findViewById(R.id.pendex_container);
                 final TextView questionTextView = (TextView) findViewById(R.id.textView1);
                 final Button button1 = (Button) findViewById(R.id.button1);
                 final Button button2 = (Button) findViewById(R.id.button2);
@@ -78,9 +88,14 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
                 final int buttonHeight = height / 4;
                 final int textHeight = height - 2 * buttonHeight;
 
-                questionTextView.setLayoutParams(new LinearLayout.LayoutParams(
+                questionTextView.setLayoutParams(new RelativeLayout.LayoutParams(
                         LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
                 questionTextView.setHeight(textHeight);
+                final RelativeLayout.LayoutParams params =
+                        new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT,
+                                LayoutParams.WRAP_CONTENT);
+                params.addRule(RelativeLayout.BELOW, R.id.textView1);
+                button1.setLayoutParams(params);
                 button1.setHeight(buttonHeight);
                 button2.setHeight(buttonHeight);
 
@@ -138,11 +153,23 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
      */
     private void processNextQuestion(final int answer) {
         try {
-            ProfileUtil.answerQuestion(getApplicationContext(), answer);
+
+            final ProfileAnswered answered =
+                    ProfileUtil.answerQuestion(getApplicationContext(), answer);
+
+            final List<PendexAnimation> animations =
+                    AnimationUtil.createPendexAnimationList(answered.getPendexList(),
+                            AnimationType.Pendex);
+            animations.addAll(AnimationUtil.createPendexAnimationList(answered.getAchievements(),
+                    AnimationType.Achievement));
+
+            AnimationUtil.chainAnimateText(Pendex.this, mainRelativeLayout, R.id.button1,
+                    animations, null);
+
         } catch (final QuestionsLoadException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            Log.e(TAG, "Error answering a question. [answerIndex=" + answer + "]");
         }
+
         nextQuestion();
     }
 

@@ -1,12 +1,12 @@
-package pg.android.pendex.test.utils;
+package pg.android.pendex.test.utils.anim;
 
 import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.TestCase;
 import pg.android.pendex.beans.PendexAnimation;
-import pg.android.pendex.utils.AnimationUtil;
-import pg.android.pendex.utils.AnimationUtil.AnimationType;
+import pg.android.pendex.utils.anim.AnimationUtil;
+import pg.android.pendex.utils.anim.AnimationUtil.AnimationType;
 
 public class AnimationUtilTest extends TestCase {
 

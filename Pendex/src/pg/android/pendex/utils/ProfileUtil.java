@@ -391,7 +391,7 @@ public final class ProfileUtil {
         for (final Entry<String, Integer> entry : pendexRating.getPendex().entrySet()) {
 
             profileAnswered.addPendexList(FormatUtil.spaceDelimiter(entry.getKey(),
-                    entry.getValue()));
+                    "+" + entry.getValue()));
 
             if (pendex.containsKey(entry.getKey())) {
                 pendex.put(entry.getKey(), pendex.get(entry.getKey()) + entry.getValue());

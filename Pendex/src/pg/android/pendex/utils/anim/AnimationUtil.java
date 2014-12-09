@@ -1,4 +1,4 @@
-package pg.android.pendex.utils;
+package pg.android.pendex.utils.anim;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,7 @@ import java.util.List;
 import pg.android.pendex.R;
 import pg.android.pendex.beans.PendexAnimation;
 import pg.android.pendex.interfaces.IPendexAnimationCallbacks;
+import pg.android.pendex.utils.FormatUtil;
 import android.app.Activity;
 import android.content.Context;
 import android.view.Gravity;
@@ -35,7 +36,60 @@ public class AnimationUtil {
     private static final String ACHIEVEMENT_PREFIX = "Achievement:";
 
     public enum AnimationType {
-        Pendex, Achievement;
+        Achievement, Answer, Pendex;
+    }
+
+    public static void animateViewSlideInTop(final Activity activity, final View view) {
+
+        final Animation animation = AnimationUtils.loadAnimation(activity, R.animator.slide_in_top);
+        animation.setAnimationListener(createShowListener(view));
+        view.startAnimation(animation);
+
+    }
+
+    public static void animateViewSlideOutTop(final Activity activity, final View view) {
+
+        final Animation animation =
+                AnimationUtils.loadAnimation(activity, R.animator.slide_out_top);
+        animation.setAnimationListener(createHideListener(view));
+        view.startAnimation(animation);
+
+    }
+
+    public static void animateViewSlideInLeft(final Activity activity, final View view) {
+
+        final Animation animation =
+                AnimationUtils.loadAnimation(activity, R.animator.slide_in_left);
+        animation.setAnimationListener(createShowListener(view));
+        view.startAnimation(animation);
+
+    }
+
+    public static void animateViewSlideOutLeft(final Activity activity, final View view) {
+
+        final Animation animation =
+                AnimationUtils.loadAnimation(activity, R.animator.slide_out_left);
+        animation.setAnimationListener(createHideListener(view));
+        view.startAnimation(animation);
+
+    }
+
+    public static void animateViewSlideInRight(final Activity activity, final View view) {
+
+        final Animation animation =
+                AnimationUtils.loadAnimation(activity, R.animator.slide_in_right);
+        animation.setAnimationListener(createShowListener(view));
+        view.startAnimation(animation);
+
+    }
+
+    public static void animateViewSlideOutRight(final Activity activity, final View view) {
+
+        final Animation animation =
+                AnimationUtils.loadAnimation(activity, R.animator.slide_out_right);
+        animation.setAnimationListener(createHideListener(view));
+        view.startAnimation(animation);
+
     }
 
     public static void animateText(final Activity activity, final RelativeLayout layout,
@@ -123,6 +177,7 @@ public class AnimationUtil {
                     startAchieve = startAchieve + FADE_IN_DURATION;
                     break;
 
+                case Answer:
                 default:
 
                     fadeInAnimation =
@@ -159,6 +214,46 @@ public class AnimationUtil {
 
         }
 
+    }
+
+    private static AnimationListener createHideListener(final View view) {
+        return new AnimationListener() {
+
+            @Override
+            public void onAnimationStart(final Animation animation) {
+            }
+
+            @Override
+            public void onAnimationRepeat(final Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(final Animation animation) {
+                // Hide text after animation
+                view.setVisibility(View.INVISIBLE);
+            }
+        };
+    }
+
+    private static AnimationListener createShowListener(final View view) {
+        return new AnimationListener() {
+
+            @Override
+            public void onAnimationStart(final Animation animation) {
+                // Show the text
+                view.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationRepeat(final Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(final Animation animation) {
+            }
+        };
     }
 
     private static AnimationListener createStartAnimationListener(
@@ -248,11 +343,31 @@ public class AnimationUtil {
 
                 break;
 
-            default:
+            case Answer:
 
                 textView = (TextView) inflater.inflate(R.layout.combat_text, layout, false);
 
                 textView.setTextSize(30);
+                textView.setTextColor(context.getResources().getColor(R.color.black));
+
+                final RelativeLayout.LayoutParams answerParams =
+                        new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.WRAP_CONTENT);
+
+                answerParams.addRule(RelativeLayout.ABOVE, aboveId);
+
+                textView.setLayoutParams(answerParams);
+                textView.setGravity(Gravity.CENTER);
+
+                textView.setText(text);
+
+                break;
+
+            default:
+
+                textView = (TextView) inflater.inflate(R.layout.combat_text, layout, false);
+
+                textView.setTextSize(28);
                 textView.setTextColor(context.getResources().getColor(R.color.darkorange));
 
                 final RelativeLayout.LayoutParams params =

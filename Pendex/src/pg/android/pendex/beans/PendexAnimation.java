@@ -1,6 +1,6 @@
 package pg.android.pendex.beans;
 
-import pg.android.pendex.utils.AnimationUtil.AnimationType;
+import pg.android.pendex.utils.anim.AnimationUtil.AnimationType;
 
 /**
  * String animation.

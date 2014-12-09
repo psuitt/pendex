@@ -65,7 +65,7 @@ public class ChangeProfile extends ActionBarActivity {
             }
         });
 
-        adapter.setSelected(ProfileUtil.getProfileId());
+        profileListView.setItemChecked(allProfiles.indexOf(ProfileUtil.getProfileId()), true);
 
     }
 
@@ -110,7 +110,7 @@ public class ChangeProfile extends ActionBarActivity {
                     public void createdUser(final String newUserId) {
                         allProfiles.clear();
                         allProfiles.addAll(ProfileUtil.getProfilesList(ChangeProfile.this));
-                        adapter.setSelected(newUserId);
+                        profileListView.setItemChecked(allProfiles.indexOf(newUserId), true);
                         // Load the selected profile.
                         try {
                             ProfileUtil.loadProfile(ChangeProfile.this, newUserId);

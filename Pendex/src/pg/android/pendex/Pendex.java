@@ -1,5 +1,6 @@
 package pg.android.pendex;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import pg.android.pendex.beans.PendexAnimation;
@@ -12,10 +13,11 @@ import pg.android.pendex.exceptions.QuestionsLoadException;
 import pg.android.pendex.exceptions.profile.ProfileLoadException;
 import pg.android.pendex.exceptions.profile.ProfileSaveException;
 import pg.android.pendex.interfaces.INavigationDrawerCallbacks;
-import pg.android.pendex.utils.AnimationUtil;
-import pg.android.pendex.utils.AnimationUtil.AnimationType;
+import pg.android.pendex.interfaces.IPendexAnimationCallbacks;
 import pg.android.pendex.utils.ProfileUtil;
 import pg.android.pendex.utils.QuestionUtil;
+import pg.android.pendex.utils.anim.AnimationUtil;
+import pg.android.pendex.utils.anim.AnimationUtil.AnimationType;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -152,25 +154,57 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
      * @param answer - int - Index of answer.
      */
     private void processNextQuestion(final int answer) {
+
+        final TextView questionTextView = (TextView) findViewById(R.id.textView1);
+        final Button button1 = (Button) findViewById(R.id.button1);
+        final Button button2 = (Button) findViewById(R.id.button2);
+
         try {
 
             final ProfileAnswered answered =
                     ProfileUtil.answerQuestion(getApplicationContext(), answer);
 
-            final List<PendexAnimation> animations =
-                    AnimationUtil.createPendexAnimationList(answered.getPendexList(),
-                            AnimationType.Pendex);
+            final List<PendexAnimation> animations = new ArrayList<PendexAnimation>();
+
+            final PendexAnimation pendexAnimation = new PendexAnimation();
+
+            pendexAnimation.setAnimationType(AnimationType.Answer);
+            pendexAnimation.setText(QuestionUtil.getSelectedQuestion().getAnswers().get(answer)
+                    .getAnswer());
+
+            animations.add(pendexAnimation);
+
+            animations.addAll(AnimationUtil.createPendexAnimationList(answered.getPendexList(),
+                    AnimationType.Pendex));
             animations.addAll(AnimationUtil.createPendexAnimationList(answered.getAchievements(),
                     AnimationType.Achievement));
 
+
             AnimationUtil.chainAnimateText(Pendex.this, mainRelativeLayout, R.id.button1,
-                    animations, null);
+                    animations, new IPendexAnimationCallbacks() {
+
+                        @Override
+                        public void animationStarted() {
+                            AnimationUtil.animateViewSlideOutTop(Pendex.this, questionTextView);
+                            AnimationUtil.animateViewSlideOutRight(Pendex.this, button1);
+                            AnimationUtil.animateViewSlideOutLeft(Pendex.this, button2);
+                        }
+
+                        @Override
+                        public void animationFinished() {
+                            nextQuestion();
+                            AnimationUtil.animateViewSlideInTop(Pendex.this, questionTextView);
+                            AnimationUtil.animateViewSlideInRight(Pendex.this, button1);
+                            AnimationUtil.animateViewSlideInLeft(Pendex.this, button2);
+                        }
+                    });
+
 
         } catch (final QuestionsLoadException e) {
             Log.e(TAG, "Error answering a question. [answerIndex=" + answer + "]");
         }
 
-        nextQuestion();
+
     }
 
     private void nextQuestion() {
@@ -214,12 +248,6 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
 
     public void onSectionAttached(final int number) {
 
-        try {
-            ProfileUtil.saveProfile(getApplicationContext());
-        } catch (final ProfileSaveException e) {
-            Log.e(TAG, "Unable to save.");
-        }
-
         switch (number) {
             case 1:
                 mTitle = getString(R.string.menu_activity_pendex);
@@ -257,7 +285,7 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
         final ActionBar actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setTitle(mTitle);
+        actionBar.setTitle(getString(R.string.menu_activity_pendex));
     }
 
     @Override
@@ -285,16 +313,21 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * This should save the profile.
-     */
     @Override
-    protected void onDestroy() {
+    protected void onStop() {
         try {
             ProfileUtil.saveProfile(getApplicationContext());
         } catch (final ProfileSaveException e) {
             Log.e(TAG, "Unable to save.");
         }
+        super.onStop();
+    }
+
+    /**
+     * This should save the profile.
+     */
+    @Override
+    protected void onDestroy() {
         super.onDestroy();
     }
 

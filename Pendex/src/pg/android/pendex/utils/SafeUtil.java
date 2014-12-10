@@ -21,13 +21,23 @@ public final class SafeUtil {
     private static final String REGEX_NOT_CHARACTER = "([^a-z]|$)";
 
     static {
-        final ArrayList<String> arrayList = new ArrayList<String>();
+
+        ArrayList<String> arrayList = new ArrayList<String>();
 
         arrayList.add("Dangit! ");
         arrayList.add("Blast! ");
         arrayList.add("Water Bearing Shield! ");
 
         map.put("damn", arrayList);
+
+        arrayList = new ArrayList<String>();
+
+        arrayList.add("Ugh! ");
+        arrayList.add("Lame! ");
+        arrayList.add("Aw! ");
+
+        map.put("shit", arrayList);
+
     }
 
     /**

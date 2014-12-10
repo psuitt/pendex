@@ -40,8 +40,8 @@ public final class QuestionUtil {
     private static final List<Question> questions = new ArrayList<Question>();
     private static final Map<String, Question> questionsMap = new HashMap<String, Question>();
 
-    private static final int QUESTIONS_TO_REFRESH = 10;
-    private static final int MAX_QUESTIONS_LOADED = 20;
+    private static final int QUESTIONS_TO_REFRESH = 8;
+    private static final int MAX_QUESTIONS_LOADED = 16;
 
     /**
      * Resets the done flag to false and all static data.

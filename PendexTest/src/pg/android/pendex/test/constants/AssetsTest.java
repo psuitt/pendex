@@ -17,7 +17,7 @@ public class AssetsTest extends TestCase {
 
     public void testGetIndexFromId10000() {
         final int index = Assets.getIndexFromId("LiFE10000");
-        assertEquals(9999, index);
+        assertEquals(999, index);
     }
 
     public void testGetIndexFromId10001() {
@@ -35,14 +35,14 @@ public class AssetsTest extends TestCase {
         assertEquals("life-1.json", fileName);
     }
 
-    public void testGetFileNameFromIdSecondFile10000() {
-        final String fileName = Assets.getFileNameFromId("LIFe10000");
-        assertEquals("life-1.json", fileName);
+    public void testGetFileNameFromIdSecondFile1001() {
+        final String fileName = Assets.getFileNameFromId("LIFe1001");
+        assertEquals("life-2.json", fileName);
     }
 
-    public void testGetFileNameFromIdSecondFile10001() {
-        final String fileName = Assets.getFileNameFromId("lIFE10001");
-        assertEquals("life-2.json", fileName);
+    public void testGetFileNameFromIdSecondFile10000() {
+        final String fileName = Assets.getFileNameFromId("lIFE10000");
+        assertEquals("life-10.json", fileName);
     }
 
 }

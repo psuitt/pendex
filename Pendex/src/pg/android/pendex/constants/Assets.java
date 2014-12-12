@@ -21,7 +21,7 @@ public final class Assets {
     public static final String ACHIEVEMENTS_JSON = "achievements.json";
     public static final String TRAITS_JSON = "traits.json";
 
-    private static int MAX_ROWS_PER_FILE = 10000;
+    public static int MAX_ROWS_PER_FILE = 1000;
 
     private static final String DELIMITER = "-";
 

@@ -3,7 +3,6 @@ package pg.android.pendex.utils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -19,6 +18,8 @@ public final class SafeUtil {
 
     private static final String REGEX_IGNORE_CASE = "(?i)";
     private static final String REGEX_NOT_CHARACTER = "([^a-z]|$)";
+    private static final String REGEX_4_CHARACTER = "[a-z][*]{3}";
+    private static final String REGEX_5_CHARACTER = "[a-z][*]{4}";
 
     static {
 
@@ -28,7 +29,7 @@ public final class SafeUtil {
         arrayList.add("Blast! ");
         arrayList.add("Water Bearing Shield! ");
 
-        map.put("damn", arrayList);
+        map.put("damn" + REGEX_NOT_CHARACTER, arrayList);
 
         arrayList = new ArrayList<String>();
 
@@ -36,7 +37,47 @@ public final class SafeUtil {
         arrayList.add("Lame! ");
         arrayList.add("Aw! ");
 
-        map.put("shit", arrayList);
+        map.put("shit" + REGEX_NOT_CHARACTER, arrayList);
+
+        arrayList = new ArrayList<String>();
+
+        arrayList.add("Thor! ");
+        arrayList.add("Odin! ");
+        arrayList.add("Shamu! ");
+
+        map.put("god" + REGEX_NOT_CHARACTER, arrayList);
+
+        arrayList = new ArrayList<String>();
+
+        arrayList.add("Thor! ");
+        arrayList.add("Odin! ");
+        arrayList.add("Shamu! ");
+
+        map.put("hell" + REGEX_NOT_CHARACTER, arrayList);
+
+        arrayList = new ArrayList<String>();
+
+        arrayList.add("Thor! ");
+        arrayList.add("Odin! ");
+        arrayList.add("Shamu! ");
+
+        map.put("kill" + REGEX_NOT_CHARACTER, arrayList);
+
+        arrayList = new ArrayList<String>();
+
+        arrayList.add("fished! ");
+        arrayList.add("Odin! ");
+        arrayList.add("Shamu! ");
+
+        map.put(REGEX_4_CHARACTER, arrayList);
+
+        arrayList = new ArrayList<String>();
+
+        arrayList.add("Thor! ");
+        arrayList.add("Odin! ");
+        arrayList.add("Shamu! ");
+
+        map.put(REGEX_5_CHARACTER, arrayList);
 
     }
 
@@ -50,15 +91,12 @@ public final class SafeUtil {
     public static String secureString(final String str) {
 
         String newString = str;
-        final String lowerCase = str.toLowerCase(Locale.getDefault());
 
         for (final Entry<String, List<String>> badWordEntry : map.entrySet()) {
-            if (lowerCase.contains(badWordEntry.getKey())) {
-                final String replacement = Utils.randomFromList(badWordEntry.getValue());
-                newString =
-                        newString.replaceAll(REGEX_IGNORE_CASE + badWordEntry.getKey()
-                                + REGEX_NOT_CHARACTER, replacement);
-            }
+            newString =
+                    newString.replaceAll(REGEX_IGNORE_CASE + badWordEntry.getKey(),
+                            Utils.randomFromList(badWordEntry.getValue()));
+
         }
 
         return newString;

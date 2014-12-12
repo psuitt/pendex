@@ -30,4 +30,14 @@ public class SafeUtilTest extends TestCase {
         assertFalse(str.contains("damn"));
     }
 
+    public void testSecureStringFStar() {
+        final String str = SafeUtil.secureString("damn i'm good f***ed something");
+        assertFalse(str.contains("f***ed"));
+    }
+
+    public void testSecureStringBStar() {
+        final String str = SafeUtil.secureString("damn i'm good B**** something");
+        assertFalse(str.contains("B****"));
+    }
+
 }

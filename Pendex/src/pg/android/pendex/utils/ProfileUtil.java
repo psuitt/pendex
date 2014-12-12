@@ -28,6 +28,7 @@ import pg.android.pendex.exceptions.AbstractLoadException;
 import pg.android.pendex.exceptions.AbstractSaveException;
 import pg.android.pendex.exceptions.QuestionsLoadException;
 import pg.android.pendex.exceptions.TraitLoadException;
+import pg.android.pendex.exceptions.profile.ProfileCreateException;
 import pg.android.pendex.exceptions.profile.ProfileExistsException;
 import pg.android.pendex.exceptions.profile.ProfileLoadException;
 import pg.android.pendex.exceptions.profile.ProfileResetException;
@@ -117,7 +118,7 @@ public final class ProfileUtil {
     }
 
     public static void loadProfile(final Context context) throws ProfileLoadException,
-            ProfileSaveException {
+            ProfileSaveException, ProfileCreateException {
 
         if (!profileReload) {
             return;
@@ -128,6 +129,10 @@ public final class ProfileUtil {
 
         final String loadedProfileId =
                 settings.getString(Preferences.LAST_PROFILE_ID_STRING, Constants.DEFAULT_USER);
+
+        if (Constants.DEFAULT_USER.equals(loadedProfileId)) {
+            throw new ProfileCreateException();
+        }
 
         loadProfile(context, loadedProfileId);
 

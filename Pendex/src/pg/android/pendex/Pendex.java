@@ -10,6 +10,7 @@ import pg.android.pendex.constants.Constants;
 import pg.android.pendex.constants.Messages;
 import pg.android.pendex.exceptions.OutOfQuestionsException;
 import pg.android.pendex.exceptions.QuestionsLoadException;
+import pg.android.pendex.exceptions.profile.ProfileCreateException;
 import pg.android.pendex.exceptions.profile.ProfileLoadException;
 import pg.android.pendex.exceptions.profile.ProfileSaveException;
 import pg.android.pendex.interfaces.INavigationDrawerCallbacks;
@@ -70,6 +71,16 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
+        try {
+            ProfileUtil.loadProfile(getApplicationContext());
+        } catch (final ProfileLoadException e) {
+            Log.e(TAG, e.getMessage());
+        } catch (final ProfileSaveException e) {
+            Log.e(TAG, e.getMessage());
+        } catch (final ProfileCreateException e) {
+            // TODO Create a new profile.
+        }
+
         final Button button1 = (Button) findViewById(R.id.button1);
         final TextView questionTextView = (TextView) findViewById(R.id.textView1);
 
@@ -107,17 +118,6 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
 
             }
         });
-
-        try {
-            ProfileUtil.loadProfile(getApplicationContext());
-        } catch (final ProfileLoadException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (final ProfileSaveException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
 
     }
 

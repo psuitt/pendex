@@ -11,6 +11,7 @@ import java.util.List;
  */
 public class ProfileAnswered {
 
+    private String answeredText;
     private List<String> achievements = new ArrayList<String>();
     private List<String> pendexList = new ArrayList<String>();
 
@@ -19,6 +20,14 @@ public class ProfileAnswered {
      */
     public ProfileAnswered() {
 
+    }
+
+    public String getAnsweredText() {
+        return answeredText;
+    }
+
+    public void setAnsweredText(final String answeredText) {
+        this.answeredText = answeredText;
     }
 
     public List<String> getAchievements() {

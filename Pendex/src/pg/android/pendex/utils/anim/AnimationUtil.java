@@ -92,11 +92,6 @@ public class AnimationUtil {
 
     }
 
-    public static void animateText(final Activity activity, final RelativeLayout layout,
-            final int aboveId, final String text) {
-        animateText(activity, layout, aboveId, AnimationType.Pendex, text, null);
-    }
-
     /**
      * Creates an animation for the main layout.
      * 
@@ -105,30 +100,46 @@ public class AnimationUtil {
      * @param aboveId - int - Id of where to start the animation.
      * @param animType - {@link AnimationType} - Type of text animation.
      * @param text - String - Text to display.
-     * @param callback - {@link IPendexAnimationCallbacks} - Callback after animation.
+     * 
+     * @return View - {@link View} - Returned view that was just faded in.
      */
-    public static void animateText(final Activity activity, final RelativeLayout layout,
-            final int aboveId, final AnimationType animType, final String text,
-            final IPendexAnimationCallbacks callback) {
+    public static TextView animateTextFadeIn(final Activity activity, final RelativeLayout layout,
+            final int aboveId, final AnimationType animType, final String text) {
 
         final LayoutInflater inflater = activity.getLayoutInflater();
 
         final TextView textView =
                 createTextView(activity, layout, inflater, aboveId, animType, text);
-
+        textView.setVisibility(View.INVISIBLE);
         layout.addView(textView);
 
-        final Animation fadeInAnimation =
-                AnimationUtils.loadAnimation(activity, R.animator.traits_anim);
-        final AlphaAnimation fadeOutAnimation = new AlphaAnimation(FADE_OUT_START, FADE_OUT_END);
-        fadeOutAnimation.setDuration(FADE_OUT_DURATION);
+        final Animation fadeInAnimation = new AlphaAnimation(FADE_OUT_END, FADE_OUT_START);
+        fadeInAnimation.setDuration(FADE_IN_DURATION);
 
-        fadeInAnimation.setAnimationListener(createStartAnimationListener(callback, textView,
-                fadeOutAnimation));
-        fadeOutAnimation
-                .setAnimationListener(createEndAnimationListener(layout, callback, textView));
+        fadeInAnimation.setAnimationListener(AnimationFactory.createStartAnimationListener(
+                textView, null, null));
 
         textView.startAnimation(fadeInAnimation);
+
+        return textView;
+
+    }
+
+    /**
+     * Creates an animation for the main layout to remove the input view by a fade out.
+     * 
+     * @param layout - {@link RelativeLayout} - Layout to remove the view from.
+     * @param view - {@link View} - View to remove.
+     * 
+     */
+    public static void animateTextFadeOutAndRemove(final RelativeLayout layout, final View view) {
+
+        final AlphaAnimation fadeOutAnimation = new AlphaAnimation(FADE_OUT_START, FADE_OUT_END);
+        fadeOutAnimation.setDuration(FADE_OUT_DURATION);
+        fadeOutAnimation.setAnimationListener(AnimationFactory.createEndAnimationListener(layout,
+                view, null));
+
+        view.startAnimation(fadeOutAnimation);
 
     }
 
@@ -177,7 +188,6 @@ public class AnimationUtil {
                     startAchieve = startAchieve + FADE_IN_DURATION;
                     break;
 
-                case Answer:
                 default:
 
                     fadeInAnimation =
@@ -193,19 +203,19 @@ public class AnimationUtil {
 
 
             if (offset != 0) {
-                fadeInAnimation.setAnimationListener(createStartAnimationListener(null, textView,
-                        fadeOutAnimation));
+                fadeInAnimation.setAnimationListener(AnimationFactory.createStartAnimationListener(
+                        textView, null, fadeOutAnimation));
             } else {
-                fadeInAnimation.setAnimationListener(createStartAnimationListener(callback,
-                        textView, fadeOutAnimation));
+                fadeInAnimation.setAnimationListener(AnimationFactory.createStartAnimationListener(
+                        textView, callback, fadeOutAnimation));
             }
 
             if (offset != last) {
-                fadeOutAnimation.setAnimationListener(createEndAnimationListener(layout, null,
-                        textView));
+                fadeOutAnimation.setAnimationListener(AnimationFactory.createEndAnimationListener(
+                        layout, textView, null));
             } else {
-                fadeOutAnimation.setAnimationListener(createEndAnimationListener(layout, callback,
-                        textView));
+                fadeOutAnimation.setAnimationListener(AnimationFactory.createEndAnimationListener(
+                        layout, textView, callback));
             }
 
             textView.startAnimation(fadeInAnimation);
@@ -252,56 +262,6 @@ public class AnimationUtil {
 
             @Override
             public void onAnimationEnd(final Animation animation) {
-            }
-        };
-    }
-
-    private static AnimationListener createStartAnimationListener(
-            final IPendexAnimationCallbacks callback, final TextView textView,
-            final AlphaAnimation fadeOutAnimationObject) {
-        return new AnimationListener() {
-
-            @Override
-            public void onAnimationStart(final Animation animation) {
-                // Show the text;
-                textView.setVisibility(View.VISIBLE);
-                if (callback != null) {
-                    callback.animationStarted();
-                }
-            }
-
-            @Override
-            public void onAnimationRepeat(final Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(final Animation animation) {
-                textView.startAnimation(fadeOutAnimationObject);
-            }
-        };
-    }
-
-    private static AnimationListener createEndAnimationListener(final RelativeLayout layout,
-            final IPendexAnimationCallbacks callback, final TextView textView) {
-        return new AnimationListener() {
-
-            @Override
-            public void onAnimationStart(final Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(final Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(final Animation animation) {
-                layout.removeView(textView);
-                if (callback != null) {
-                    callback.animationFinished();
-                }
             }
         };
     }

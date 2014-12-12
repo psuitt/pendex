@@ -35,7 +35,6 @@ public final class QuestionUtil {
     private static final String TAG = "QuestionUtil";
 
     private static boolean done = false;
-    private static String linked;
     private static Question selectedQuestion;
     private static final List<Question> questions = new ArrayList<Question>();
     private static final Map<String, Question> questionsMap = new HashMap<String, Question>();
@@ -48,12 +47,18 @@ public final class QuestionUtil {
      */
     public static void resetQuestions() {
         done = false;
-        linked = null;
         selectedQuestion = null;
-        questions.clear();
-        questionsMap.clear();
+        clearQuestions();
     }
 
+    /**
+     * Returns a random question be sure to {@link #removeQuestionById(String)} when answered.
+     * 
+     * @param context - {@link Context} - Where to get the assets.
+     * 
+     * @throws QuestionsLoadException - Thrown if the questions if they do not load.
+     * @throws OutOfQuestionsException - Thrown if there are no more questions to answer.
+     */
     public static Question getRandomQuestion(final Context context) throws QuestionsLoadException,
             OutOfQuestionsException {
 
@@ -62,27 +67,20 @@ public final class QuestionUtil {
             throw new OutOfQuestionsException();
         }
 
-        if (linked != null) {
+        if (selectedQuestion != null) {
             return selectedQuestion;
         }
 
-        if (questions.isEmpty() || questions.size() < QUESTIONS_TO_REFRESH) {
-            loadQuestions(context);
-        }
-
-        // Sanity check because you could be done.
-        if (questions.isEmpty()) {
-            selectedQuestion = null;
-            done = true;
-            throw new OutOfQuestionsException();
-        }
-
-        Collections.shuffle(questions);
+        reloadQuestions(context);
 
         int index = Constants.FIRST;
         final int max = questions.size();
         Question q = questions.get(index);
 
+        /*
+         * If there is a parent and you have not answered it yet skip this till you get to the next
+         * available question.
+         */
         while (!q.getParentId().isEmpty() && !ProfileUtil.hasAnswered(q.getParentId())
                 && index < max) {
             index++;
@@ -94,10 +92,54 @@ public final class QuestionUtil {
 
     }
 
+    /**
+     * Reloads the questions if the questions are less than the refresh number.
+     * 
+     * @param context - {@link Context} - Where to get the assets.
+     * 
+     * @throws QuestionsLoadException - Thrown if the questions if they do not load.
+     * @throws OutOfQuestionsException - Thrown if there are no more questions to answer.
+     */
+    private static void reloadQuestions(final Context context) throws QuestionsLoadException,
+            OutOfQuestionsException {
+        if (questions.size() < QUESTIONS_TO_REFRESH) {
+
+            loadQuestions(context);
+
+            // Sanity check because you could be done.
+            if (questions.isEmpty()) {
+                selectedQuestion = null;
+                done = true;
+                throw new OutOfQuestionsException();
+            }
+
+            // Shuffle the sortable list.
+            Collections.shuffle(questions);
+
+        }
+    }
+
+    /**
+     * Loads questions from the context.
+     * 
+     * @param context - {@link Context} - Where to get the assets.
+     * 
+     * @throws QuestionsLoadException - Thrown if the questions if they do not load.
+     * @throws OutOfQuestionsException - Thrown if there are no more questions to answer.
+     */
     private static void loadQuestions(final Context context) throws QuestionsLoadException {
         loadQuestions(context, null);
     }
 
+    /**
+     * Loads questions from the context.
+     * 
+     * @param context - {@link Context} - Where to get the assets.
+     * @param s - String - Id if you want to load a specific question.
+     * 
+     * @throws QuestionsLoadException - Thrown if the questions if they do not load.
+     * @throws OutOfQuestionsException - Thrown if there are no more questions to answer.
+     */
     private static void loadQuestions(final Context context, final String s)
             throws QuestionsLoadException {
 
@@ -147,8 +189,7 @@ public final class QuestionUtil {
 
                 final Question q = convertJsonToQuestion(object);
 
-                questions.add(q);
-                questionsMap.put(id, q);
+                addQuestion(q);
 
                 added++;
 
@@ -192,6 +233,15 @@ public final class QuestionUtil {
 
     }
 
+    /**
+     * Converts {@link JSONObject}s to a question bean.
+     * 
+     * @param object - {@link JSONObject} - Question json object.
+     * 
+     * @return {@link Question} - Question bean.
+     * 
+     * @throws JSONException - Thrown if the question can't find a field in the json object.
+     */
     private static Question convertJsonToQuestion(final JSONObject object) throws JSONException {
 
         final Question question = new Question();
@@ -244,39 +294,28 @@ public final class QuestionUtil {
         return question;
     }
 
-
-    private static void safeQuestion(final Question question) {
+    /**
+     * Removes the bad words from the question and answers.
+     * 
+     * @param question - {@link Question} - Question to filter.
+     */
+    private static void removeBadWordsQuestion(final Question question) {
         question.setQuestion(SafeUtil.secureString(question.getQuestion()));
         for (final Answer answer : question.getAnswers()) {
             answer.setAnswer(SafeUtil.secureString(answer.getAnswer()));
         }
     }
 
-    public static void removeLinked() {
-        linked = null;
-    }
-
     /**
-     * Removes the current question from the list and map and sets the current question.
+     * Sets the current question.
      * 
      * @param q - {@link Question} - Questions to set.
      */
     private static void setQuestion(final Question q) {
-        removeQuestion(q);
         selectedQuestion = q;
         if (ProfileUtil.isSafe()) {
-            safeQuestion(selectedQuestion);
+            removeBadWordsQuestion(selectedQuestion);
         }
-    }
-
-    /**
-     * Removes the question from the map and list.
-     * 
-     * @param q - {@link Question} - Question to remove.
-     */
-    public static void removeQuestion(final Question q) {
-        questions.remove(q);
-        questionsMap.remove(q.getId());
     }
 
     /**
@@ -297,20 +336,22 @@ public final class QuestionUtil {
 
         // Now set the current question.
         setQuestion(question);
-        linked = id;
     }
 
     /**
-     * Removes the question from the map and list.
+     * Removes the question from the map and list, and also if there are linked questions those are
+     * also removed. This is to be called when a question is answered.
      * 
      * @param id - String - Id of the question.
      * 
      * @return List&lt;String&gt; - The questions if there are links this will be more than 1.
      */
     public static List<String> removeQuestionById(final String id) {
+
         final List<String> removed = new ArrayList<String>();
         final Question question = questionsMap.get(id);
 
+        // Add the current id.
         removed.add(id);
 
         if (question == null) {
@@ -318,8 +359,8 @@ public final class QuestionUtil {
             return removed;
         }
 
+        // Remove the question
         removeQuestion(question);
-
 
         for (final Answer answer : question.getAnswers()) {
             if (!answer.getLinked().isEmpty()) {
@@ -328,6 +369,51 @@ public final class QuestionUtil {
         }
 
         return removed;
+
+    }
+
+    /**
+     * Adds input question to both collections.
+     * 
+     * @param q - {@link Question} - Question to add.
+     */
+    private static void addQuestion(final Question q) {
+        questions.add(q);
+        questionsMap.put(q.getId(), q);
+    }
+
+    /**
+     * Clears the question from both the map and list.
+     */
+    private static void clearQuestions() {
+        questions.clear();
+        questionsMap.clear();
+    }
+
+    /**
+     * Removes the selected question from the list and map.
+     * 
+     */
+    public static void removeSelectedQuestion() {
+        removeQuestion(selectedQuestion);
+    }
+
+    /**
+     * Removes the question from the map and list.
+     * 
+     * @param q - {@link Question} - Question to remove.
+     */
+    private static void removeQuestion(final Question q) {
+        questions.remove(q);
+        questionsMap.remove(q.getId());
+    }
+
+    /**
+     * Sets the selected question to null. When null {@link #getRandomQuestion(Context)} will return
+     * the next random question.
+     */
+    public static void clearSelectedQuestion() {
+        selectedQuestion = null;
     }
 
     /**
@@ -343,6 +429,24 @@ public final class QuestionUtil {
 
     public static Question getSelectedQuestion() {
         return selectedQuestion;
+    }
+
+    /**
+     * Returns the inverse of the answered question.
+     * 
+     * @param indexOfAnswer - int - Current question index.
+     * @param selectedQuestion - {@link Answer} - Question to get the not answered.
+     * 
+     * @return {@link Answer} - Current not answered option in the question.
+     */
+    public static Answer getNotAnswered(final int indexOfAnswer, final Question selectedQuestion) {
+        Answer notAnswered;
+        if (indexOfAnswer == 0) {
+            notAnswered = selectedQuestion.getAnswers().get(1);
+        } else {
+            notAnswered = selectedQuestion.getAnswers().get(0);
+        }
+        return notAnswered;
     }
 
 }

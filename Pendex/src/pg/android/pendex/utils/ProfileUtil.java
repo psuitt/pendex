@@ -58,6 +58,13 @@ public final class ProfileUtil {
 
     private static final String PROFILE_FILENAME_SUFFIX = "-profile.json";
 
+    /**
+     * Returns the list of profiles.
+     * 
+     * @param context - {@link Context} - Where to get the assets.
+     * 
+     * @return List&lt;String&gt; - List of profiles that can be loaded.
+     */
     public static List<String> getProfilesList(final Context context) {
 
         final List<String> list = new ArrayList<String>();
@@ -349,27 +356,121 @@ public final class ProfileUtil {
 
         final Question selectedQuestion = QuestionUtil.getSelectedQuestion();
 
-        // No question to answer.
-        if (selectedQuestion == null) {
-            return profileAnswered;
-        }
+        // Answer the current question appropriately.
+        answeredQuestions.put(selectedQuestion.getId(), indexOfAnswer);
 
         if (Constants.SKIP == indexOfAnswer) {
-            answeredQuestions.put(selectedQuestion.getId(), indexOfAnswer);
+            // Nothing remove all linked as you will not be able to continue.
+            removeAnswerLinked(selectedQuestion.getId());
+            // Allow next question to get a new question.
+            QuestionUtil.clearSelectedQuestion();
+            profileAnswered.setAnsweredText(Constants.EMPTY_STRING);
             return profileAnswered;
         }
 
+        // Remove just the selected because you just answered it.
+        QuestionUtil.removeSelectedQuestion();
+
         final Answer answer = selectedQuestion.getAnswers().get(indexOfAnswer);
-        Answer notAnswered;
-        final PendexRating pendexRating = answer.getPendexRating();
-        final String question = selectedQuestion.getQuestion();
+        final Answer notAnswered = QuestionUtil.getNotAnswered(indexOfAnswer, selectedQuestion);
 
-        if (indexOfAnswer == 0) {
-            notAnswered = selectedQuestion.getAnswers().get(1);
-        } else {
-            notAnswered = selectedQuestion.getAnswers().get(0);
+        profileAnswered.setAnsweredText(answer.getAnswer());
+
+        updateLastAnswered(answer, notAnswered, selectedQuestion.getQuestion());
+
+        updatePendex(profileAnswered, answer);
+
+        updateNotAnsweredQuestion(notAnswered);
+
+        updateAchievements(profileAnswered, answer);
+
+        updateLikes(selectedQuestion, answer);
+
+        updateNextQuestion(context, answer);
+
+        return profileAnswered;
+
+    }
+
+    /**
+     * Removes the answers for the not answered linked Ids.
+     * 
+     * @param notAnswered - {@link Answer} - Current not answered option in the question.
+     */
+    private static void updateNotAnsweredQuestion(final Answer notAnswered) {
+        // Skip the not answered.
+        if (!notAnswered.getLinked().isEmpty()) {
+            removeAnswerLinked(notAnswered.getLinked());
         }
+    }
 
+    /**
+     * If achievement is not empty the will be updated.
+     * 
+     * @param profileAnswered - {@link ProfileAnswered} - Bean to set achievement for return.
+     * @param answer - {@link Answer} - Current answered question.
+     */
+    private static void updateAchievements(final ProfileAnswered profileAnswered,
+            final Answer answer) {
+        if (!answer.getAchievement().isEmpty()) {
+            AchievementUtil.addAchievements(answer.getAchievement());
+            profileAnswered.addAchievement(answer.getAchievement());
+        }
+    }
+
+    /**
+     * Updates the user likes list.
+     * 
+     * @param selectedQuestion - {@link Question} - Selected question.
+     * @param answer - {@link Answer} - Current answered question.
+     */
+    private static void updateLikes(final Question selectedQuestion, final Answer answer) {
+        // Handle the likes.
+        if (!selectedQuestion.getType().isEmpty()) {
+            LikeUtil.addLike(selectedQuestion.getType(), answer.getAnswer());
+        }
+    }
+
+    /**
+     * If there is a linked question the next question will be that. If not the next question is
+     * cleared.
+     * 
+     * @param context - {@link Context} - Where files are located.
+     * @param answer - {@link Answer} - To check for a linked question.
+     * 
+     * @throws QuestionsLoadException - If question isn't found.
+     */
+    private static void updateNextQuestion(final Context context, final Answer answer)
+            throws QuestionsLoadException {
+        // Set the next question to the subsequent question
+        if (!answer.getLinked().isEmpty()) {
+            QuestionUtil.setQuestionById(context, answer.getLinked());
+        } else {
+            QuestionUtil.clearSelectedQuestion();
+        }
+    }
+
+    /**
+     * Removes the id from the questions and also answers all the linked questions as a skip.
+     * 
+     * @param idToRemove - String - Id to remove.
+     */
+    private static void removeAnswerLinked(final String idToRemove) {
+        final List<String> removed = QuestionUtil.removeQuestionById(idToRemove);
+        for (final String removedId : removed) {
+            answeredQuestions.put(removedId, Constants.SKIP);
+        }
+    }
+
+    /**
+     * Sets the last answered based on the current answer and the not answered response.
+     * 
+     * @param answer - {@link Answer} - Answered.
+     * @param notAnswered - {@link Answer} - Not answered.
+     * @param question - String - Text for the answered display.
+     */
+    private static void updateLastAnswered(final Answer answer, final Answer notAnswered,
+            final String question) {
 
         final StringBuilder lastAnsweredSB = new StringBuilder();
 
@@ -386,7 +487,16 @@ public final class ProfileUtil {
 
         lastAnswered = lastAnsweredSB.toString();
 
-        answeredQuestions.put(selectedQuestion.getId(), indexOfAnswer);
+    }
+
+    /**
+     * Updates the pendex of the current user.
+     * 
+     * @param profileAnswered - {@link ProfileAnswered} - Bean to set profile answered display.
+     * @param answer - {@link Answer} - Answer to process and add the pendex to.
+     */
+    private static void updatePendex(final ProfileAnswered profileAnswered, final Answer answer) {
+        final PendexRating pendexRating = answer.getPendexRating();
 
         for (final Entry<String, Integer> entry : pendexRating.getPendex().entrySet()) {
 
@@ -400,34 +510,6 @@ public final class ProfileUtil {
             }
 
         }
-
-        // Set the next question to the subsequent question
-        if (!answer.getLinked().isEmpty()) {
-            QuestionUtil.setQuestionById(context, answer.getLinked());
-        } else {
-            QuestionUtil.removeLinked();
-        }
-
-        // Skip the not answered.
-        if (!notAnswered.getLinked().isEmpty()) {
-            final List<String> removed = QuestionUtil.removeQuestionById(notAnswered.getLinked());
-            for (final String removedId : removed) {
-                answeredQuestions.put(removedId, Constants.SKIP);
-            }
-        }
-
-        if (!answer.getAchievement().isEmpty()) {
-            AchievementUtil.addAchievements(answer.getAchievement());
-            profileAnswered.addAchievement(answer.getAchievement());
-        }
-
-        // Handle the likes.
-        if (!selectedQuestion.getType().isEmpty()) {
-            LikeUtil.addLike(selectedQuestion.getType(), answer.getAnswer());
-        }
-
-        return profileAnswered;
-
     }
 
     public static List<Trait> getPendexTraits(final Context context) throws TraitLoadException {

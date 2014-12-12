@@ -168,10 +168,6 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
 
             final PendexAnimation pendexAnimation = new PendexAnimation();
 
-            pendexAnimation.setAnimationType(AnimationType.Answer);
-            pendexAnimation.setText(QuestionUtil.getSelectedQuestion().getAnswers().get(answer)
-                    .getAnswer());
-
             animations.add(pendexAnimation);
 
             animations.addAll(AnimationUtil.createPendexAnimationList(answered.getPendexList(),
@@ -179,6 +175,9 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
             animations.addAll(AnimationUtil.createPendexAnimationList(answered.getAchievements(),
                     AnimationType.Achievement));
 
+            final TextView answerTextView =
+                    AnimationUtil.animateTextFadeIn(Pendex.this, mainRelativeLayout, R.id.button1,
+                            AnimationType.Answer, answered.getAnsweredText());
 
             AnimationUtil.chainAnimateText(Pendex.this, mainRelativeLayout, R.id.button1,
                     animations, new IPendexAnimationCallbacks() {
@@ -193,6 +192,8 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
                         @Override
                         public void animationFinished() {
                             nextQuestion();
+                            AnimationUtil.animateTextFadeOutAndRemove(mainRelativeLayout,
+                                    answerTextView);
                             AnimationUtil.animateViewSlideInTop(Pendex.this, questionTextView);
                             AnimationUtil.animateViewSlideInRight(Pendex.this, button1);
                             AnimationUtil.animateViewSlideInLeft(Pendex.this, button2);

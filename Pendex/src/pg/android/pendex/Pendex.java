@@ -51,11 +51,6 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
      */
     private NavigationDrawerFragment mNavigationDrawerFragment;
 
-    /**
-     * Used to store the last screen title. For use in {@link #restoreActionBar()}.
-     */
-    private CharSequence mTitle;
-
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,7 +60,6 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
         mNavigationDrawerFragment =
                 (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(
                         R.id.navigation_drawer);
-        mTitle = getTitle();
 
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
@@ -78,7 +72,7 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
         } catch (final ProfileSaveException e) {
             Log.e(TAG, e.getMessage());
         } catch (final ProfileCreateException e) {
-            // TODO Create a new profile.
+
         }
 
         final Button button1 = (Button) findViewById(R.id.button1);
@@ -251,33 +245,24 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
 
         switch (number) {
             case 1:
-                mTitle = getString(R.string.menu_activity_pendex);
                 break;
             case 2:
-                mTitle = getString(R.string.menu_activity_change_profile);
-                final Intent changeProfileIntent =
-                        new Intent(getBaseContext(), ChangeProfile.class);
-                startActivity(changeProfileIntent);
+                startActivity(new Intent(getBaseContext(), ChangeProfile.class));
                 break;
             case 3:
-                mTitle = getString(R.string.menu_activity_profile);
-                final Intent profileIntent = new Intent(getBaseContext(), Profile.class);
-                startActivity(profileIntent);
+                startActivity(new Intent(getBaseContext(), Profile.class));
                 break;
             case 4:
-                mTitle = getString(R.string.menu_activity_likes);
-                final Intent likesIntent = new Intent(getBaseContext(), Likes.class);
-                startActivity(likesIntent);
+                startActivity(new Intent(getBaseContext(), Likes.class));
                 break;
             case 5:
-                mTitle = getString(R.string.menu_activity_traits);
-                final Intent traitsIntent = new Intent(getBaseContext(), Traits.class);
-                startActivity(traitsIntent);
+                startActivity(new Intent(getBaseContext(), Traits.class));
                 break;
             case 6:
-                mTitle = getString(R.string.menu_activity_achievements);
-                final Intent achievementsIntent = new Intent(getBaseContext(), Achievements.class);
-                startActivity(achievementsIntent);
+                startActivity(new Intent(getBaseContext(), Achievements.class));
+                break;
+            case 7:
+                startActivity(new Intent(getBaseContext(), About.class));
                 break;
         }
     }

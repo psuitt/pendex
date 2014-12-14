@@ -23,6 +23,11 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".Welcome"
+            android:label="@string/menu_activity_welcome"
+            android:parentActivityName=".Pendex" >
+        </activity>
+        <activity
             android:name=".ChangeProfile"
             android:label="@string/menu_activity_change_profile"
             android:parentActivityName=".Pendex" >
@@ -57,6 +62,14 @@
         <activity
             android:name=".Achievements"
             android:label="@string/menu_activity_achievements"
+            android:parentActivityName=".Pendex" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="pg.android.pendex.Pendex" />
+        </activity>
+        <activity
+            android:name=".About"
+            android:label="@string/menu_activity_about"
             android:parentActivityName=".Pendex" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

@@ -104,14 +104,28 @@ public final class ProfileUtil {
         pendex = new HashMap<String, Integer>();
     }
 
-    public static void createProfile(final Context context, final String profile)
+    /**
+     * Creates the input profile name any strings or special characters are trimmed from the id.
+     * 
+     * @param context - {@link Context} - Holds the assets.
+     * @param profileName - String - Profile name.
+     * 
+     * @throws ProfileExistsException - Thrown if the profile already exits.
+     * @throws ProfileSaveException - Thrown if the profile save fails.
+     */
+    public static void createProfile(final Context context, final String profileName)
             throws ProfileExistsException, ProfileSaveException {
 
-        if (getProfilesList(context).contains(profile.trim())) {
+        final String profileNameFiltered =
+                profileName.replaceAll(Constants.ALPHANUMERIC_CHARACTERS_PATTERN, Constants.EMPTY_STRING);
+
+        if (getProfilesList(context).contains(profileNameFiltered)) {
             throw new ProfileExistsException();
         }
 
-        reset(profile);
+        reset(profileName);
+        loadedProfileId = profileNameFiltered;
+
         created = new Date(System.currentTimeMillis());
         saveProfile(context);
 

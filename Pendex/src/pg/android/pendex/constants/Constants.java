@@ -26,6 +26,8 @@ public final class Constants {
     public static final int FIRST = 0;
     public static final int SKIP = -1;
 
+    public static final String ALPHANUMERIC_CHARACTERS_PATTERN = "[^a-zA-Z0-9]";
+
     /**
      * Hidden constructor.
      */

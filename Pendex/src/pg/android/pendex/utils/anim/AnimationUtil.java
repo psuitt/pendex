@@ -31,7 +31,9 @@ public class AnimationUtil {
     private static final float FADE_OUT_END = 0f;
     private static final float FADE_OUT_START = 1f;
     private static final int FADE_IN_DURATION = 1000;
-    private static final int FADE_OUT_DURATION = 2000;
+    private static final int FADE_OUT_DURATION_SHORT = 300;
+    private static final int FADE_OUT_DURATION = 1500;
+    private static final int FADE_OUT_DURATION_LONG = 2000;
 
     private static final String ACHIEVEMENT_PREFIX = "Achievement:";
 
@@ -173,7 +175,7 @@ public class AnimationUtil {
             Animation fadeInAnimation = null;
             final AlphaAnimation fadeOutAnimation =
                     new AlphaAnimation(FADE_OUT_START, FADE_OUT_END);
-            fadeOutAnimation.setDuration(FADE_OUT_DURATION);
+            fadeOutAnimation.setDuration(FADE_OUT_DURATION_LONG);
 
             switch (animation.getAnimationType()) {
 
@@ -189,12 +191,12 @@ public class AnimationUtil {
                     break;
 
                 default:
-
+                    fadeOutAnimation.setDuration(FADE_OUT_DURATION_SHORT);
                     fadeInAnimation =
                             AnimationUtils.loadAnimation(activity, R.animator.traits_anim);
                     final long pendexDuration = fadeInAnimation.getDuration();
 
-                    final long startOffset = (pendexDuration / 3) * offset;
+                    final long startOffset = (pendexDuration / 2) * offset;
                     fadeInAnimation.setStartOffset(startOffset);
                     startAchieve = startOffset + pendexDuration;
                     break;

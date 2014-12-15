@@ -23,6 +23,10 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".Loading"
+            android:label="@string/activity_loading" >
+        </activity>
+        <activity
             android:name=".Welcome"
             android:label="@string/menu_activity_welcome" >
         </activity>

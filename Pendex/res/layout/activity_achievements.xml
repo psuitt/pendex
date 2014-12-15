@@ -8,11 +8,12 @@
 
     <TextView
         android:id="@+id/achievements_title"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:text="@string/test"
-        android:layout_alignParentRight="true"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="30sp" />
 
     <ListView
         android:id="@+id/achievements_view"

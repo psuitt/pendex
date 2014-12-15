@@ -34,6 +34,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -45,7 +46,13 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
     private static final String CHOOSE_WISELY = "Choose Wisely!";
 
     private RelativeLayout mainRelativeLayout;
+    private TextView questionTextView;
+    private Button button1;
+    private Button button2;
 
+    private int currentHeight = 0;
+
+    private boolean loadNewQuestion = true;
     private boolean save = true;
 
     /**
@@ -72,6 +79,10 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
         setContentView(R.layout.activity_pendex);
 
         mainRelativeLayout = (RelativeLayout) findViewById(R.id.pendex_container);
+        questionTextView = (TextView) findViewById(R.id.textView1);
+        button1 = (Button) findViewById(R.id.button1);
+        button2 = (Button) findViewById(R.id.button2);
+
         mNavigationDrawerFragment =
                 (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(
                         R.id.navigation_drawer);
@@ -80,39 +91,27 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
-        final Button button1 = (Button) findViewById(R.id.button1);
-        final TextView questionTextView = (TextView) findViewById(R.id.textView1);
+        questionTextView.setText(R.string.pendex_default_start_text);
+
+        if (QuestionUtil.getSelectedQuestion() == null) {
+            setUpInitialScreen();
+        } else {
+            loadNewQuestion = false;
+            init();
+        }
+
+    }
+
+    private void setUpInitialScreen() {
 
         button1.setText(R.string.pendex_click_to_begin);
-        questionTextView.setText(R.string.pendex_default_start_text);
 
         button1.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(final View v) {
 
-                final RelativeLayout container =
-                        (RelativeLayout) findViewById(R.id.pendex_container);
-                final TextView questionTextView = (TextView) findViewById(R.id.textView1);
-                final Button button1 = (Button) findViewById(R.id.button1);
-                final Button button2 = (Button) findViewById(R.id.button2);
-
-                final int height = container.getHeight();
-                final int buttonHeight = height / 4;
-                final int textHeight = height - 2 * buttonHeight;
-
-                questionTextView.setLayoutParams(new RelativeLayout.LayoutParams(
-                        LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-                questionTextView.setHeight(textHeight);
-                final RelativeLayout.LayoutParams params =
-                        new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT,
-                                LayoutParams.WRAP_CONTENT);
-                params.addRule(RelativeLayout.BELOW, R.id.textView1);
-                button1.setLayoutParams(params);
-                button1.setHeight(buttonHeight);
-                button2.setHeight(buttonHeight);
-
-                button2.setVisibility(View.VISIBLE);
-
+                loadNewQuestion = true;
+                resizeButtons();
                 init();
 
             }
@@ -122,15 +121,54 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
 
     private void init() {
 
+        mainRelativeLayout.getViewTreeObserver().addOnGlobalLayoutListener(
+                new OnGlobalLayoutListener() {
+
+                    @Override
+                    public void onGlobalLayout() {
+                        resizeButtons();
+                    }
+                });
+
+
+
         setUpButtonListeners();
+
         nextQuestion();
 
     }
 
-    private void setUpButtonListeners() {
+    private void resizeButtons() {
 
-        final Button button1 = (Button) findViewById(R.id.button1);
-        final Button button2 = (Button) findViewById(R.id.button2);
+        final int height = mainRelativeLayout.getHeight();
+
+        if (height > 0) {
+
+            if (currentHeight == height) {
+                return;
+            }
+
+            currentHeight = height;
+
+            final int buttonHeight = height / 4;
+            final int textHeight = height - 2 * buttonHeight;
+
+            questionTextView.setLayoutParams(new RelativeLayout.LayoutParams(
+                    LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+            questionTextView.setHeight(textHeight);
+            final RelativeLayout.LayoutParams params =
+                    new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT,
+                            LayoutParams.WRAP_CONTENT);
+            params.addRule(RelativeLayout.BELOW, R.id.textView1);
+            button1.setLayoutParams(params);
+            button1.setHeight(buttonHeight);
+            button2.setHeight(buttonHeight);
+
+            button2.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void setUpButtonListeners() {
 
         button1.setOnClickListener(new Button.OnClickListener() {
             @Override
@@ -153,10 +191,6 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
      * @param answer - int - Index of answer.
      */
     private void processNextQuestion(final int answer) {
-
-        final TextView questionTextView = (TextView) findViewById(R.id.textView1);
-        final Button button1 = (Button) findViewById(R.id.button1);
-        final Button button2 = (Button) findViewById(R.id.button2);
 
         try {
 
@@ -190,6 +224,7 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
 
                         @Override
                         public void animationFinished() {
+                            loadNewQuestion = true;
                             nextQuestion();
                             AnimationUtil.animateTextFadeOutAndRemove(mainRelativeLayout,
                                     answerTextView);
@@ -209,18 +244,20 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
 
     private void nextQuestion() {
 
-        final Button button1 = (Button) findViewById(R.id.button1);
-        final Button button2 = (Button) findViewById(R.id.button2);
-        final TextView questionTextViw = (TextView) findViewById(R.id.textView1);
-
         try {
 
-            final Question question = QuestionUtil.getRandomQuestion(getApplicationContext());
+            final Question question;
+
+            if (loadNewQuestion) {
+                question = QuestionUtil.getRandomQuestion(getApplicationContext());
+            } else {
+                question = QuestionUtil.getSelectedQuestion();
+            }
 
             if (Constants.EMPTY_STRING.equals(question.getQuestion())) {
-                questionTextViw.setText(CHOOSE_WISELY);
+                questionTextView.setText(CHOOSE_WISELY);
             } else {
-                questionTextViw.setText(question.getQuestion());
+                questionTextView.setText(question.getQuestion());
             }
             button1.setText(question.getAnswers().get(0).getAnswer());
             button2.setText(question.getAnswers().get(1).getAnswer());
@@ -230,7 +267,7 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
             e.printStackTrace();
 
         } catch (final OutOfQuestionsException e) {
-            questionTextViw.setText(Messages.COMPLETED_MESSAGE);
+            questionTextView.setText(Messages.COMPLETED_MESSAGE);
             button1.setText("");
             button2.setText("");
         }
@@ -369,6 +406,7 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        loadNewQuestion = true;
         nextQuestion();
     }
 

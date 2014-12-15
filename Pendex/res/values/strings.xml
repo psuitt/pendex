@@ -22,7 +22,9 @@
     <string name="menu_activity_achievements">Achievements</string>
     <string name="menu_activity_about">About</string>
     
-    <string name="welcome_description">Description text</string>
+    <string name="activity_loading">Loading</string>
+    
+    <string name="welcome_description">An app all about questions. You will be given 2 choices choose the one you want from the two to unlock traits, likes, and achievements. Begin by creating a profile below. </string>
     <string name="welcome_create">Create</string>
     <string name="welcome_profile">Profile Name</string>
     

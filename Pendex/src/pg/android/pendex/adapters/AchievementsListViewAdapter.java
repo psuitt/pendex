@@ -5,6 +5,7 @@ import java.util.List;
 
 import pg.android.pendex.R;
 import pg.android.pendex.beans.Achievement;
+import pg.android.pendex.constants.Constants;
 import pg.android.pendex.exceptions.achievement.AchievementLoadException;
 import pg.android.pendex.utils.AchievementUtil;
 import pg.android.pendex.utils.FormatUtil;
@@ -29,6 +30,7 @@ public class AchievementsListViewAdapter extends BaseAdapter {
         if (achievements.isEmpty()) {
             final Achievement achievement = new Achievement();
             achievement.setAchievement("You have no achievements start answering!");
+            achievement.setValue(0);
             achievements.add(achievement);
         }
 
@@ -76,7 +78,11 @@ public class AchievementsListViewAdapter extends BaseAdapter {
 
         holder.title.setText(achievement.getAchievement());
         holder.date.setText(FormatUtil.getDateSimple(achievement.getDate()));
-        holder.value.setText(String.valueOf(achievement.getValue()));
+        if (achievement.getValue() > 0) {
+            holder.value.setText(String.valueOf(achievement.getValue()));
+        } else {
+            holder.value.setText(String.valueOf(Constants.EMPTY_STRING));
+        }
         try {
             holder.summary.setText(AchievementUtil.getAchievementSummary(context,
                     achievement.getAchievement()));

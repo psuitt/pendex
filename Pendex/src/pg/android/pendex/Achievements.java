@@ -36,7 +36,7 @@ public class Achievements extends ActionBarActivity {
 
         final TextView textView = (TextView) findViewById(R.id.achievements_title);
 
-        textView.setText("Total Points: "
+        textView.setText("Achievements "
                 + String.valueOf(AchievementUtil.getTotalAchievementPoints()));
 
     }

@@ -10,7 +10,7 @@ import pg.android.pendex.constants.Constants;
 import pg.android.pendex.constants.Messages;
 import pg.android.pendex.exceptions.OutOfQuestionsException;
 import pg.android.pendex.exceptions.QuestionsLoadException;
-import pg.android.pendex.exceptions.profile.ProfileCreateException;
+import pg.android.pendex.exceptions.profile.ProfileCreateNewException;
 import pg.android.pendex.exceptions.profile.ProfileLoadException;
 import pg.android.pendex.exceptions.profile.ProfileSaveException;
 import pg.android.pendex.interfaces.INavigationDrawerCallbacks;
@@ -46,6 +46,8 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
 
     private RelativeLayout mainRelativeLayout;
 
+    private boolean save = true;
+
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
@@ -54,6 +56,19 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        try {
+            ProfileUtil.loadProfile(getApplicationContext());
+        } catch (final ProfileLoadException e) {
+            Log.e(TAG, e.getMessage());
+        } catch (final ProfileSaveException e) {
+            Log.e(TAG, e.getMessage());
+        } catch (final ProfileCreateNewException e) {
+            save = false;
+            this.startActivity(new Intent(getBaseContext(), Welcome.class));
+            return;
+        }
+
         setContentView(R.layout.activity_pendex);
 
         mainRelativeLayout = (RelativeLayout) findViewById(R.id.pendex_container);
@@ -64,16 +79,6 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
-
-        try {
-            ProfileUtil.loadProfile(getApplicationContext());
-        } catch (final ProfileLoadException e) {
-            Log.e(TAG, e.getMessage());
-        } catch (final ProfileSaveException e) {
-            Log.e(TAG, e.getMessage());
-        } catch (final ProfileCreateException e) {
-
-        }
 
         final Button button1 = (Button) findViewById(R.id.button1);
         final TextView questionTextView = (TextView) findViewById(R.id.textView1);
@@ -302,7 +307,9 @@ public class Pendex extends ActionBarActivity implements INavigationDrawerCallba
     @Override
     protected void onStop() {
         try {
-            ProfileUtil.saveProfile(getApplicationContext());
+            if (save) {
+                ProfileUtil.saveProfile(getApplicationContext());
+            }
         } catch (final ProfileSaveException e) {
             Log.e(TAG, "Unable to save.");
         }

@@ -24,6 +24,9 @@ public class RemoveProfileOnClickListener implements OnClickListener {
     public void onClick(final View v) {
 
         ProfileUtil.removeProfile(context, profileId);
+        if (ProfileUtil.getProfileId().equals(profileId)) {
+            ProfileUtil.triggerProfileReload();
+        }
         adapter.remove(profileId);
         adapter.notifyDataSetChanged();
 

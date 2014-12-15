@@ -1,9 +1,24 @@
-<!-- A DrawerLayout is intended to be used as the top-level content view using match_parent for both width and height to consume the full space available. -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:paddingTop="8dp"
     android:paddingLeft="8dp"
-    android:paddingRight="8dp"
-    android:orientation="vertical" >
+    android:paddingRight="8dp" >
+    
+    <TextView
+        android:id="@+id/about_description"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="25dip"
+        android:textSize="25sp"
+        android:text="@string/about_description" >
+    </TextView>
 
-</RelativeLayout>
+    <ExpandableListView
+        android:id="@+id/about_expandable_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+    </ExpandableListView>
+
+</LinearLayout>

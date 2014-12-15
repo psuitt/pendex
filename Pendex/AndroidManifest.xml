@@ -24,8 +24,7 @@
         </activity>
         <activity
             android:name=".Welcome"
-            android:label="@string/menu_activity_welcome"
-            android:parentActivityName=".Pendex" >
+            android:label="@string/menu_activity_welcome" >
         </activity>
         <activity
             android:name=".ChangeProfile"

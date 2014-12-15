@@ -6,17 +6,13 @@ package pg.android.pendex.exceptions.profile;
  * @author Sora
  * 
  */
-public class ProfileCreateException extends Exception {
+public class ProfileCreateNewException extends Exception {
 
     /** Serial id. */
     private static final long serialVersionUID = 1L;
 
-    public ProfileCreateException() {
-        super("A profile failed to create.");
-    }
-
-    public ProfileCreateException(final String s) {
-        super(s);
+    public ProfileCreateNewException() {
+        super("A profile needs to be created before continuing.");
     }
 
 }

@@ -22,6 +22,10 @@
     <string name="menu_activity_achievements">Achievements</string>
     <string name="menu_activity_about">About</string>
     
+    <string name="welcome_description">Description text</string>
+    <string name="welcome_create">Create</string>
+    <string name="welcome_profile">Profile Name</string>
+    
     <string name="pendex_default_start_text">Start building up your traits by clicking below!</string>
     <string name="pendex_skip">Skip</string>
     <string name="pendex_click_to_begin">Click To Begin</string>
@@ -31,6 +35,8 @@
     
     <string name="profile_switch_safe">Safe Mode</string>
     <string name="profile_button_reset">Reset Traits</string>
+    
+    <string name="about_description">Pendex is not based on any factual basis and is solely created for fun. Please don\'t base life decisions on anything in this app, but have fun comparing your ratings to others.</string>
     
     <string name="dialog_change_profile_name_field">Name</string>
 

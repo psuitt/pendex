@@ -1,8 +1,8 @@
 package pg.android.pendex.dialogs;
 
 import pg.android.pendex.R;
+import pg.android.pendex.exceptions.profile.ProfileCreateException;
 import pg.android.pendex.exceptions.profile.ProfileExistsException;
-import pg.android.pendex.exceptions.profile.ProfileSaveException;
 import pg.android.pendex.interfaces.IChangeProfileAddDialogCallbacks;
 import pg.android.pendex.utils.ProfileUtil;
 import android.app.AlertDialog;
@@ -57,10 +57,10 @@ public class ChangeProfileAdd extends DialogFragment {
                             if (callback != null) {
                                 callback.createdUser(userInputString);
                             }
-                        } catch (final ProfileSaveException e) {
+                        } catch (final ProfileExistsException e) {
                             // TODO Auto-generated catch block
                             e.printStackTrace();
-                        } catch (final ProfileExistsException e) {
+                        } catch (final ProfileCreateException e) {
                             // TODO Auto-generated catch block
                             e.printStackTrace();
                         }

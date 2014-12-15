@@ -12,7 +12,7 @@ public final class Constants {
     public static final boolean DEBUG_MODE = true;
     public static final boolean DEBUG_QUESTIONS = false;
 
-    public static final String DEFAULT_USER = "Pendex";
+    public static final String DEFAULT_USER = "PendexTemp";
 
     public static final String DATE_FORMAT = "MMMM dd, yyyy H:mm a";
 

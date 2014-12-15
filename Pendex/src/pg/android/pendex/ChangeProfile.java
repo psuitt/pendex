@@ -4,8 +4,8 @@ import java.util.List;
 
 import pg.android.pendex.adapters.ChangeProfileListViewAdapter;
 import pg.android.pendex.dialogs.ChangeProfileAdd;
+import pg.android.pendex.exceptions.profile.ProfileCreateNewException;
 import pg.android.pendex.exceptions.profile.ProfileLoadException;
-import pg.android.pendex.exceptions.profile.ProfileSaveException;
 import pg.android.pendex.interfaces.IChangeProfileAddDialogCallbacks;
 import pg.android.pendex.utils.ProfileUtil;
 import android.app.DialogFragment;
@@ -57,7 +57,7 @@ public class ChangeProfile extends ActionBarActivity {
                 } catch (final ProfileLoadException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
-                } catch (final ProfileSaveException e) {
+                } catch (final ProfileCreateNewException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
@@ -111,18 +111,8 @@ public class ChangeProfile extends ActionBarActivity {
                         allProfiles.clear();
                         allProfiles.addAll(ProfileUtil.getProfilesList(ChangeProfile.this));
                         profileListView.setItemChecked(allProfiles.indexOf(newUserId), true);
-                        // Load the selected profile.
-                        try {
-                            ProfileUtil.loadProfile(ChangeProfile.this, newUserId);
-                            // Move to parent.
-                            NavUtils.navigateUpFromSameTask(ChangeProfile.this);
-                        } catch (final ProfileLoadException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        } catch (final ProfileSaveException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
+                        // Move to parent.
+                        NavUtils.navigateUpFromSameTask(ChangeProfile.this);
 
                     }
 

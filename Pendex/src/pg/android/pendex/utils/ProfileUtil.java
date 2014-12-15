@@ -29,6 +29,7 @@ import pg.android.pendex.exceptions.AbstractSaveException;
 import pg.android.pendex.exceptions.QuestionsLoadException;
 import pg.android.pendex.exceptions.TraitLoadException;
 import pg.android.pendex.exceptions.profile.ProfileCreateException;
+import pg.android.pendex.exceptions.profile.ProfileCreateNewException;
 import pg.android.pendex.exceptions.profile.ProfileExistsException;
 import pg.android.pendex.exceptions.profile.ProfileLoadException;
 import pg.android.pendex.exceptions.profile.ProfileResetException;
@@ -106,18 +107,26 @@ public final class ProfileUtil {
 
     /**
      * Creates the input profile name any strings or special characters are trimmed from the id.
+     * This will also set the current profile to this.
+     * 
      * 
      * @param context - {@link Context} - Holds the assets.
      * @param profileName - String - Profile name.
      * 
      * @throws ProfileExistsException - Thrown if the profile already exits.
      * @throws ProfileSaveException - Thrown if the profile save fails.
+     * @throws ProfileCreateException
      */
     public static void createProfile(final Context context, final String profileName)
-            throws ProfileExistsException, ProfileSaveException {
+            throws ProfileExistsException, ProfileCreateException {
 
         final String profileNameFiltered =
-                profileName.replaceAll(Constants.ALPHANUMERIC_CHARACTERS_PATTERN, Constants.EMPTY_STRING);
+                profileName.replaceAll(Constants.ALPHANUMERIC_CHARACTERS_PATTERN,
+                        Constants.EMPTY_STRING);
+
+        if (profileNameFiltered.trim().length() == 0) {
+            throw new ProfileCreateException("Length must be greater than 0");
+        }
 
         if (getProfilesList(context).contains(profileNameFiltered)) {
             throw new ProfileExistsException();
@@ -125,14 +134,27 @@ public final class ProfileUtil {
 
         reset(profileName);
         loadedProfileId = profileNameFiltered;
+        lastAnswered = "Start answering questions!";
+        safe = true;
 
         created = new Date(System.currentTimeMillis());
-        saveProfile(context);
+
+
+        try {
+            saveProfile(context);
+            loadProfile(context, loadedProfileId);
+        } catch (final ProfileLoadException e) {
+            throw new ProfileCreateException();
+        } catch (final ProfileCreateNewException e) {
+            throw new ProfileCreateException();
+        } catch (final ProfileSaveException e) {
+            throw new ProfileCreateException();
+        }
 
     }
 
     public static void loadProfile(final Context context) throws ProfileLoadException,
-            ProfileSaveException, ProfileCreateException {
+            ProfileSaveException, ProfileCreateNewException {
 
         if (!profileReload) {
             return;
@@ -144,8 +166,8 @@ public final class ProfileUtil {
         final String loadedProfileId =
                 settings.getString(Preferences.LAST_PROFILE_ID_STRING, Constants.DEFAULT_USER);
 
-        if (Constants.DEFAULT_USER.equals(loadedProfileId)) {
-            throw new ProfileCreateException();
+        if (loadedProfileId.trim().length() == 0 || Constants.DEFAULT_USER.equals(loadedProfileId)) {
+            throw new ProfileCreateNewException();
         }
 
         loadProfile(context, loadedProfileId);
@@ -154,10 +176,10 @@ public final class ProfileUtil {
 
     }
 
-    public static void loadProfile(final Context context, final String profile)
-            throws ProfileLoadException, ProfileSaveException {
+    public static void loadProfile(final Context context, final String profileId)
+            throws ProfileLoadException, ProfileCreateNewException {
 
-        loadedProfileId = profile;
+        loadedProfileId = profileId;
         answeredQuestions = new HashMap<String, Integer>();
         pendex = new HashMap<String, Integer>();
 
@@ -186,7 +208,7 @@ public final class ProfileUtil {
 
         } catch (final FileNotFoundException e) {
 
-            saveProfile(context);
+            throw new ProfileCreateNewException();
 
         } catch (final JSONException e) {
 
@@ -310,6 +332,7 @@ public final class ProfileUtil {
     public static void resetLoadedProfile(final Context context) throws ProfileResetException {
 
         reset();
+
         try {
             saveProfile(context);
             LikeUtil.removeLikes(context, loadedProfileId);

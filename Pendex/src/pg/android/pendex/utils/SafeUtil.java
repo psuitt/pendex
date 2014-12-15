@@ -1,6 +1,6 @@
 package pg.android.pendex.utils;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,61 +23,20 @@ public final class SafeUtil {
 
     static {
 
-        ArrayList<String> arrayList = new ArrayList<String>();
+        map.put("damn" + REGEX_NOT_CHARACTER,
+                Arrays.asList("Dangit! ", "Blast! ", "Water Bearing Shield! "));
 
-        arrayList.add("Dangit! ");
-        arrayList.add("Blast! ");
-        arrayList.add("Water Bearing Shield! ");
+        map.put("shit" + REGEX_NOT_CHARACTER, Arrays.asList("Ugh! ", "Lame! ", "Aw! "));
 
-        map.put("damn" + REGEX_NOT_CHARACTER, arrayList);
+        map.put("god" + REGEX_NOT_CHARACTER, Arrays.asList("Thor! ", "Odin! ", "Shamu! "));
 
-        arrayList = new ArrayList<String>();
+        map.put("hell" + REGEX_NOT_CHARACTER, Arrays.asList("Thor! ", "Odin! ", "Shamu! "));
 
-        arrayList.add("Ugh! ");
-        arrayList.add("Lame! ");
-        arrayList.add("Aw! ");
+        map.put("kill" + REGEX_NOT_CHARACTER, Arrays.asList("Thor! ", "Odin! ", "Shamu! "));
 
-        map.put("shit" + REGEX_NOT_CHARACTER, arrayList);
+        map.put(REGEX_4_CHARACTER, Arrays.asList("fished! ", "Odin! ", "Shamu! "));
 
-        arrayList = new ArrayList<String>();
-
-        arrayList.add("Thor! ");
-        arrayList.add("Odin! ");
-        arrayList.add("Shamu! ");
-
-        map.put("god" + REGEX_NOT_CHARACTER, arrayList);
-
-        arrayList = new ArrayList<String>();
-
-        arrayList.add("Thor! ");
-        arrayList.add("Odin! ");
-        arrayList.add("Shamu! ");
-
-        map.put("hell" + REGEX_NOT_CHARACTER, arrayList);
-
-        arrayList = new ArrayList<String>();
-
-        arrayList.add("Thor! ");
-        arrayList.add("Odin! ");
-        arrayList.add("Shamu! ");
-
-        map.put("kill" + REGEX_NOT_CHARACTER, arrayList);
-
-        arrayList = new ArrayList<String>();
-
-        arrayList.add("fished! ");
-        arrayList.add("Odin! ");
-        arrayList.add("Shamu! ");
-
-        map.put(REGEX_4_CHARACTER, arrayList);
-
-        arrayList = new ArrayList<String>();
-
-        arrayList.add("Thor! ");
-        arrayList.add("Odin! ");
-        arrayList.add("Shamu! ");
-
-        map.put(REGEX_5_CHARACTER, arrayList);
+        map.put(REGEX_5_CHARACTER, Arrays.asList("Thor! ", "Odin! ", "Shamu! "));
 
     }
 
